@@ -46,11 +46,11 @@ class _AddItemPageState extends State<AddItemPage> {
 
   Future<void> _selectImage() async {
     final pickedFile = await _imagePicker.pickImage(
-      source: ImageSource.gallery, // or ImageSource.camera
+      source: ImageSource.gallery, 
     );
     if (pickedFile != null) {
       setState(() {
-        _imageUrl = pickedFile.path; // Store image path locally
+        _imageUrl = pickedFile.path;
       });
     }
   }
@@ -76,7 +76,7 @@ class _AddItemPageState extends State<AddItemPage> {
         await box.put(id.toString(), newItem);
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Item added successfully!')));
-        Navigator.pop(context);
+        Navigator.pop(context, newItem);
       } catch (e) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Error: $e')));

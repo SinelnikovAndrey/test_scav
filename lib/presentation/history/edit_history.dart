@@ -9,7 +9,6 @@ import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/widgets/default_button.dart';
 
-// ... Your ItemData, PlaceData models, and other pages ...
 
 class EditHistoryPage extends StatefulWidget {
   final HistoryData placeData;
@@ -26,8 +25,8 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
   final _placeDescriptionController = TextEditingController();
   final _placePhotoUrlController = TextEditingController();
   DateTime _selectedDateTime = DateTime.now();
-  String? _selectedImagePath; // Path to the selected image
-  late Box<HistoryData> placeBox; // Declare placeBox
+  String? _selectedImagePath; 
+  late Box<HistoryData> placeBox; 
   final _imagePicker = ImagePicker();
   String? _imageUrl;
 
@@ -93,7 +92,6 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
       final placeBox = await Hive.openBox<HistoryData>(historyBoxName);
       await placeBox.put(widget.placeData.id.toString(), updatedPlaceData);
 
-      // Trigger a rebuild of the widget to reflect the changes
       setState(() {});
     }
   }

@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:test_scav/main.dart';
@@ -45,7 +44,7 @@ class _EditItemPageState extends State<EditItemPage> {
 
   Future<void> _selectImage() async {
     final pickedFile = await _imagePicker.pickImage(
-      source: ImageSource.gallery, // or ImageSource.camera
+      source: ImageSource.gallery, 
     );
     if (pickedFile != null) {
       setState(() {
@@ -59,7 +58,6 @@ class _EditItemPageState extends State<EditItemPage> {
     if (_formKey.currentState!.validate()) {
       final box = await Hive.openBox<ItemData>(itemBoxName);
 
-      // Update the ItemData object in Hive
       final updatedItem = ItemData(
         id: widget.itemData.id,
         name: _nameController.text.trim(),
@@ -71,7 +69,6 @@ class _EditItemPageState extends State<EditItemPage> {
       );
       await box.put(widget.itemData.id.toString(), updatedItem);
 
-      // Navigate back to the previous screen
       Navigator.pop(context);
     }
   }

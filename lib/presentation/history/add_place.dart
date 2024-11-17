@@ -30,8 +30,8 @@ class AddPlacePage extends StatefulWidget {
 }
 
 class _AddPlacePageState extends State<AddPlacePage> {
-  final _formKey = GlobalKey<FormState>(); // Remains final
-  final _placeNameController = TextEditingController(); // Remains final
+  final _formKey = GlobalKey<FormState>(); 
+  final _placeNameController = TextEditingController(); 
   late Box<ItemData> itemBox;
   late ItemData itemData;
 

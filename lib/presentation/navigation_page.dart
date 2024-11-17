@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_scav/presentation/history/history_page.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
-// import 'package:flutter_svg/svg.dart';
+import 'package:test_scav/presentation/home/test_items_page.dart';
 
 
 class NavigationPage extends StatefulWidget {
@@ -53,6 +53,10 @@ class _HomePageState extends State<NavigationPage> {
               icon: Icon(Icons.list),
               label: 'History',
             ),
+            NavigationDestination(
+              icon: Icon(Icons.text_format_sharp),
+              label: 'Test',
+            ),
        
            
           ],
@@ -63,7 +67,7 @@ class _HomePageState extends State<NavigationPage> {
         children: const [
          MyItemsPage(),
          HistoryPage(),
-          // HistoryPage(),
+         TestMyItemsPage(),
          
         ],
       ),

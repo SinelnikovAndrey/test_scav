@@ -4,12 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:test_scav/main.dart';
 import 'package:test_scav/models/history_data.dart';
-import 'package:test_scav/models/item_data.dart';
-import 'package:test_scav/presentation/history/add_place.dart';
 import 'package:test_scav/presentation/history/edit_history.dart';
-import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
-import 'package:test_scav/widgets/default_button.dart';
 
 class DetailHistoryPage extends StatefulWidget {
   final String itemId;
