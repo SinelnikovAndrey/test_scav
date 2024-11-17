@@ -1,17 +1,18 @@
 
 import 'package:flutter/material.dart';
-import 'package:test_scav/presentation/my_items_page.dart';
+import 'package:test_scav/presentation/history/history_page.dart';
+import 'package:test_scav/presentation/home/my_items_page.dart';
 // import 'package:flutter_svg/svg.dart';
 
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class NavigationPage extends StatefulWidget {
+  const NavigationPage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<NavigationPage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<NavigationPage> {
   int selectedIndex = 0;
 
   @override
@@ -49,7 +50,7 @@ class _HomePageState extends State<HomePage> {
               label: 'Home',
             ),
             NavigationDestination(
-              icon: Icon(Icons.home),
+              icon: Icon(Icons.list),
               label: 'History',
             ),
        
@@ -61,7 +62,7 @@ class _HomePageState extends State<HomePage> {
         index: selectedIndex,
         children: const [
          MyItemsPage(),
-         MyItemsPage(),
+         HistoryPage(),
           // HistoryPage(),
          
         ],

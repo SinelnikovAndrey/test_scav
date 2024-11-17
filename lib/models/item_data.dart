@@ -87,20 +87,6 @@ class ItemData extends Equatable {
   @override
   List<Object?> get props => [id, name, color, form, group, description, photoUrl];
 
-
-  // List<Object?> get props {
-  //   return [
-  //     id,
-  //     name,
-  //     color,
-  //     form,
-  //     group,
-  //     description,
-  //     photoUrl,
-      
-  //   ];
-  // }
-
   
 }
 

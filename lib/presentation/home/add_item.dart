@@ -8,6 +8,7 @@ import 'package:test_scav/main.dart';
 import 'package:test_scav/models/item_data.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/widgets/color_box.dart';
 import 'package:test_scav/widgets/default_button.dart';
 
 
@@ -320,21 +321,4 @@ class _AddItemPageState extends State<AddItemPage> {
   }
 }
 
-class ColorBox extends StatelessWidget {
-  final Color color;
-
-  const ColorBox({super.key, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.09,
-      width: MediaQuery.of(context).size.width * 0.20,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-      ),
-    );
-  }
-}
 

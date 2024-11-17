@@ -3,10 +3,13 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:test_scav/main.dart';
+import 'package:test_scav/models/history_data.dart';
 import 'package:test_scav/models/item_data.dart';
+import 'package:test_scav/presentation/history/add_place.dart';
+import 'package:test_scav/presentation/home/edit_item.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
-import 'package:test_scav/utils/app_router.dart';
+import 'package:test_scav/widgets/color_box.dart';
 import 'package:test_scav/widgets/default_button.dart';
 
 class ItemDetailPage extends StatefulWidget {
@@ -27,12 +30,24 @@ class ItemDetailPage extends StatefulWidget {
 
 class _ItemDetailPageState extends State<ItemDetailPage> {
   ItemData? item;
+  late Box<ItemData> itemBox;
+  late ItemData itemData;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     _loadItemData();
+    itemBox = Hive.box<ItemData>(itemBoxName);
+    itemData = itemBox.get(widget.itemId.toString()) ??
+        ItemData(
+            name: '',
+            photoUrl: '',
+            id: '',
+            color: '',
+            form: '',
+            group: '',
+            description: '');
   }
 
   Future<void> _loadItemData() async {
@@ -53,6 +68,19 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         centerTitle: true,
+        actions: [
+          ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditItemPage(itemData: itemData,),
+              ),
+            );
+          },
+          child: const Text('Edit Item'),
+        ),
+        ],
        
       ),
       bottomNavigationBar: Padding(
@@ -67,7 +95,8 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                       DefaultButton(
                   text: 'Add',
                   onTap: () {
-                          Navigator.of(context).pushNamed(AppRouter.addItemRoute);
+                           Future.delayed(Duration.zero, (){Navigator.of(context)
+            .push(AddPlacePage.materialPageRoute(itemId: itemData.id));});
                         },
                 )
                
@@ -177,20 +206,3 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
   }
 }
 
-class ColorBox extends StatelessWidget {
-  final Color color;
-
-  const ColorBox({super.key, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: MediaQuery.of(context).size.height * 0.09,
-      width: MediaQuery.of(context).size.width * 0.20,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(10),
-      ),
-    );
-  }
-}

@@ -1,7 +1,7 @@
 
 import 'package:flutter/material.dart';
-import 'package:test_scav/presentation/add_item.dart';
-import 'package:test_scav/presentation/my_items_page.dart';
+import 'package:test_scav/presentation/home/add_item.dart';
+import 'package:test_scav/presentation/home/my_items_page.dart';
 
 class AppRouter {
   static const String myItemsPageRoute = '/myItemsPage';
@@ -9,6 +9,7 @@ class AppRouter {
   static const String notificationsRoute = '/notifications';
   static const String addItemRoute = '/addItem';
   static const String itemDetailRoute = '/itemDetail';
+  static const String addPlaceRoute = '/addPlaceDetail';
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -16,6 +17,8 @@ class AppRouter {
         return MaterialPageRoute<void>(builder: (_) => const AddItemPage());
       case myItemsPageRoute:
         return MaterialPageRoute<void>(builder: (_) => const MyItemsPage());
+      // case addPlaceRoute:
+      //   return MaterialPageRoute<void>(builder: (_) => const AddPlacePage());
       default:
         return MaterialPageRoute<void>(
           builder: (_) => Scaffold(

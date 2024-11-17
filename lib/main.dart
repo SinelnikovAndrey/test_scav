@@ -1,13 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:test_scav/models/history_data.dart';
 import 'package:test_scav/models/item_data.dart';
 import 'package:test_scav/my_app.dart';
 import 'package:test_scav/services/hive_adapters.dart'; // Import Provider
 
-// const String itemsBoxName = 'itemBox';
-const String placeBoxName = 'places';
 const String itemBoxName = 'itemsBox';
+const String historyBoxName = 'places';
 // final itemService = ItemService(itemBox); 
 
 
@@ -17,6 +17,7 @@ Future<void> main() async {
   registerAdapters();
 
   await Hive.openBox<ItemData>(itemBoxName);
+  await Hive.openBox<HistoryData>(historyBoxName);
 
   // ItemService.loadItems();
 
