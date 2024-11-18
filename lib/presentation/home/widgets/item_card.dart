@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/presentation/home/item_detail_page.dart';
+// import 'package:test_scav/presentation/home/item_detail_page.dart';
+import 'package:test_scav/presentation/home/testtt_detail.dart';
 import 'package:test_scav/utils/app_colors.dart';
 
 class ItemCard extends StatelessWidget {
@@ -19,10 +21,10 @@ class ItemCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: () {
-
-        Future.delayed(Duration.zero, (){Navigator.of(context)
-            .push(ItemDetailPage.materialPageRoute(itemId: itemId.id));});
-        
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => ItemDetailPage(itemId: itemId.id)),
+        );
       },
 
           child: Container(

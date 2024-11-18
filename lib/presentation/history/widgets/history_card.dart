@@ -22,8 +22,10 @@ class HistoryCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(10),
           onTap: () {
 
-        Future.delayed(Duration.zero, (){Navigator.of(context)
-            .push(DetailHistoryPage.materialPageRoute(itemId: item.id));});
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HistoryDetailPage(historyId: item.id)),
+        );
         
       },
 
@@ -50,6 +52,7 @@ class HistoryCard extends StatelessWidget {
                           Text(item.itemName, style: AppFonts.h6,),
                         const SizedBox(height: 10.0),
                         
+                        // Text(formattedDateTime),
                         Row(
                           children: [
                             const Icon(Iconsax.calendar_1, size: 25,),

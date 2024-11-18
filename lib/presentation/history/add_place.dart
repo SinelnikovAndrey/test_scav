@@ -6,6 +6,7 @@ import 'package:test_scav/data/models/history_data.dart';
 import 'dart:math';
 
 import 'package:test_scav/data/models/item_data.dart';
+import 'package:test_scav/presentation/history/history_page.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/widgets/default_button.dart';
 
@@ -84,7 +85,12 @@ class _AddPlacePageState extends State<AddPlacePage> {
         await placeBox.put(placeId.toString(), placeData);
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Place added history successfully!')));
-        Navigator.pop(context);
+        Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HistoryPage(),
+                    ),
+                  );
       } catch (e) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Error: $e')));
