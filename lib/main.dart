@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:test_scav/models/history_data.dart';
-import 'package:test_scav/models/item_data.dart';
+import 'package:test_scav/data/models/history_data.dart';
+import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/my_app.dart';
 import 'package:test_scav/services/hive_adapters.dart'; 
 

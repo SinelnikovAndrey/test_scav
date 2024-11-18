@@ -1,0 +1,50 @@
+{
+    
+    "firstTipHead": "Use a Methodical Approach",
+    "retraceYourSteps": "Retrace Your Steps: Try to remember your last actions before you lost the item. Revisit the places you’ve been recently and check all possible locations carefully.",
+    "checkTheMostObviousPlacesFirst": "Check the Most Obvious Places First: Lost items are often in plain sight or in areas where you commonly use them. Start your search in these locations.",
+    "focusOnOneItem": "Focus on One Item at a Time: If you’ve lost multiple items, don’t try to find them all at once. Prioritize finding one, then move on to the next.",
+
+    "secondTipHead": "Use Memory Triggers",
+    "visualize": "Visualize: Close your eyes and imagine the last time you used the item. This mental picture might help you recall where you placed it.",
+    "thinkOfTheLastSeenLocation": "Think of the Last Seen Location: Consider where you last remember seeing or using the item. This gives you a good starting point for your search.",
+    "relateToSounds": "Relate to Sounds or Habits: Sometimes remembering a sound (like the jingle of keys) or a habitual action can help you locate an item. Did you put your keys down after hearing the door close?",
+
+    "thirdTipHead": "Physical Search Strategies",
+    "checkHiddenAreas": "Check Hidden Areas: Items can easily fall between cushions, behind furniture, or be hidden under other objects. Inspect these areas thoroughly.",
+    "methodicallyGoThroughDrawersorBags": "Methodically Go Through Drawers or Bags: Slowly go through your drawers, bags, and shelves, one section at a time. Lost items often hide beneath or behind other belongings.",
+    "useAFlashlight": "Use a Flashlight: If your item is small or in a dimly lit area, a flashlight can help you illuminate dark spaces where it might be hiding.",
+
+    "forthTipHead": "Stay Organized",
+    "designateASpotforEachItem": "Designate a Spot for Each Item: To prevent future losses, create a designated spot for commonly misplaced items (like a hook for keys, a bowl for your wallet).",
+    "buildAHabitOfDoubleChecking": "Build a Habit of Double-Checking: Before leaving the house, develop a habit of checking for essential items like your phone, wallet, and keys. This will help reduce the chance of misplacing them.",
+    "useBrightOrNoticeableMarkers": "Use Bright or Noticeable Markers: If you often misplace small items, attach bright keychains or labels to make them more noticeable.",
+
+    "fifthTipHead": "Leverage Technology",
+    "rememberTheLastLocation": "Remember the Last Location: The app can store where an item was last seen or used. Use this feature to quickly narrow down your search.",
+    "takePhotosOfItems": "Take Photos of Items: If you’re prone to losing things, take pictures of where they are stored. This can serve as a visual reminder for future reference.",
+    "setReminders": "Set Reminders for Rarely Used Items: If there’s an item you don’t use daily, the app can remind you to check in on it periodically, preventing it from being forgotten entirely.",
+
+    "sixthItemHead": "Emotional Management During Searches",
+    "stayCalm": "Stay Calm: Anxiety and stress can cloud your thinking and make it harder to find lost items. Take a deep breath and remain focused.",
+    "searchInSteps": "Search in Steps: Don’t overwhelm yourself by trying to search your entire house at once. Break your search into smaller areas and focus on one spot at a time.",
+
+    "seventhTipHead": "Prevent Future Losses",
+    "createASimple ": "Create a Simple Storage System: Use small containers, hooks, or trays to organize commonly used items and prevent them from getting misplaced.",
+    "developStorage": "Develop Storage Habits: Train yourself to place frequently lost items, such as your phone or keys, in the same spot every time you get home.",
+
+    "eithTipHead": "Group Search Strategy",
+    "askOthers": "Ask Others: If you can’t find something, ask people around you if they’ve seen it. Sometimes another person’s perspective can reveal what you’ve missed.",
+    "getFriends": "Get Friends to Help: If you’re searching in a public place or a large area, ask friends to help you search to cover more ground.",
+
+    "ninthTipHead": "Common Mistakes During Searches",
+    "delayingTheSearch": "Delaying the Search: Start looking for the lost item as soon as you realize it’s missing. The sooner you start searching, the better your chances of finding it.",
+    "skippingOverAreas": "Skipping Over Areas: Be sure to thoroughly check places you’ve already looked. Items can often be overlooked in the first search.",
+
+    "tenthTipHead": "Items That Are Frequently Misplaced",
+    "keys": "Keys: Create a dedicated spot by the door or in a bowl for easy access and tracking.",
+    "phone": "Phone: Use a specific charging station to always know where your phone is.",
+    "wallet": "Wallet: Keep your wallet in a consistent pocket or drawer when not in use.",
+    "glasses": "Glasses: Place them in a case when not wearing them, in a specific spot to avoid losing them."
+
+}

@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:test_scav/main.dart';
-import 'package:test_scav/models/history_data.dart';
+import 'package:test_scav/data/models/history_data.dart';
 import 'package:test_scav/presentation/history/edit_history.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 

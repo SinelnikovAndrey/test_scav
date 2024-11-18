@@ -5,7 +5,7 @@ import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/presentation/home/item_detail_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
 
-class ItemCard extends StatelessWidget {
+class TipCard extends StatelessWidget {
   // final int item;
   final ItemData itemId;
   const ItemCard({super.key, required this.itemId});

@@ -3,8 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:test_scav/main.dart';
-import 'package:test_scav/models/history_data.dart';
-import 'package:test_scav/models/item_data.dart';
+import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/presentation/history/add_place.dart';
 import 'package:test_scav/presentation/home/edit_item.dart';
 import 'package:test_scav/utils/app_colors.dart';
@@ -61,48 +60,47 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-    isLoading
+    return isLoading
         ? const Scaffold(body: Center(child: CircularProgressIndicator()))
         : Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        centerTitle: true,
-        actions: [
-          ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditItemPage(itemData: itemData,),
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              centerTitle: true,
+              actions: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditItemPage(
+                          itemData: itemData,
+                        ),
+                      ),
+                    );
+                  },
+                  child: const Text('Edit Item'),
+                ),
+              ],
+            ),
+            bottomNavigationBar: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 25,
+                vertical: 30,
               ),
-            );
-          },
-          child: const Text('Edit Item'),
-        ),
-        ],
-       
-      ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 25,
-          vertical: 30,
-        ),
-        child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: 
-                      
-                      DefaultButton(
-                  text: 'Add',
-                  onTap: () {
-                           Future.delayed(Duration.zero, (){Navigator.of(context)
-            .push(AddPlacePage.materialPageRoute(itemId: itemData.id));});
-                        },
-                )
-               
-                    ),
-      ),
-      body: Padding(
+              child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: DefaultButton(
+                    text: 'Add',
+                    onTap: () {
+                      Future.delayed(Duration.zero, () {
+                        Navigator.of(context).push(
+                            AddPlacePage.materialPageRoute(
+                                itemId: itemData.id));
+                      });
+                    },
+                  )),
+            ),
+            body: Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
                 child: Column(
@@ -118,91 +116,100 @@ class _ItemDetailPageState extends State<ItemDetailPage> {
                       ),
                     const SizedBox(height: 16.0),
                     Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Form',style: AppFonts.h6,),
-                            // SizedBox(height: 5,),
-                            Text(item!.form),
-                          ],
-                        ),
-                      )),
-                       const SizedBox(height: 16.0),
-                      Row(
-                        children: [
-                          Container(
-                          decoration: BoxDecoration(
+                        decoration: BoxDecoration(
                             border: Border.all(),
-                            borderRadius: BorderRadius.circular(20)
+                            borderRadius: BorderRadius.circular(20)),
+                        height: MediaQuery.of(context).size.height * 0.09,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Form',
+                                style: AppFonts.h6,
+                              ),
+                              // SizedBox(height: 5,),
+                              Text(item!.form),
+                            ],
                           ),
-                           height: MediaQuery.of(context).size.height * 0.09,
+                        )),
+                    const SizedBox(height: 16.0),
+                    Row(
+                      children: [
+                        Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(),
+                                borderRadius: BorderRadius.circular(20)),
+                            height: MediaQuery.of(context).size.height * 0.09,
                             width: MediaQuery.of(context).size.width * 0.68,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('Color',style: AppFonts.h6,),
-                                
-                                Text(item!.color),
-                                
-                              ],
-                            ),
-                          )),
-                          const SizedBox(width: 10.0),
-                          ColorBox(color: colorMap[item!.color]!)
-                        ],
-                      ),
-                       const SizedBox(height: 16.0),
-                      Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Group',style: AppFonts.h6,),
-                            // SizedBox(height: 5,),
-                            Text(item!.group),
-                          ],
-                        ),
-                      )),
-                       const SizedBox(height: 16.0),
-                      Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(),
-                        borderRadius: BorderRadius.circular(20)
-                      ),
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0,vertical: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Description',style: AppFonts.h6,),
-                            // SizedBox(height: 5,),
-                            Text(item!.description),
-                          ],
-                        ),
-                      )),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    'Color',
+                                    style: AppFonts.h6,
+                                  ),
+                                  Text(item!.color),
+                                ],
+                              ),
+                            )),
+                        const SizedBox(width: 10.0),
+                        ColorBox(color: colorMap[item!.color]!)
+                      ],
+                    ),
+                    const SizedBox(height: 16.0),
+                    Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(20)),
+                        height: MediaQuery.of(context).size.height * 0.09,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Group',
+                                style: AppFonts.h6,
+                              ),
+                              // SizedBox(height: 5,),
+                              Text(item!.group),
+                            ],
+                          ),
+                        )),
+                    const SizedBox(height: 16.0),
+                    Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(),
+                            borderRadius: BorderRadius.circular(20)),
+                        height: MediaQuery.of(context).size.height * 0.09,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'Description',
+                                style: AppFonts.h6,
+                              ),
+                              // SizedBox(height: 5,),
+                              Text(item!.description),
+                            ],
+                          ),
+                        )),
                   ],
                 ),
               ),
             ));
   }
 }
-

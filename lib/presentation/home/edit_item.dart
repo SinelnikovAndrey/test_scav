@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:test_scav/main.dart';
-import 'package:test_scav/models/item_data.dart';
+import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/widgets/color_box.dart';
@@ -213,14 +213,14 @@ class _EditItemPageState extends State<EditItemPage> {
                           controller: _formController,
                           decoration: const InputDecoration(
                               border: InputBorder.none,
-                              hintText: 'Add format',
+                              hintText: 'Add form',
                               hintStyle: TextStyle(
                                 fontSize: 18,
                                 color: Colors.grey,
                               )),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a format';
+                              return 'Please enter a form';
                             }
                             return null;
                           },

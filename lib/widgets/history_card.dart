@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:test_scav/models/history_data.dart';
+import 'package:test_scav/data/models/history_data.dart';
 import 'package:test_scav/presentation/history/detail_history.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';

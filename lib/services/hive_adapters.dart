@@ -1,7 +1,7 @@
 
 import 'package:hive/hive.dart';
-import 'package:test_scav/models/history_data.dart';
-import 'package:test_scav/models/item_data.dart';
+import 'package:test_scav/data/models/history_data.dart';
+import 'package:test_scav/data/models/item_data.dart';
 
 void registerAdapters() {
 
