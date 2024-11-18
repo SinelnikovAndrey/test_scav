@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_scav/main.dart';
 import 'package:test_scav/data/models/history_data.dart';
-import 'package:test_scav/widgets/history_card.dart'; 
+import 'package:test_scav/presentation/history/widgets/history_card.dart'; 
 
 
 class HistoryPage extends StatefulWidget {

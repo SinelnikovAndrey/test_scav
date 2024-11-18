@@ -4,7 +4,7 @@ import 'package:test_scav/main.dart';
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/default_button.dart';
-import 'package:test_scav/widgets/item_card.dart';
+import 'package:test_scav/presentation/home/widgets/item_card.dart';
 
 class MyItemsPage extends StatefulWidget {
   const MyItemsPage({super.key});
@@ -50,9 +50,9 @@ class _MyItemsPageState extends State<MyItemsPage> {
       body: ValueListenableBuilder(
         valueListenable: itemBox.listenable(),
         builder: (context, Box<ItemData> box, widget) {
-          final places = box.values.toList();
+          final items = box.values.toList();
 
-          if (places.isEmpty) {
+          if (items.isEmpty) {
             return const Center(child: Text('No history found'));
           } else {
             return SingleChildScrollView(
@@ -63,11 +63,11 @@ class _MyItemsPageState extends State<MyItemsPage> {
                    
                     Expanded(
                       child: ListView.builder(
-                        itemCount: places.length,
+                        itemCount: items.length,
                         itemBuilder: (context, index) {
                           return ItemCard(
-                            key: ValueKey(places[index].id),
-                            itemId: places[index],
+                            key: ValueKey(items[index].id),
+                            itemId: items[index],
                           );
                         },
                       ),

@@ -1,14 +1,28 @@
 
+
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:test_scav/presentation/navigation_page.dart';
+import 'package:flutter/services.dart'; 
+import 'package:test_scav/data/models/tips/tips_data.dart'; 
+
+import 'package:test_scav/widgets/navigation_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_router.dart';
 
+void main() async { //Use async for main
+  WidgetsFlutterBinding.ensureInitialized();
+  final jsonData = await rootBundle.loadString('assets/en.json');
+  final rootData = Root.fromJson(json.decode(jsonData));
+
+  runApp(MyApp(rootData: rootData));
+}
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Root rootData;
+  const MyApp({super.key, required this.rootData});
 
-  // This widget is the root of application.
+  // ... rest of your MyApp widget ...
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -19,8 +33,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       onGenerateRoute: AppRouter.onGenerateRoute,
-      home: const NavigationPage(),
- 
+      home: NavigationPage(rootData: rootData), // Pass rootData here
     );
   }
 }

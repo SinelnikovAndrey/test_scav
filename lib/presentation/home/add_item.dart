@@ -90,7 +90,6 @@ class _AddItemPageState extends State<AddItemPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('Add Item'),
         centerTitle: true,

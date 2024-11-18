@@ -50,7 +50,6 @@ class HistoryCard extends StatelessWidget {
                           Text(item.itemName, style: AppFonts.h6,),
                         const SizedBox(height: 10.0),
                         
-                        // Text(formattedDateTime),
                         Row(
                           children: [
                             const Icon(Iconsax.calendar_1, size: 25,),

@@ -1,15 +1,17 @@
 
+
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter/services.dart'; 
 import 'package:test_scav/data/models/history_data.dart';
 import 'package:test_scav/data/models/item_data.dart';
+import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/my_app.dart';
-import 'package:test_scav/services/hive_adapters.dart'; 
+import 'package:test_scav/data/services/hive_adapters.dart';
 
 const String itemBoxName = 'itemsBox';
 const String historyBoxName = 'places';
-// final itemService = ItemService(itemBox); 
-
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,9 +21,8 @@ Future<void> main() async {
   await Hive.openBox<ItemData>(itemBoxName);
   await Hive.openBox<HistoryData>(historyBoxName);
 
-  // ItemService.loadItems();
+  final jsonData = await rootBundle.loadString('assets/en.json');
+  final rootData = Root.fromJson(json.decode(jsonData));
 
-  runApp(
-    const MyApp(),
-  );
+  runApp(MyApp(rootData: rootData));
 }

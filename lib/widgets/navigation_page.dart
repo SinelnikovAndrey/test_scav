@@ -1,12 +1,19 @@
 
 import 'package:flutter/material.dart';
+import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/presentation/history/history_page.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
 import 'package:test_scav/presentation/home/test_items_page.dart';
+import 'package:test_scav/presentation/tips/tip_display.dart';
+
+
+
+
 
 
 class NavigationPage extends StatefulWidget {
-  const NavigationPage({super.key});
+  final Root rootData;
+  const NavigationPage({super.key, required this.rootData});
 
   @override
   State<NavigationPage> createState() => _HomePageState();
@@ -54,21 +61,23 @@ class _HomePageState extends State<NavigationPage> {
               label: 'History',
             ),
             NavigationDestination(
+              icon: Icon(Icons.tips_and_updates),
+              label: 'Tip',
+            ),
+            NavigationDestination(
               icon: Icon(Icons.text_format_sharp),
               label: 'Test',
             ),
-       
-           
           ],
         ),
       ),
       body: IndexedStack(
         index: selectedIndex,
-        children: const [
-         MyItemsPage(),
-         HistoryPage(),
-         TestMyItemsPage(),
-         
+        children: [
+          const MyItemsPage(),
+          const HistoryPage(),
+          TipDisplay(rootData: widget.rootData),
+          const TestMyItemsPage(),
         ],
       ),
     );

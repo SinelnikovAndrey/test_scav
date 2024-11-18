@@ -51,7 +51,7 @@ class ItemData extends Equatable {
       'name': name,
       'color': color,
       'form': form,
-      'group': group, // enum to string
+      'group': group, 
       'description': description,
       'photoUrl': photoUrl,
       

@@ -34,11 +34,9 @@ class HistoryData {
     this.placePhotoUrl,
   });
 
-  // Helper method to format the date and time
   String get formattedFetchDate => DateFormat('dd.MM.yy').format(fetchDateTime);
   String get formattedFetchTime => DateFormat('HH:mm').format(fetchDateTime);
 
-  //Added copyWith method
   HistoryData copyWith({
     String? id,
     String? placeName,
@@ -69,7 +67,6 @@ class HistoryData {
     );
   }
 
-  //Added toMap method
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -87,7 +84,6 @@ class HistoryData {
     };
   }
 
-  //Added fromMap method
   factory HistoryData.fromMap(Map<String, dynamic> map) {
     return HistoryData(
       id: map['id'] as String,
@@ -105,7 +101,6 @@ class HistoryData {
     );
   }
 
-  //Added toJson and fromJson methods
   String toJson() => json.encode(toMap());
 
   factory HistoryData.fromJson(String source) =>

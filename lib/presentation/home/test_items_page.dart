@@ -7,7 +7,7 @@ import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_router.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:test_scav/widgets/default_button.dart';
-import 'package:test_scav/widgets/item_card.dart';
+import 'package:test_scav/presentation/home/widgets/item_card.dart';
 
 class TestMyItemsPage extends StatefulWidget {
   const TestMyItemsPage({Key? key}) : super(key: key);
@@ -108,9 +108,9 @@ class _TestMyItemsPageState extends State<TestMyItemsPage> {
         body: ValueListenableBuilder(
           valueListenable: itemBox.listenable(),
         builder: (context, Box<ItemData> box, widget) {
-          final places = box.values.toList();
+          final items = box.values.toList();
 
-            if (places.isEmpty) {
+            if (items.isEmpty) {
               return const Center(child: Text('No history found'));
             } else {
               return Column(
@@ -146,12 +146,12 @@ class _TestMyItemsPageState extends State<TestMyItemsPage> {
                             ? const Center(child: Text('No items found'))
                             : 
                             ListView.builder(
-              itemCount: places.length,
+              itemCount: items.length,
               itemBuilder: (context, index) {
 
                 return ItemCard(
-                        key: ValueKey(places[index].id),
-                        itemId: places[index],
+                        key: ValueKey(items[index].id),
+                        itemId: items[index],
                       );
               },
             ),
