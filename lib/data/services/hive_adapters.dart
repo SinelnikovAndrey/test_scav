@@ -11,7 +11,7 @@ void registerAdapters() {
 
 class ItemDataAdapter extends TypeAdapter<ItemData> {
   @override
-  final int typeId = 0; 
+  final int typeId = 2; 
 
   @override
   ItemData read(BinaryReader reader) {
@@ -42,7 +42,7 @@ class ItemDataAdapter extends TypeAdapter<ItemData> {
 
 class HistoryDataAdapter extends TypeAdapter<HistoryData> {
   @override
-  final int typeId = 1;
+  final int typeId = 3;
 
   @override
   HistoryData read(BinaryReader reader) {

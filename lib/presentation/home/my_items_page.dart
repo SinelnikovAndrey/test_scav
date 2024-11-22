@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_scav/main.dart';
 import 'package:test_scav/data/models/item_data.dart';
+import 'package:test_scav/presentation/notification/reminder/reminder.dart';
 import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/default_button.dart';
 import 'package:test_scav/presentation/home/widgets/item_card.dart';
+import 'package:test_scav/widgets/round_button.dart';
 
 class MyItemsPage extends StatefulWidget {
   const MyItemsPage({super.key});
@@ -21,6 +23,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
   void initState() {
     super.initState();
     itemBox = Hive.box<ItemData>(itemBoxName);
+    
   }
 
   @override
@@ -33,7 +36,20 @@ class _MyItemsPageState extends State<MyItemsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MyItem'),
+        title: const Text('MyItems'),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+        actions: [
+          RoundButton(
+            icon: Icons.add, 
+            onTap: () {
+                Navigator.of(context).pushNamed(AppRouter.addGroupRoute);
+              }),
+              SizedBox(
+                width: MediaQuery.of(context).size.width * 0.44,
+              ),
+              
+        ],
       ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(right: 5.0),

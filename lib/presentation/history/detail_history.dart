@@ -98,7 +98,7 @@ class HistoryDetailPage extends StatelessWidget {
                               style: AppFonts.h6,
                             ),
                             // SizedBox(height: 5,),
-                            Text(item.formattedFetchDate),
+                            Text(item.formattedFetchTime),
                           ],
                         ),
                       )),

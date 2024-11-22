@@ -3,8 +3,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/presentation/home/item_detail_page.dart';
-// import 'package:test_scav/presentation/home/item_detail_page.dart';
-import 'package:test_scav/presentation/home/testtt_detail.dart';
 import 'package:test_scav/utils/app_colors.dart';
 
 class ItemCard extends StatelessWidget {

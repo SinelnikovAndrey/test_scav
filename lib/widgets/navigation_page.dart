@@ -1,10 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
+import 'package:test_scav/main.dart';
 import 'package:test_scav/presentation/history/history_page.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
-import 'package:test_scav/presentation/home/test_items_page.dart';
+import 'package:test_scav/presentation/notification/reminder_list.dart';
 import 'package:test_scav/presentation/tips/tip_display.dart';
+import '../presentation/notification/reminder/reminder.dart';
 
 
 
@@ -77,7 +79,7 @@ class _HomePageState extends State<NavigationPage> {
           const MyItemsPage(),
           const HistoryPage(),
           TipDisplay(rootData: widget.rootData),
-          const TestMyItemsPage(),
+          const ReminderList(),
         ],
       ),
     );
