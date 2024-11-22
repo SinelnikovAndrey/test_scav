@@ -11,7 +11,7 @@ import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/my_app.dart';
 import 'package:test_scav/data/services/hive_adapters.dart';
 import 'package:test_scav/presentation/notification/notification.dart';
-import 'package:test_scav/presentation/notification/reminder/reminder.dart';
+import 'package:test_scav/data/models/reminder/reminder.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 

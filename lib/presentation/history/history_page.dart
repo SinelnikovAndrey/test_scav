@@ -44,7 +44,7 @@ class _HistoryPageState extends State<HistoryPage> {
           final places = box.values.toList();
 
           if (places.isEmpty) {
-            return const Center(child: Text('The history of your items will be here'));
+            return const Center(child: Text('The history of your items will be here', style: AppFonts.h8));
           } else {
             return ListView.builder(
               itemCount: places.length,

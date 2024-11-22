@@ -2,14 +2,18 @@
 import 'package:flutter/material.dart';
 import 'package:test_scav/presentation/home/add_item.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
-import 'package:test_scav/presentation/notification/add_group.dart';
+import 'package:test_scav/presentation/home/add_group.dart';
+import 'package:test_scav/presentation/notification/reminder_body_list.dart';
+import 'package:test_scav/presentation/notification/reminder_list.dart';
 
 class AppRouter {
   static const String myItemsPageRoute = '/myItemsPage';
   static const String homeRoute = '/home';
+  static const String rateUsRoute = '/myHomePage';
   static const String notificationsRoute = '/notifications';
   static const String addItemRoute = '/addItem';
-  static const String newAddItemRoute = '/newAddItem';
+  static const String reminderItemRoute = '/reminderAddItem';
+  static const String reminderBodyRoute = '/reminderBodyList';
   static const String addGroupRoute = '/addGroup';
   static const String itemDetailRoute = '/itemDetail';
   static const String addPlaceRoute = '/addPlaceDetail';
@@ -18,14 +22,16 @@ class AppRouter {
     switch (settings.name) {
       case addItemRoute:
         return MaterialPageRoute<void>(builder: (_) => const AddItemPage());
-      // case newAddItemRoute:
-      //   return MaterialPageRoute<void>(builder: (_) => const AddItemPage());
+      case reminderItemRoute:
+        return MaterialPageRoute<void>(builder: (_) => const ReminderList());
+      case reminderBodyRoute:
+        return MaterialPageRoute<void>(builder: (_) => const ReminderBodyList());
       case addGroupRoute:
         return MaterialPageRoute<void>(builder: (_) => const AddGroupPage());
       case myItemsPageRoute:
         return MaterialPageRoute<void>(builder: (_) => const MyItemsPage());
-      // case addPlaceRoute:
-      //   return MaterialPageRoute<void>(builder: (_) => const AddPlacePage());
+      // case rateUsRoute:
+      //   return MaterialPageRoute<void>(builder: (_) => const MyHomePage());
       default:
         return MaterialPageRoute<void>(
           builder: (_) => Scaffold(

@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_scav/main.dart';
-import 'package:test_scav/presentation/notification/reminder/reminder.dart';
+import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/widgets/default_button.dart';
 import 'package:uuid/uuid.dart';
@@ -58,6 +58,7 @@ class _AddGroupPageState extends State<AddGroupPage> {
       try {
         final box = await Hive.openBox<Reminder>(reminderBoxName);
         final newReminder = Reminder(
+          body: "Check your ${_titleController.text.trim()} items",
           id: _nextId++, 
           title: _titleController.text.trim(),
           dateTime: DateTime.now(),

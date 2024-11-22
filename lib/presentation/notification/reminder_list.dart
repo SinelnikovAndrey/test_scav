@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:test_scav/presentation/notification/reminder/reminder.dart';
+import 'package:test_scav/data/models/reminder/reminder.dart';
+import 'package:test_scav/main.dart';
 import 'package:test_scav/presentation/notification/notification.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/widgets/left_button.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:uuid/uuid.dart';
 
-const reminderBoxName = 'remindersBox';
 
 class ReminderList extends StatefulWidget {
   const ReminderList({super.key});
@@ -38,7 +39,6 @@ class _ReminderListState extends State<ReminderList> {
 
   Future<void> _showTimePicker(
       BuildContext context, int index, Box<Reminder> box) async {
- 
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.fromDateTime(box.getAt(index)!.dateTime),
@@ -51,9 +51,9 @@ class _ReminderListState extends State<ReminderList> {
         picked.hour,
         picked.minute,
       );
-      
 
-      final updatedReminder = box.getAt(index)!.copyWith(dateTime: newDateTime, active: true);
+      final updatedReminder =
+          box.getAt(index)!.copyWith(dateTime: newDateTime, active: true);
       box.putAt(index, updatedReminder);
 
       setState(() {
@@ -78,63 +78,43 @@ class _ReminderListState extends State<ReminderList> {
     return scheduledDate;
   }
 
-//   Future<void> _scheduleDailyTenAMNotification(
-//       int id, Reminder reminder) async {
-        
-//     final notificationDetails = await LocalNotifications.notificationDetails();
-//     try {
-//     // if (notificationDetails != null) {
-//       await LocalNotifications.flutterLocalNotificationsPlugin.zonedSchedule(
-//           id,
-//           'daily scheduled notification title',
-//           'daily scheduled notification body',
-//           _nextInstanceOfTenAM(),
-//           const NotificationDetails(
-//             android: AndroidNotificationDetails('daily notification channel id',
-//                 'daily notification channel name',
-//                 channelDescription: 'daily notification description'),
-//           ),
-//           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-//           uiLocalNotificationDateInterpretation:
-//               UILocalNotificationDateInterpretation.absoluteTime,
-//           matchDateTimeComponents: DateTimeComponents.time);
-//      print('Scheduled notification for ID: $id, title: ${reminder.title}, time: ${reminder.dateTime}');
-//   } catch (e) {
-//     print('Error scheduling notification for ID $id: $e');
-//     // Important: Handle the error appropriately.  Perhaps display a toast.
-//   }
-// }
+  Future<void> _scheduleDailyTenAMNotification(
+      int id, Reminder reminder) async {
+    final notificationDetails = await LocalNotifications.notificationDetails();
+    if (notificationDetails == null) {
+      print('Error: Notification details are null');
+      return;
+    }
 
-
-Future<void> _scheduleDailyTenAMNotification(int id, Reminder reminder) async {
-  final notificationDetails = await LocalNotifications.notificationDetails();
-  if (notificationDetails == null) {
-    print('Error: Notification details are null');
-    return; // Stop if details are null
+    try {
+      await LocalNotifications.flutterLocalNotificationsPlugin.zonedSchedule(
+        id,
+        'Daily Scavenger',
+        'Check your ${reminder.title} items',
+        _nextInstanceOfTenAM(),
+        notificationDetails,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('reminder for ${reminder.title} added successfully!')));
+      print(
+          'Scheduled notification for ID: $id, title: ${reminder.title}, time: ${reminder.dateTime}');
+    } catch (e) {
+      print('Error scheduling notification for ID $id: $e');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
+    } finally {
+      setState(() {});
+    }
   }
-
-  try {
-    await LocalNotifications.flutterLocalNotificationsPlugin.zonedSchedule(
-      id,
-      'daily scheduled notification title', // hardcoded title
-      'daily scheduled notification body', // hardcoded body
-      _nextInstanceOfTenAM(),
-      notificationDetails,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
-    );
-    print('Scheduled notification for ID: $id, title: ${reminder.title}, time: ${reminder.dateTime}');
-  } catch (e) {
-    print('Error scheduling notification for ID $id: $e');
-    // Important: Handle the error appropriately.  Perhaps display a toast.
-  }
-}
 
   Future<void> _cancelNotification(int id) async {
     await LocalNotifications.cancel(id);
     setState(() {
-      reminderNotificationStates.remove(id); 
+      reminderNotificationStates.remove(id);
     });
   }
 
@@ -154,66 +134,141 @@ Future<void> _scheduleDailyTenAMNotification(int id, Reminder reminder) async {
         }
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Notification', style: AppFonts.h10,),
-            centerTitle: true,
-            // leading: Padding(
-            //   padding: const EdgeInsets.all(10.0),
-            //   child: LeftButton(
-            //     icon: Icons.arrow_left,
-            //     onTap: () {
-            //       Navigator.pop(context);
-            //     },
-            //     iconColor: Colors.black,
-            //     backgroundColor: Colors.transparent,
-            //     borderColor: Colors.black12,
-            //   ),
-            // ),
+            title: const Text(
+              'Settings',
+              style: AppFonts.h10,
             ),
+            centerTitle: true,
+            leading: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: LeftButton(
+                icon: Icons.arrow_left,
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                iconColor: Colors.black,
+                backgroundColor: Colors.transparent,
+                borderColor: Colors.black12,
+              ),
+            ),
+          ),
           body: reminders.isEmpty
               ? const Center(child: Text('No reminders found'))
               : ListView.builder(
-                  itemCount: reminders.length,
-                  itemBuilder: (context, index) {
-                    final reminder = reminders[index];
-                    return ListTile(
-                      title: Text(reminder.title),
-                      subtitle: TextField(
-                        controller: dateTimeControllers[index],
-                        readOnly: true,
-                        onTap: () => _showTimePicker(context, index, box),
-                        decoration:
-                            const InputDecoration(hintText: 'Tap to set time'),
+                itemCount: reminders.length,
+                itemBuilder: (context, index) {
+                  final reminder = reminders[index];
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                      Text(
+                        reminder.title,
+                        style: AppFonts.h8,
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Switch(
-                            value: reminder
-                                .active, 
-                            onChanged: (value) async {
-                              final updatedReminder =
-                                  reminder.copyWith(active: value);
-                              box.putAt(index, updatedReminder);
-                              if (value) {
-                                await _scheduleDailyTenAMNotification(
-                                    reminder.id, updatedReminder);
-                              } else {
-                                await _cancelNotification(reminder.id);
-                              }
-                              setState(() {}); 
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-      
+                      Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(20)),
+                          height: MediaQuery.of(context).size.height * 0.09,
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15.0, vertical: 10),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.65,
+                                  child: TextFormField(
+                                    decoration: const InputDecoration(
+                                      focusedBorder: InputBorder.none,
+                                      enabledBorder: InputBorder.none,
+                                      contentPadding:
+                                          EdgeInsetsDirectional.only(
+                                              start: 10.0),
+                                    ),
+                                    // style: TextStyle( decoration: TextDecoration.none),
+                                    onTap: () =>
+                                        _showTimePicker(context, index, box),
+                                    controller: dateTimeControllers[index],
+                                  ),
+                                ),
+                                  
+                                //       SizedBox(
+                                //   width: MediaQuery.of(context).size.width * 0.5,
+                                // ),
+                                Switch(
+                                  value: reminder.active,
+                                  onChanged: (value) async {
+                                    final updatedReminder =
+                                        reminder.copyWith(active: value);
+                                    box.putAt(index, updatedReminder);
+                                    if (value) {
+                                      await _scheduleDailyTenAMNotification(
+                                          reminder.id, updatedReminder);
+                                    } else {
+                                      await _cancelNotification(reminder.id);
+                                    }
+                                    setState(() {});
+                                  },
+                                ),
+                              ],
+                            ),
+                          )),
+                    ]),
+                  );
+                },
+              ),
         );
       },
     );
   }
 }
-
-
-
+// Column( children: [
+// Text(
+//                     reminder.title,
+//                     style: AppFonts.h6,
+//                   ),
+// Row(
+//   children: [
+//     Container(
+//                           decoration: BoxDecoration(
+//                               border: Border.all(),
+//                               borderRadius: BorderRadius.circular(20)),
+//                           height: MediaQuery.of(context).size.height * 0.09,
+//                           width: MediaQuery.of(context).size.width * 0.9,
+//                           child: Padding(
+//                             padding: const EdgeInsets.symmetric(
+//                                 horizontal: 20.0, vertical: 10),
+//                             child: TextFormField(
+//                               onTap: () => _showTimePicker(context, index, box),
+//                               controller: dateTimeControllers[index],
+                              
+                              
+//                             ),
+    
+                            
+//                           )),
+//                           SizedBox(
+//                             width: MediaQuery.of(context).size.width * 0.5,
+//                           ),
+//                           Switch(
+//                             value: reminder
+//                                 .active, 
+//                             onChanged: (value) async {
+//                               final updatedReminder =
+//                                   reminder.copyWith(active: value);
+//                               box.putAt(index, updatedReminder);
+//                               if (value) {
+//                                 await _scheduleDailyTenAMNotification(
+//                                     reminder.id, updatedReminder);
+//                               } else {
+//                                 await _cancelNotification(reminder.id);
+//                               }
+//                               setState(() {}); 
+//                             },
+//                           ),
+//   ],
+// ),])

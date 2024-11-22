@@ -6,7 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:test_scav/main.dart';
 import 'package:test_scav/data/models/item_data.dart';
-import 'package:test_scav/presentation/notification/reminder/reminder.dart';
+import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/widgets/color_box.dart';

@@ -4,8 +4,8 @@ import 'package:iconsax/iconsax.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/presentation/history/history_page.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
-import 'package:test_scav/presentation/notification/reminder_list.dart';
 import 'package:test_scav/presentation/tips/tip_display.dart';
+import 'package:test_scav/presentation/settings/settings.dart';
 
 
 
@@ -19,7 +19,7 @@ class NavigationPage extends StatefulWidget {
 
 class _HomePageState extends State<NavigationPage> {
     int selectedIndex = 0;
-  final Color backgroundColor = Colors.black; 
+  final Color backgroundColor = Colors.black87; 
 
 
   @override
@@ -96,7 +96,7 @@ class _HomePageState extends State<NavigationPage> {
           const MyItemsPage(),
           const HistoryPage(),
           TipDisplay(rootData: widget.rootData),
-          const ReminderList(),
+          const Settings(),
         ],
       ),
     );

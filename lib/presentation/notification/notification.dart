@@ -1,5 +1,4 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-// import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest.dart' as tz;
@@ -117,74 +116,3 @@ class LocalNotifications {
 }
 
 
-////////////////////////////////////////////////
-///   version 2
-///
-
-// class NotificationApi {
-//   static final notification = FlutterLocalNotificationsPlugin();
-//   static final onNotifications = BehaviorSubject<String?>();
-
-//   static Future<void> init() async {
-//     const AndroidInitializationSettings android =
-//         AndroidInitializationSettings('@mipmap/ic_launcher');
-//     const InitializationSettings initializationSettings =
-//         InitializationSettings(
-//           android: android);
-
-//     await notification.initialize(
-//       initializationSettings,
-//       onDidReceiveNotificationResponse: receiveNotification,
-//       onDidReceiveBackgroundNotificationResponse: receiveBackgroundNotification,
-//     );
-
-//     await requestPermission();
-//   }
-
-//   static Future<void> requestPermission() async {
-//     var status = await Permission.notification.status;
-//     if (!status.isGranted) {
-//       final result = await Permission.notification.request();
-//       if (result != PermissionStatus.granted) {
-//         print('Notification permission denied.');
-//       }
-//     }
-//   }
-
-//   static void receiveNotification(NotificationResponse? payload) {
-//     final actionId = payload?.actionId ?? 'null';
-//     final message = payload?.payload ?? 'null';
-//     print('Notification received: $message Action: $actionId');
-//     onNotifications.add(message);
-//   }
-
-//   static void receiveBackgroundNotification(NotificationResponse? payload) {
-//     final actionId = payload?.actionId ?? 'null';
-//     final message = payload?.payload ?? 'null';
-//     print('Background Notification received: $message Action: $actionId');
-//     onNotifications.add(message);
-//   }
-
-//   static Future<NotificationDetails?> notificationDetails() async {
-//     return const NotificationDetails(
-//       android: AndroidNotificationDetails(
-//         'channel_Id_1',
-//         'channel_Name_1',
-//         importance: Importance.high,
-//         priority: Priority.high,
-//         channelDescription: 'channel_Id_1_channel_Name_1',
-//         groupKey: 'channel_Id_1_channel_Name_1',
-//         setAsGroupSummary: true,
-//         actions: [
-//           AndroidNotificationAction('id_Open', 'Open', showsUserInterface: true),
-//           AndroidNotificationAction('id_Close', 'Close', showsUserInterface: true),
-//         ],
-//       ),
-//     );
-//   }
-
-
-
-//   static Future<void> cancelAll() async => await notification.cancelAll();
-//   static Future<void> cancel(int id) async => await notification.cancel(id);
-// }
