@@ -12,7 +12,7 @@ class TipPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text("Tip"),
+        title: const Text('Tip',style: AppFonts.h10,),
         centerTitle: true,
       ),
       body: Padding(

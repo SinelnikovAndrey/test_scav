@@ -9,6 +9,7 @@ import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/presentation/history/history_page.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/widgets/default_button.dart';
+import 'package:test_scav/widgets/left_button.dart';
 
 class AddPlacePage extends StatefulWidget {
   final String itemId;
@@ -100,12 +101,23 @@ class _AddPlacePageState extends State<AddPlacePage> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Place'),
+        title: const Text('Add Place', style: AppFonts.h10,),
+        leading: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: LeftButton(
+                icon: Icons.arrow_left,
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                iconColor: Colors.black,
+                backgroundColor: Colors.transparent,
+                borderColor: Colors.black12,
+              ),
+            ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

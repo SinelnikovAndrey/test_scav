@@ -20,8 +20,14 @@ static const h8 = TextStyle(
       fontSize: 36,
       fontWeight: FontWeight.w500,
       height: 1.5
-      )
-      ;
+      );
+      static const h9 = TextStyle(
+      color: darkText,
+      fontFamily: 'SF Pro Display',
+      fontSize: 34,
+      fontWeight: FontWeight.w500,
+      height: 1.5
+      );
 
   static const h6 = TextStyle(
       color: darkText,

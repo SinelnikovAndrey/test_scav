@@ -3,18 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_scav/data/models/history_data.dart';
 import 'package:test_scav/main.dart';
-import 'package:test_scav/presentation/history/add_place.dart';
 import 'package:test_scav/presentation/history/edit_history.dart';
 import 'package:test_scav/utils/app_fonts.dart';
-import 'package:test_scav/widgets/default_button.dart';
+import 'package:test_scav/widgets/left_button.dart';
 
 class HistoryDetailPage extends StatelessWidget {
   final String historyId;
   const HistoryDetailPage({super.key, required this.historyId});
-
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -27,23 +22,41 @@ class HistoryDetailPage extends StatelessWidget {
         }
         return Scaffold(
           appBar: AppBar(
+            title: Text(item.itemName, style: AppFonts.h10,),
             automaticallyImplyLeading: false,
             centerTitle: true,
+            leading: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: LeftButton(
+              icon: Icons.arrow_left,
+              onTap: () {
+                Navigator.pop(context);
+              },
+              iconColor: Colors.black,
+              backgroundColor: Colors.transparent,
+              borderColor: Colors.black12,
+            ),
+          ),
             actions: [
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditHistoryPage(placeData: item),
-                    ),
-                  );
-                },
-                child: const Text('Edit Item'),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: LeftButton(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditHistoryPage(placeData: item),
+                      ),
+                    );
+                  },
+                  icon: Icons.edit,
+                  iconColor: Colors.black,
+                  backgroundColor: Colors.transparent,
+                  borderColor: Colors.black12,
+                ),
               ),
             ],
           ),
-        
           body: Padding(
             padding: const EdgeInsets.all(16.0),
             child: SingleChildScrollView(

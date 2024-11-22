@@ -9,6 +9,7 @@ class AppRouter {
   static const String homeRoute = '/home';
   static const String notificationsRoute = '/notifications';
   static const String addItemRoute = '/addItem';
+  static const String newAddItemRoute = '/newAddItem';
   static const String addGroupRoute = '/addGroup';
   static const String itemDetailRoute = '/itemDetail';
   static const String addPlaceRoute = '/addPlaceDetail';
@@ -17,6 +18,8 @@ class AppRouter {
     switch (settings.name) {
       case addItemRoute:
         return MaterialPageRoute<void>(builder: (_) => const AddItemPage());
+      // case newAddItemRoute:
+      //   return MaterialPageRoute<void>(builder: (_) => const AddItemPage());
       case addGroupRoute:
         return MaterialPageRoute<void>(builder: (_) => const AddGroupPage());
       case myItemsPageRoute:

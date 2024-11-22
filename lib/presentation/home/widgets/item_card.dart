@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/presentation/home/item_detail_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
+import 'package:test_scav/utils/app_fonts.dart';
 
 class ItemCard extends StatelessWidget {
   final ItemData itemId;
@@ -56,15 +58,39 @@ class ItemCard extends StatelessWidget {
                     Text(
                       itemId.name,
                       maxLines: 1,
-                      style: Theme.of(context).textTheme.bodyLarge,
+                      style: AppFonts.h8,
                     ),
                     const SizedBox(height: 15),
-                    Text(
-                  itemId.name,
-                  maxLines: 1,
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+                    Row(
+                          children: [
+                            const Icon(
+                              Icons.color_lens_outlined,
+                              size: 25,
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              itemId.color,
+                              
+                            ),
+                          ],
+                        ),
                       const SizedBox(height: 15),  
+                      Row(
+                          children: [
+                            const Icon(
+                              Iconsax.box_1,
+                              size: 25,
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              itemId.form,
+                            ),
+                          ],
+                        ),
              
                   ],
                 ),

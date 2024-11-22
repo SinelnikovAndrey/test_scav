@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/presentation/tips/tip_card.dart';
+import 'package:test_scav/utils/app_fonts.dart';
 
 
 class TipDisplay extends StatelessWidget {
@@ -11,7 +12,10 @@ class TipDisplay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Tips')),
+      appBar: AppBar(
+       title: const Text('Tips',style: AppFonts.h10,),
+        centerTitle: true,
+      ),
       body: rootData.tips == null || rootData.tips!.isEmpty
           ? const Center(child: Text('No tips found.')) 
           : ListView.builder(

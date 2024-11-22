@@ -9,7 +9,7 @@ import 'package:test_scav/data/models/history_data.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/widgets/default_button.dart';
-import 'package:test_scav/widgets/round_button.dart';
+import 'package:test_scav/widgets/left_button.dart';
 
 
 class EditHistoryPage extends StatefulWidget {
@@ -29,12 +29,10 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
   final _placePhotoUrlController = TextEditingController();
   final TextEditingController _timeController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
-  // final TextEditingController _imageController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
   String? _selectedImagePath; 
   late Box<HistoryData> placeBox; 
-  // final _imagePicker = ImagePicker();
   String? _imageUrl;
 
   DateTime _selectedDateTime = DateTime.now();
@@ -53,8 +51,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
     _placeDescriptionController.text = widget.placeData.placeDescription;
     _placePhotoUrlController.text = widget.placeData.placePhotoUrl ?? '';
     _selectedDate = widget.placeData.saveDateTime;
-    // _selectedTime = widget.placeData.saveTime;
-    //  _updateTimeController();
+
      _updateDateTimeController();
   }
 
@@ -67,13 +64,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
     _dateController.text = DateFormat('dd/MM/yy HH:mm').format(_selectedDate);
   }
 
-  // void _updateImageController() {
-  //   if (_selectedImage != null) {
-  //     _imageController.text = _selectedImage!.path; 
-  //   } else {
-  //     _imageController.text = 'No image selected';
-  //   }
-  // }
+
 
    Future<void> _selectTime(BuildContext context) async {
     final TimeOfDay? picked = await showTimePicker(
@@ -83,8 +74,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
     if (picked != null) {
       setState(() {
         _selectedTime = picked;
-        // _updateTimeController();
-        // _updateDateController();
+
         _updateDateTimeController();
         _selectedImage();
       });
@@ -123,20 +113,6 @@ void _updateDateTimeController() {
       }
     }
   }
-//  Future<void> _selectDate(BuildContext context) async {
-//     final DateTime? picked = await showDatePicker(
-//       context: context,
-//       initialDate: _selectedDate,
-//       firstDate: DateTime(2000),
-//       lastDate: DateTime(2101),
-//     );
-//     if (picked != null) {
-//       setState(() {
-//         _selectedDate = picked;
-//         _updateDateController();
-//       });
-//     }
-//   }
 
   Future<void> _selectedImage() async {
     final picker = ImagePicker();
@@ -190,8 +166,20 @@ void _updateDateTimeController() {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        
-        title: Text(widget.placeData.itemName),
+        centerTitle: true,
+        title: Text(widget.placeData.itemName, style: AppFonts.h10,),
+        leading: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: LeftButton(
+              icon: Icons.arrow_left,
+              onTap: () {
+                Navigator.pop(context);
+              },
+              iconColor: Colors.black,
+              backgroundColor: Colors.transparent,
+              borderColor: Colors.black12,
+            ),
+          ),
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -246,36 +234,7 @@ void _updateDateTimeController() {
                         ),
                       )),
                   const SizedBox(height: 20.0),
-                  // const Text(
-                  //   'Time',
-                  //   style: AppFonts.h6,
-                  // ),
-                  // Container(
-                  //     decoration: BoxDecoration(
-                  //         border: Border.all(),
-                  //         borderRadius: BorderRadius.circular(20)),
-                  //     height: MediaQuery.of(context).size.height * 0.09,
-                  //     width: MediaQuery.of(context).size.width * 0.9,
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.symmetric(
-                  //           horizontal: 20.0, vertical: 10),
-                  //       child: TextField(
-
-                  //         onTap: () => _selectTime(context),
-                  //         controller: _timeController,
-                  //         decoration: const InputDecoration(
-                  //             border: InputBorder.none,
-                  //             hintText: 'time',
-                  //             hintStyle: TextStyle(
-                  //               fontSize: 18,
-                  //               color: Colors.grey,
-                  //             )),
-                  //       ),
-                  //     )),
-                  
-                  
-                  
-                  // const SizedBox(height: 20.0),
+              
                   const Text(
                     'Location',
                     style: AppFonts.h6,

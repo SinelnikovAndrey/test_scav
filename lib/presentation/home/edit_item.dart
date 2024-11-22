@@ -8,6 +8,7 @@ import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/widgets/color_box.dart';
 import 'package:test_scav/widgets/default_button.dart';
+import 'package:test_scav/widgets/left_button.dart';
 
 class EditItemPage extends StatefulWidget {
   final ItemData itemData;
@@ -77,7 +78,19 @@ class _EditItemPageState extends State<EditItemPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Item'),
+        title: const Text('Edit Item', style: AppFonts.h10),
+        leading: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: LeftButton(
+              icon: Icons.arrow_left,
+              onTap: () {
+                Navigator.pop(context);
+              },
+              iconColor: Colors.black,
+              backgroundColor: Colors.transparent,
+              borderColor: Colors.black12,
+            ),
+          ),
       ),
       body:  SingleChildScrollView(
         child: Form(

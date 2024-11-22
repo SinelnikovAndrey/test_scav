@@ -21,14 +21,12 @@ class HistoryCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: () {
-
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HistoryDetailPage(historyId: item.id)),
-        );
-        
-      },
-
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => HistoryDetailPage(historyId: item.id)),
+            );
+          },
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -38,33 +36,48 @@ class HistoryCard extends StatelessWidget {
               ),
             ),
             child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (item.photoUrl != null)
-                        Image.file(File(item.photoUrl!), height: 146, width: 146, fit: BoxFit.cover),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                          Text(item.itemName, style: AppFonts.h6,),
+              padding: const EdgeInsets.all(5.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (item.photoUrl != null)
+                    ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: Image.file(File(item.photoUrl!),
+                            height: 146, width: 146, fit: BoxFit.cover)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          item.itemName,
+                          style: AppFonts.h8,
+                        ),
                         const SizedBox(height: 10.0),
-                        
+
                         // Text(formattedDateTime),
                         Row(
                           children: [
-                            const Icon(Iconsax.calendar_1, size: 25,),
-                            const SizedBox(width: 5,),
-                            Text(item.formattedFetchDate, ),
+                            const Icon(
+                              Iconsax.calendar_1,
+                              size: 25,
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              item.formattedFetchDate,
+                            ),
                           ],
                         ),
                         const SizedBox(height: 10.0),
                         Row(
                           children: [
                             const Icon(Iconsax.clock),
-                            const SizedBox(width: 5,),
+                            const SizedBox(
+                              width: 5,
+                            ),
                             Text(item.formattedFetchTime),
                           ],
                         ),
@@ -72,17 +85,18 @@ class HistoryCard extends StatelessWidget {
                         Row(
                           children: [
                             const Icon(Iconsax.location),
-                            const SizedBox(width: 5,),
+                            const SizedBox(
+                              width: 5,
+                            ),
                             Text(item.placeName),
                           ],
                         ),
-                                        
-                        ],),
-                      ),
-                      
-                    ],
+                      ],
+                    ),
                   ),
-                ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
