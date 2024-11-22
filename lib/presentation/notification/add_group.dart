@@ -78,8 +78,19 @@ class _AddGroupPageState extends State<AddGroupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Item'),
+        title: const Text('Add Group', style: AppFonts.h10,),
         centerTitle: true,
+      
+      ),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(right: 5.0),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.09,
+          width: MediaQuery.of(context).size.width * 0.9,
+          child: DefaultButton(
+              text: "Add",
+              onTap: _addGroup ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -127,10 +138,8 @@ class _AddGroupPageState extends State<AddGroupPage> {
                       )),
                 ]),
 
-                DefaultButton(
-                  text: 'Add',
-                  onTap: _addGroup,
-                )
+
+                
               ],
             ),
           ),

@@ -4,7 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:test_scav/presentation/notification/reminder/reminder.dart';
 import 'package:test_scav/presentation/notification/notification.dart';
-import 'package:test_scav/widgets/left_button.dart';
+import 'package:test_scav/utils/app_fonts.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:uuid/uuid.dart';
 
@@ -25,7 +25,7 @@ class _ReminderListState extends State<ReminderList> {
   @override
   void initState() {
     super.initState();
-    NotificationApi.init();
+    LocalNotifications.init();
   }
 
   @override
@@ -78,31 +78,61 @@ class _ReminderListState extends State<ReminderList> {
     return scheduledDate;
   }
 
-  Future<void> _scheduleDailyTenAMNotification(
-      int id, Reminder reminder) async {
-    final notificationDetails = await NotificationApi.notificationDetails();
-    if (notificationDetails != null) {
-      await NotificationApi.notification.zonedSchedule(
-          id,
-          'daily scheduled notification title',
-          'daily scheduled notification body',
-          _nextInstanceOfTenAM(),
-          const NotificationDetails(
-            android: AndroidNotificationDetails('daily notification channel id',
-                'daily notification channel name',
-                channelDescription: 'daily notification description'),
-          ),
-          androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-          uiLocalNotificationDateInterpretation:
-              UILocalNotificationDateInterpretation.absoluteTime,
-          matchDateTimeComponents: DateTimeComponents.time);
-    } else {
-      print('Failed to create notification details.');
-    }
+//   Future<void> _scheduleDailyTenAMNotification(
+//       int id, Reminder reminder) async {
+        
+//     final notificationDetails = await LocalNotifications.notificationDetails();
+//     try {
+//     // if (notificationDetails != null) {
+//       await LocalNotifications.flutterLocalNotificationsPlugin.zonedSchedule(
+//           id,
+//           'daily scheduled notification title',
+//           'daily scheduled notification body',
+//           _nextInstanceOfTenAM(),
+//           const NotificationDetails(
+//             android: AndroidNotificationDetails('daily notification channel id',
+//                 'daily notification channel name',
+//                 channelDescription: 'daily notification description'),
+//           ),
+//           androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+//           uiLocalNotificationDateInterpretation:
+//               UILocalNotificationDateInterpretation.absoluteTime,
+//           matchDateTimeComponents: DateTimeComponents.time);
+//      print('Scheduled notification for ID: $id, title: ${reminder.title}, time: ${reminder.dateTime}');
+//   } catch (e) {
+//     print('Error scheduling notification for ID $id: $e');
+//     // Important: Handle the error appropriately.  Perhaps display a toast.
+//   }
+// }
+
+
+Future<void> _scheduleDailyTenAMNotification(int id, Reminder reminder) async {
+  final notificationDetails = await LocalNotifications.notificationDetails();
+  if (notificationDetails == null) {
+    print('Error: Notification details are null');
+    return; // Stop if details are null
   }
 
+  try {
+    await LocalNotifications.flutterLocalNotificationsPlugin.zonedSchedule(
+      id,
+      'daily scheduled notification title', // hardcoded title
+      'daily scheduled notification body', // hardcoded body
+      _nextInstanceOfTenAM(),
+      notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
+    print('Scheduled notification for ID: $id, title: ${reminder.title}, time: ${reminder.dateTime}');
+  } catch (e) {
+    print('Error scheduling notification for ID $id: $e');
+    // Important: Handle the error appropriately.  Perhaps display a toast.
+  }
+}
+
   Future<void> _cancelNotification(int id) async {
-    await NotificationApi.cancel(id);
+    await LocalNotifications.cancel(id);
     setState(() {
       reminderNotificationStates.remove(id); 
     });
@@ -124,19 +154,20 @@ class _ReminderListState extends State<ReminderList> {
         }
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Reminders'),
-            leading: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: LeftButton(
-                icon: Icons.arrow_left,
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                iconColor: Colors.black,
-                backgroundColor: Colors.transparent,
-                borderColor: Colors.black12,
-              ),
-            ),
+            title: const Text('Notification', style: AppFonts.h10,),
+            centerTitle: true,
+            // leading: Padding(
+            //   padding: const EdgeInsets.all(10.0),
+            //   child: LeftButton(
+            //     icon: Icons.arrow_left,
+            //     onTap: () {
+            //       Navigator.pop(context);
+            //     },
+            //     iconColor: Colors.black,
+            //     backgroundColor: Colors.transparent,
+            //     borderColor: Colors.black12,
+            //   ),
+            // ),
             ),
           body: reminders.isEmpty
               ? const Center(child: Text('No reminders found'))
@@ -177,26 +208,12 @@ class _ReminderListState extends State<ReminderList> {
                     );
                   },
                 ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () {
-            
-            },
-            child: const Icon(Icons.add),
-          ),
+      
         );
       },
     );
   }
 }
 
-extension ReminderExtension on Reminder {
-   Reminder copyWith({int? id, String? title, DateTime? dateTime, bool? active}) {
-    return Reminder(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      dateTime: dateTime ?? this.dateTime,
-      active: active ?? this.active,
-    );
-  }
-}
+
 

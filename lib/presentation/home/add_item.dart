@@ -98,6 +98,7 @@ class _AddItemPageState extends State<AddItemPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          centerTitle: true,
           title: const Text('Add Item', style: AppFonts.h10,),
           leading: Padding(
             padding: const EdgeInsets.all(10.0),

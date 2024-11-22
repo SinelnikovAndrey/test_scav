@@ -105,7 +105,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
           child: DefaultButton(
               text: "Add",
               onTap: () {
-                Navigator.of(context).pushNamed(AppRouter.newAddItemRoute);
+                Navigator.of(context).pushNamed(AppRouter.addItemRoute);
               }),
         ),
       ),
