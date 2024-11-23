@@ -62,7 +62,6 @@ class _AddItemPageState extends State<AddItemPage> {
 
   Future<void> _submit() async {
     if (_formKey.currentState!.validate()) {
-      //Save ItemData with selected group
     }
   }
 

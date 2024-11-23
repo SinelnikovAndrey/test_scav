@@ -23,19 +23,19 @@ class _SettingsState extends State<Settings> {
   final InAppReview inAppReview = InAppReview.instance;
 
   final ValueNotifier<bool> _allNotificationsEnabled =
-      ValueNotifier(false); //State for the global switch
+      ValueNotifier(false); 
 
   Future<void> _updateAllNotifications(bool enabled) async {
     final box = await Hive.openBox<Reminder>(reminderBoxName);
     final reminders = box.values.toList();
-    await box.clear(); // Important: Clear the box before updating
+    await box.clear(); 
 
     for (final reminder in reminders) {
       final updatedReminder = reminder.copyWith(active: enabled);
       await box.add(updatedReminder);
     }
 
-    _allNotificationsEnabled.value = enabled; // Update switch state
+    _allNotificationsEnabled.value = enabled; 
     String message =
         enabled ? 'All notifications enabled' : 'All notifications disabled';
     Fluttertoast.showToast(msg: message, gravity: ToastGravity.BOTTOM);
@@ -199,7 +199,7 @@ class _SettingsState extends State<Settings> {
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                          left: 10), //Maintain padding
+                                          left: 10), 
                                       child: Switch(
                                         value: enabled,
                                         onChanged: (value) =>
