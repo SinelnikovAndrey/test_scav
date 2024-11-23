@@ -32,21 +32,20 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
   String? _selectedImagePath; 
-  late Box<HistoryData> placeBox; 
+  late Box<HistoryData> historyBox; 
   String? _imageUrl;
 
   DateTime _selectedDateTime = DateTime.now();
   final TextEditingController _dateTimeController = TextEditingController();
 
   HistoryData? item;
-  late Box<HistoryData> historyBox;
   late HistoryData itemData;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    placeBox = Hive.box<HistoryData>(historyBoxName);
+    historyBox = Hive.box<HistoryData>(historyBoxName);
     _placeNameController.text = widget.placeData.placeName;
     _placeDescriptionController.text = widget.placeData.placeDescription;
     _placePhotoUrlController.text = widget.placeData.placePhotoUrl ?? '';

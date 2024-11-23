@@ -1,9 +1,8 @@
 import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
-part 'reminder.g.dart';
 
-@HiveType(typeId: 5)
+// @HiveType(typeId: 5)
 class Reminder {
 
   @HiveField(0)

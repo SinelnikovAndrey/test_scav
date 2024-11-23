@@ -18,127 +18,228 @@ class MyItemsPage extends StatefulWidget {
 }
 
 class _MyItemsPageState extends State<MyItemsPage> {
-  String? selectedGroup;
-  late Future<List<String>> _reminderTitlesFuture;
+    late final Box<ItemData> itemBox;
+  late final Box<Reminder> reminderBox;
+  String? selectedGroup = 'All';
+  final ValueNotifier<List<String>> _reminderTitles = ValueNotifier(['All']);
 
   @override
   void initState() {
     super.initState();
-    _reminderTitlesFuture = _fetchReminderTitles();
+    // ... other init code ...
+    reminderBox = Hive.box<Reminder>(reminderBoxName);
+    _updateReminderTitles(); // Initial load
+    reminderBox.listenable().addListener(_updateReminderTitles); // Listen for changes
   }
 
-  Future<List<String>> _fetchReminderTitles() async {
-    final box = await Hive.openBox<Reminder>(reminderBoxName);
-    return ['All', ...box.values.map((reminder) => reminder.title).toList()];
-  }
-
-  List<ItemData> _sortItemsByGroup(List<ItemData> items) {
-    if (selectedGroup == null || selectedGroup == 'All') {
-      return items;
+  void _updateReminderTitles() {
+    try {
+      final titles = ['All', ...reminderBox.values.map((reminder) => reminder.title)];
+      _reminderTitles.value = titles;
+    } catch (e) {
+      //Handle errors appropriately, perhaps by showing a message.
+      print("Error updating reminder titles: $e");
     }
-    return items.where((item) => item.group == selectedGroup).toList();
+  }
+
+   List<ItemData> _sortItemsByGroup(List<ItemData> items) {
+    return items.where((item) => item.group == selectedGroup || selectedGroup == 'All').toList();
   }
 
   @override
+  void dispose() {
+    super.dispose();
+     itemBox.close();
+    reminderBox.listenable().removeListener(_updateReminderTitles); //Remove listener to avoid leaks.
+    _reminderTitles.dispose(); 
+    // ... other dispose code ...
+  }
+
+ 
+
+
+
+   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('MyItems', style: AppFonts.h9,),
-        automaticallyImplyLeading: false,
-        // centerTitle: true,
-        actions: [
-          RoundButton(
+    return ValueListenableBuilder<Box<ItemData>>(
+      valueListenable: Hive.box<ItemData>(itemBoxName).listenable(),
+      builder: (context, itemBox, child) {
+        final items = itemBox.values.toList();
+        final sortedItems = _sortItemsByGroup(items);
+        return Scaffold(
+          appBar: AppBar(
+            title: const Text('MyItems', style: AppFonts.h9),
+            automaticallyImplyLeading: false,
+            actions: [
+                        RoundButton(
               icon: Icons.add,
               onTap: () {
                 Navigator.of(context).pushNamed(AppRouter.addGroupRoute);
               }),
-   
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-            child: FutureBuilder<List<String>>(
-              future: _reminderTitlesFuture,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Text('Loading...');
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  final reminderTitles = snapshot.data!;
-                  return Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                    width: MediaQuery.of(context).size.width * 0.37,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15.0),
-                      border: Border.all(
-                          color: AppColors.gray,
-                          style: BorderStyle.solid,
-                          width: 1),
-                    ),
-                    child: DropdownButton<String>(
-                      underline: const SizedBox(),
-                      value: selectedGroup,
-                      hint: const Text('Select Group'),
-                      items: reminderTitles.map((title) {
-                        return DropdownMenuItem<String>(
-                          value: title,
-                          child: Text(title),
-                        );
-                      }).toList(),
-                      onChanged: (value) {
-                        setState(() {
-                          selectedGroup = value;
-                        });
-                      },
-                    ),
+              ValueListenableBuilder<List<String>>(
+                valueListenable: _reminderTitles,
+                builder: (context, reminderTitles, child) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    child: _buildDropdown(reminderTitles), //Helper function from before
                   );
-                }
-              },
-            ),
+                },
+              ),
+            ],
           ),
-        ],
-      ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(right: 5.0),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.09,
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: DefaultButton(
-              text: "Add",
-              onTap: () {
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(right: 5.0),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.09,
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: DefaultButton(text: "Add", onTap: () {
                 Navigator.of(context).pushNamed(AppRouter.addItemRoute);
               }),
-        ),
-      ),
-      body: ValueListenableBuilder<Box<ItemData>>(
-        valueListenable: Hive.box<ItemData>(itemBoxName).listenable(),
-        builder: (context, box, child) {
-          final items = box.values.toList();
-          final sortedItems = _sortItemsByGroup(items);
-          return sortedItems.isEmpty
-              ? const Center(child: Text('Your items will be here', style: AppFonts.h8,))
+            ),
+          ),
+          body: sortedItems.isEmpty
+              ? const Center(child: Text('Your items will be here', style: AppFonts.h8))
               : SingleChildScrollView(
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: sortedItems.length,
-                            itemBuilder: (context, index) {
-                              final item = sortedItems[index];
-                              return ItemCard(
-                                key: ValueKey(item.id),
-                                itemId: item,
-                              );
-                            },
-                          ),
-                        ),
-                      ],
+                    child: ListView.builder(
+                      itemCount: sortedItems.length,
+                      itemBuilder: (context, index) {
+                        final item = sortedItems[index];
+                        return ItemCard(key: ValueKey(item.id), itemId: item);
+                      },
                     ),
                   ),
-                );
+                ),
+        );
+      },
+    );
+  }
+
+  //Helper function to avoid repeated code in ValueListenableBuilder
+  Widget _buildDropdown(List<String> reminderTitles) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10.0),
+      width: MediaQuery.of(context).size.width * 0.37,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),
+        border: Border.all(color: AppColors.gray, style: BorderStyle.solid, width: 1),
+      ),
+      child: DropdownButton<String>(
+        underline: const SizedBox(),
+        value: selectedGroup,
+        hint: const Text('Select Group'),
+        items: reminderTitles.map((title) {
+          return DropdownMenuItem<String>(
+            value: title,
+            child: Text(title),
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            selectedGroup = value;
+          });
         },
       ),
     );
   }
+
+  // ... rest of your code (initState, dispose, etc.) ...
 }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: const Text('MyItems', style: AppFonts.h9,),
+//         automaticallyImplyLeading: false,
+//         // centerTitle: true,
+//         actions: [
+          // RoundButton(
+          //     icon: Icons.add,
+          //     onTap: () {
+          //       Navigator.of(context).pushNamed(AppRouter.addGroupRoute);
+          //     }),
+   
+//           Padding(
+//             padding: const EdgeInsets.symmetric(horizontal: 15.0),
+//             child: ValueListenableBuilder<List<String>>( // ValueListenableBuilder
+//               valueListenable: _reminderTitles,
+//               builder: (context, reminderTitles, child) {
+//                 return Container(
+//                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
+//                     width: MediaQuery.of(context).size.width * 0.37,
+//                     decoration: BoxDecoration(
+//                       borderRadius: BorderRadius.circular(15.0),
+//                       border: Border.all(
+//                           color: AppColors.gray,
+//                           style: BorderStyle.solid,
+//                           width: 1),
+//                     ),
+//                   child: DropdownButton<String>(
+//                     underline: const SizedBox(),
+//                     value: selectedGroup,
+//                     hint: const Text('Select Group'),
+//                     items: reminderTitles.map((title) {
+//                       return DropdownMenuItem<String>(
+//                         value: title,
+//                         child: Text(title),
+//                       );
+//                     }).toList(),
+//                     onChanged: (value) {
+//                       setState(() {
+//                         selectedGroup = value;
+//                       });
+//                     },
+//                   ),
+//                 );
+//               },
+//             ),
+//           ),
+//         ],
+//       ),
+//       floatingActionButton: Padding(
+//         padding: const EdgeInsets.only(right: 5.0),
+//         child: SizedBox(
+//           height: MediaQuery.of(context).size.height * 0.09,
+//           width: MediaQuery.of(context).size.width * 0.9,
+//           child: DefaultButton(
+//               text: "Add",
+//               onTap: () {
+//                 Navigator.of(context).pushNamed(AppRouter.addItemRoute);
+//               }),
+//         ),
+//       ),
+//       body: ValueListenableBuilder<Box<ItemData>>(
+//         valueListenable: Hive.box<ItemData>(itemBoxName).listenable(),
+//         builder: (context, box, child) {
+//           final items = box.values.toList();
+//           final sortedItems = _sortItemsByGroup(items);
+//           return sortedItems.isEmpty
+//               ? const Center(child: Text('Your items will be here', style: AppFonts.h8,))
+//               : SingleChildScrollView(
+//                   child: SizedBox(
+//                     height: MediaQuery.of(context).size.height,
+//                     child: Column(
+//                       children: [
+//                         Expanded(
+//                           child: ListView.builder(
+//                             itemCount: sortedItems.length,
+//                             itemBuilder: (context, index) {
+//                               final item = sortedItems[index];
+//                               return ItemCard(
+//                                 key: ValueKey(item.id),
+//                                 itemId: item,
+//                               );
+//                             },
+//                           ),
+//                         ),
+//                       ],
+//                     ),
+//                   ),
+//                 );
+//         },
+//       ),
+//     );
+//   }
+// }

@@ -82,8 +82,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
           fetchDateTime: DateTime.now(), placeDescription: '',
         );
 
-        final placeBox = await Hive.openBox<HistoryData>(historyBoxName);
-        await placeBox.put(placeId.toString(), placeData);
+        final historyBox = await Hive.openBox<HistoryData>(historyBoxName);
+        await historyBox.put(placeId.toString(), placeData);
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Place added history successfully!')));
         Navigator.push(

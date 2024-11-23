@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
+import 'package:test_scav/main.dart';
 import 'package:test_scav/presentation/notification/notification.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/left_button.dart';
 
 
-const reminderBoxName = 'remindersBox';
 
 class ReminderBodyList extends StatefulWidget {
   const ReminderBodyList({super.key});

@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/widgets/navigation_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
