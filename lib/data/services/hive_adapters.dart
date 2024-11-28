@@ -58,13 +58,13 @@ class HistoryDataAdapter extends TypeAdapter<HistoryData> {
       saveDateTime: fields[2] as DateTime,
       itemName: fields[3] as String,
       placeDescription: fields[4] as String,
-      photoUrl: fields[5] as String?,
+      relativeImagePath: fields[5] as String,
       fetchDateTime: fields[6] as DateTime,
       itemColor: fields[7] as String?,
       itemForm: fields[8] as String?,
       itemGroup: fields[9] as String?,
       itemDescription: fields[10] as String?,
-      placePhotoUrl: fields[11] as String?,
+      placePhotoUrl: fields[11] as String,
     );
   }
 
@@ -82,7 +82,7 @@ class HistoryDataAdapter extends TypeAdapter<HistoryData> {
     writer.writeByte(4);
     writer.write(obj.placeDescription);
     writer.writeByte(5);
-    writer.write(obj.photoUrl);
+    writer.write(obj.relativeImagePath);
     writer.writeByte(6);
     writer.write(obj.fetchDateTime);
     writer.writeByte(7);

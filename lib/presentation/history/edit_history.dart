@@ -4,18 +4,21 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/main.dart';
 import 'package:test_scav/data/models/history_data.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/utils/file_utils.dart';
 import 'package:test_scav/widgets/default_button.dart';
 import 'package:test_scav/widgets/left_button.dart';
 
 
 class EditHistoryPage extends StatefulWidget {
   final HistoryData placeData;
+  final ValueNotifier<HistoryData> placeDataNotifier; 
 
-  const EditHistoryPage({Key? key, required this.placeData}) : super(key: key);
+  const EditHistoryPage({Key? key, required this.placeData, required this.placeDataNotifier}) : super(key: key);
 
   @override
   State<EditHistoryPage> createState() => _EditHistoryPageState();
@@ -33,22 +36,23 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
   TimeOfDay _selectedTime = TimeOfDay.now();
   String? _selectedImagePath; 
   late Box<HistoryData> historyBox; 
-  String? _imageUrl;
+  final picker = ImagePicker();
+  File? _imageUrl;
 
   DateTime _selectedDateTime = DateTime.now();
   final TextEditingController _dateTimeController = TextEditingController();
 
-  HistoryData? item;
+  // HistoryData item;
   late HistoryData itemData;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    historyBox = Hive.box<HistoryData>(historyBoxName);
+    // historyBox = Hive.box<HistoryData>(historyBoxName);
     _placeNameController.text = widget.placeData.placeName;
     _placeDescriptionController.text = widget.placeData.placeDescription;
-    _placePhotoUrlController.text = widget.placeData.placePhotoUrl ?? '';
+    _placePhotoUrlController.text = widget.placeData.placePhotoUrl;
     _selectedDate = widget.placeData.saveDateTime;
 
      _updateDateTimeController();
@@ -75,7 +79,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
         _selectedTime = picked;
 
         _updateDateTimeController();
-        _selectedImage();
+        // _selectedImage();
       });
     }
   }
@@ -113,14 +117,20 @@ void _updateDateTimeController() {
     }
   }
 
-  Future<void> _selectedImage() async {
-    final picker = ImagePicker();
+  // Future<void> _selectedImage() async {
+  //   final picker = ImagePicker();
+  //   final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+  //   if (pickedFile != null) {
+  //     setState(() {
+  //       _selectedImagePath = pickedFile.path;
+  //     });
+  //   }
+  // }
+  Future<void> _pickImage() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImagePath = pickedFile.path;
-      });
-    }
+    setState(() {
+      _imageUrl = pickedFile != null ? File(pickedFile.path) : null;
+    });
   }
 
 
@@ -134,28 +144,31 @@ void _updateDateTimeController() {
   }
 
   Future<void> _updatePlace() async {
-    if (_formKey.currentState!.validate()) {
-      final updatedPlaceData = HistoryData(
-          id: widget.placeData.id,
-          placeName: _placeNameController.text.trim(),
-          photoUrl: widget.placeData.photoUrl,
-          placeDescription: _placeDescriptionController.text.trim(),
-          itemName: widget.placeData.itemName,
-          itemColor: widget.placeData.itemColor,
-          itemForm: widget.placeData.itemForm,
-          itemGroup: widget.placeData.itemGroup,
-          itemDescription: widget.placeData.itemDescription,
-          placePhotoUrl: _selectedImagePath ?? widget.placeData.placePhotoUrl,
-          saveDateTime: widget.placeData.saveDateTime ,
-          fetchDateTime: widget.placeData.fetchDateTime 
-          );
+  if (_formKey.currentState!.validate()) {
+    final placeRelativePath = await FileUtils.saveImage(_imageUrl!);
+        if(placeRelativePath == null) throw Exception('Image save failed');
+    final updatedPlaceData = HistoryData(
+      id: widget.placeData.id,
+      placeName: _placeNameController.text.trim(),
+      relativeImagePath: widget.placeData.relativeImagePath,
+      placeDescription: _placeDescriptionController.text.trim(),
+      itemName: widget.placeData.itemName,
+      itemColor: widget.placeData.itemColor,
+      itemForm: widget.placeData.itemForm,
+      itemGroup: widget.placeData.itemGroup,
+      itemDescription: widget.placeData.itemDescription,
+      placePhotoUrl: placeRelativePath,
+      saveDateTime: widget.placeData.saveDateTime,
+      fetchDateTime: widget.placeData.fetchDateTime,
+    );
 
-      final placeBox = await Hive.openBox<HistoryData>(historyBoxName);
-      await placeBox.put(widget.placeData.id.toString(), updatedPlaceData);
+    final placeBox = await Hive.openBox<HistoryData>(historyBoxName);
+    await placeBox.put(widget.placeData.id.toString(), updatedPlaceData);
 
-      Navigator.pop(context);
-    }
+    widget.placeDataNotifier.value = updatedPlaceData; // Use notifyListeners
+    Navigator.pop(context);
   }
+}
 
   
 
@@ -163,6 +176,9 @@ void _updateDateTimeController() {
 
   @override
   Widget build(BuildContext context) {
+    return ValueListenableBuilder<HistoryData>(
+      valueListenable: widget.placeDataNotifier, // Listen to ValueNotifier
+      builder: (context, placeData, child) { 
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -181,22 +197,33 @@ void _updateDateTimeController() {
           ),
       ),
       body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+            child: Form(
+              key: _formKey,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: FutureBuilder<String>(
+                        future: FileUtils.getFullImagePath(placeData.relativeImagePath,
+                        ),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Image.file(File(snapshot.data!,),
 
-                if (widget.placeData.photoUrl != null)
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.file(File(widget.placeData.photoUrl! ),
-                            height: MediaQuery.of(context).size.height * 0.4,
                             width: MediaQuery.of(context).size.width * 0.9,
-                            fit: BoxFit.cover),
+                            );
+                          } else if (snapshot.hasError) {
+                            return const Icon(Icons.error);
+                          } else {
+                            return const CircularProgressIndicator();
+                          }
+                        },
                       ),
+                  ),
+               
 
 
                 const SizedBox(height: 20.0),
@@ -269,6 +296,7 @@ void _updateDateTimeController() {
                     'Description',
                     style: AppFonts.h6,
                   ),
+                  
                   Container(
                       decoration: BoxDecoration(
                           border: Border.all(),
@@ -297,20 +325,22 @@ void _updateDateTimeController() {
                       )),
                   const SizedBox(height: 20.0),
                   GestureDetector(
-                  onTap: _selectedImage,
+                  onTap: _pickImage,
                   child: _imageUrl != null
                       ? Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: AppColors.gray,
-                          ),
-                          height: MediaQuery.of(context).size.height * 0.4,
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: Image.file(File(_imageUrl!),
-                              height: 200,
-                              width: double.infinity,
-                              fit: BoxFit.cover),
-                        )
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: AppColors.gray,
+                                    ),
+                                    height: MediaQuery.of(context).size.height *
+                                        0.4,
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.9,
+                                    child: Image.file(_imageUrl!,
+                                        height: 200,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover),
+                                  )
                       : Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
@@ -338,6 +368,6 @@ void _updateDateTimeController() {
         ),
       ),
 
-    );
+    );});}
   }
-}
+

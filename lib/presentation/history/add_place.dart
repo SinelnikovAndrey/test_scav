@@ -75,13 +75,13 @@ class _AddPlacePageState extends State<AddPlacePage> {
           id: placeId,
           placeName: _placeNameController.text.trim(),
           saveDateTime: DateTime.now(),
-          photoUrl: itemData.relativeImagePath,
+          relativeImagePath: itemData.relativeImagePath,
           itemName: itemData.name,
           itemColor: itemData.color,
           itemForm: itemData.form,
           itemGroup: itemData.group,
           itemDescription: itemData.description,
-          fetchDateTime: DateTime.now(), placeDescription: '',
+          fetchDateTime: DateTime.now(), placeDescription: '', placePhotoUrl: '',
         );
 
         final historyBox = await Hive.openBox<HistoryData>(historyBoxName);

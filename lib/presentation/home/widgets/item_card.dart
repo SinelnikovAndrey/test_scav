@@ -51,7 +51,7 @@ class ItemCard extends StatelessWidget {
                           if (snapshot.hasData) {
                             return Image.file(File(snapshot.data!,),
                             height: MediaQuery.of(context).size.height * 0.35,
-                            width: MediaQuery.of(context).size.width * 0.35,
+                            width: MediaQuery.of(context).size.width * 0.45,
                             );
                           } else if (snapshot.hasError) {
                             return const Icon(Icons.error);

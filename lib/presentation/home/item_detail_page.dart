@@ -15,25 +15,24 @@ import 'package:path/path.dart' as p;
 
 class ItemDetailPage extends StatelessWidget {
   final String itemId;
-  final String appDocumentsDirPath; // Add this line
-
-  const ItemDetailPage(
-      {super.key, required this.itemId, required this.appDocumentsDirPath}); // Add this line
+  // final String appDocumentsDirPath; // Add this line
+  const ItemDetailPage({super.key, required this.itemId});
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Box<ItemData>>(
       valueListenable: Hive.box<ItemData>(itemBoxName).listenable(),
       builder: (context, box, _) {
-        print('Opening box: $itemBoxName');
         final item = box.get(itemId);
         if (item == null) {
-          return const Scaffold(
-              body: Center(child: Text('Item not found')));
+          return const Scaffold(body: Center(child: Text('Item not found')));
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(item.name, style: AppFonts.h10),
+            title: Text(
+              item.name,
+              style: AppFonts.h10,
+            ),
             automaticallyImplyLeading: false,
             centerTitle: true,
             backgroundColor: Colors.white,
@@ -75,14 +74,13 @@ class ItemDetailPage extends StatelessWidget {
               height: MediaQuery.of(context).size.height * 0.1,
               width: MediaQuery.of(context).size.width * 0.9,
               child: DefaultButton(
-                text: "Got it!",
-                onTap: () {
-                  Future.delayed(Duration.zero, () {
-                    Navigator.of(context).push(AddPlacePage.materialPageRoute(
-                        itemId: item.id));
-                  });
-                },
-              ),
+                  text: "Got it!",
+                  onTap: () {
+                    Future.delayed(Duration.zero, () {
+                      Navigator.of(context).push(
+                          AddPlacePage.materialPageRoute(itemId: item.id));
+                    });
+                  }),
             ),
           ),
           body: Padding(
@@ -94,18 +92,17 @@ class ItemDetailPage extends StatelessWidget {
                   if (item.relativeImagePath.isNotEmpty)
                     ClipRRect(
                       borderRadius: BorderRadius.circular(20),
-                      child: Image.file(
-                        File(p.join(appDocumentsDirPath, 'images',
-                            item.relativeImagePath)),
-                        fit: BoxFit.cover,
-                        height: 200,
-                        width: double.infinity,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Icon(Icons.error),
-                        loadingBuilder: (context, child, progress) =>
-                            progress == null
-                                ? child
-                                : const CircularProgressIndicator(),
+                      child: FutureBuilder<String>(
+                        future: FileUtils.getFullImagePath(item.relativeImagePath),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Image.file(File(snapshot.data!));
+                          } else if (snapshot.hasError) {
+                            return const Icon(Icons.error);
+                          } else {
+                            return const CircularProgressIndicator();
+                          }
+                        },
                       ),
                     ),
                   const SizedBox(height: 16.0),

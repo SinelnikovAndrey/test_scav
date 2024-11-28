@@ -7,6 +7,7 @@ import 'package:test_scav/presentation/history/detail_history.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/assets.dart';
+import 'package:test_scav/utils/file_utils.dart';
 
 class HistoryCard extends StatelessWidget {
   final HistoryData item;
@@ -17,7 +18,7 @@ class HistoryCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.25,
+        height: MediaQuery.of(context).size.height * 0.23,
         width: MediaQuery.of(context).size.width * 0.9,
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
@@ -25,11 +26,11 @@ class HistoryCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => HistoryDetailPage(historyId: item.id)),
+                  builder: (context) => HistoryDetailPage(itemId: item.id,)),
             );
           },
           child: Container(
-            padding: const EdgeInsets.all(10),
+            padding: const EdgeInsets.all(5),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
@@ -41,13 +42,25 @@ class HistoryCard extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (item.photoUrl != null)
-                    ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.file(File(item.photoUrl!),
-                            height: MediaQuery.of(context).size.height * 0.20,
-                             width: MediaQuery.of(context).size.width * 0.40,
-                            fit: BoxFit.cover)),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: FutureBuilder<String>(
+                        future: FileUtils.getFullImagePath(item.relativeImagePath,
+                        ),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Image.file(File(snapshot.data!,),
+                            height: MediaQuery.of(context).size.height * 0.40,
+                            width: MediaQuery.of(context).size.width * 0.5,
+                            );
+                          } else if (snapshot.hasError) {
+                            return const Icon(Icons.error);
+                          } else {
+                            return const CircularProgressIndicator();
+                          }
+                        },
+                      ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Column(

@@ -25,8 +25,8 @@ class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
 
-      case myItemsPageRoute:
-        return MaterialPageRoute<void>(builder: (_) => const MyItemsPage());
+      // case myItemsPageRoute:
+      //   return MaterialPageRoute<void>(builder: (_) => const MyItemsPage());
         // case itemDetailRoute:
         // return MaterialPageRoute<void>(builder: (_) => const ProductDetailPage(productId: '',));
       case addItemRoute:

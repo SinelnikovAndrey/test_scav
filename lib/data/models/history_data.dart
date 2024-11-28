@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:test_scav/utils/app_colors.dart';
 
 @immutable
 class HistoryData {
@@ -10,12 +11,12 @@ class HistoryData {
   final DateTime fetchDateTime;
   final String itemName;
   final String placeDescription;
-  final String? photoUrl;
+  final String relativeImagePath;
   final String? itemColor;
   final String? itemForm;
   final String? itemGroup;
   final String? itemDescription;
-  final String? placePhotoUrl;
+  final String placePhotoUrl;
 
   HistoryData({
     required this.id,
@@ -23,17 +24,34 @@ class HistoryData {
     required this.saveDateTime,
     required this.itemName,
     required this.placeDescription,
-    this.photoUrl,
+    required this.relativeImagePath,
     required this.fetchDateTime,
     this.itemColor,
     this.itemForm,
     this.itemGroup,
     this.itemDescription,
-    this.placePhotoUrl,
+    required this.placePhotoUrl,
   });
+
+  HistoryData.empty()
+      : id = '',
+        placeName = '',
+        relativeImagePath = '',
+        placeDescription = '',
+        itemName = '',
+        itemColor = selectedColorName, // Or a suitable default color
+        itemForm = '',
+        itemGroup = '',
+        itemDescription = '',
+        placePhotoUrl = 'null',
+        saveDateTime = DateTime.now(), // Or a suitable default date and time
+        fetchDateTime = DateTime.now();
+  
 
   String get formattedFetchDate => DateFormat('dd.MM.yy').format(fetchDateTime);
   String get formattedFetchTime => DateFormat('HH:mm').format(fetchDateTime);
+
+  
 
   HistoryData copyWith({
     String? id,
@@ -42,7 +60,7 @@ class HistoryData {
     DateTime? fetchDateTime,
     String? itemName,
     String? placeDescription,
-    String? photoUrl,
+    String? relativeImagePath,
     String? itemColor,
     String? itemForm,
     String? itemGroup,
@@ -55,7 +73,7 @@ class HistoryData {
       saveDateTime: saveDateTime ?? this.saveDateTime,
       itemName: itemName ?? this.itemName,
       placeDescription: placeDescription ?? this.placeDescription,
-      photoUrl: photoUrl ?? this.photoUrl,
+      relativeImagePath: relativeImagePath ?? this.relativeImagePath,
       fetchDateTime: fetchDateTime ?? this.fetchDateTime,
       itemColor: itemColor ?? this.itemColor,
       itemForm: itemForm ?? this.itemForm,
@@ -73,7 +91,7 @@ class HistoryData {
       'fetchDateTime': fetchDateTime.toIso8601String(),
       'itemName': itemName,
       'placeDescription': placeDescription,
-      'photoUrl': photoUrl,
+      'photoUrl': relativeImagePath,
       'itemColor': itemColor,
       'itemForm': itemForm,
       'itemGroup': itemGroup,
@@ -89,13 +107,13 @@ class HistoryData {
       saveDateTime: DateTime.parse(map['saveDateTime'] as String),
       itemName: map['itemName'] as String,
       placeDescription: map['placeDescription'] as String,
-      photoUrl: map['photoUrl'] as String?,
+      relativeImagePath: map['photoUrl'] as String,
       fetchDateTime: DateTime.parse(map['fetchDateTime'] as String),
       itemColor: map['itemColor'] as String?,
       itemForm: map['itemForm'] as String?,
       itemGroup: map['itemGroup'] as String?,
       itemDescription: map['itemDescription'] as String?,
-      placePhotoUrl: map['placePhotoUrl'] as String?,
+      placePhotoUrl: map['placePhotoUrl'] as String,
     );
   }
 
@@ -106,7 +124,7 @@ class HistoryData {
 
   @override
   String toString() {
-    return 'HistoryData{id: $id, placeName: $placeName, saveDateTime: $saveDateTime, fetchDateTime: $fetchDateTime, itemName: $itemName, placeDescription: $placeDescription, photoUrl: $photoUrl, itemColor: $itemColor, itemForm: $itemForm, itemGroup: $itemGroup, itemDescription: $itemDescription, placePhotoUrl: $placePhotoUrl}';
+    return 'HistoryData{id: $id, placeName: $placeName, saveDateTime: $saveDateTime, fetchDateTime: $fetchDateTime, itemName: $itemName, placeDescription: $placeDescription, photoUrl: $relativeImagePath, itemColor: $itemColor, itemForm: $itemForm, itemGroup: $itemGroup, itemDescription: $itemDescription, placePhotoUrl: $placePhotoUrl}';
   }
 
   @override
@@ -117,11 +135,13 @@ class HistoryData {
         fetchDateTime,
         itemName,
         placeDescription,
-        photoUrl,
+        relativeImagePath,
         itemColor,
         itemForm,
         itemGroup,
         itemDescription,
         placePhotoUrl,
       ];
+
+      // HistoryData.empty(this.placeName, this.saveDateTime, this.fetchDateTime, this.itemName, this.placeDescription, this.relativeImagePath, this.itemColor, this.itemForm, this.itemGroup, this.itemDescription, this.placePhotoUrl) : id = ''; 
 }
