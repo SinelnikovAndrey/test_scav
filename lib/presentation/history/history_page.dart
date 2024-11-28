@@ -38,27 +38,34 @@ class _HistoryPageState extends State<HistoryPage> {
         centerTitle: true,
 
       ),
-      body: ValueListenableBuilder(
-        valueListenable: placeBox.listenable(),
-        builder: (context, Box<HistoryData> box, widget) {
-          final places = box.values.toList();
-
-          if (places.isEmpty) {
-            return const Center(child: Text('The history of your items will be here', style: AppFonts.h8));
-          } else {
-            return ListView.builder(
-              itemCount: places.length,
-              itemBuilder: (context, index) {
-                final placeData = places[index];
-
-                return HistoryCard(
-                        key: ValueKey(places[index].id),
-                        item: places[index],
-                      );
-              },
-            );
-          }
-        },
+      body: Column(
+        children: [
+          ValueListenableBuilder(
+            valueListenable: placeBox.listenable(),
+            builder: (context, Box<HistoryData> box, widget) {
+              final places = box.values.toList();
+          
+              if (places.isEmpty) {
+                return const Center(child: Text('The history of your items will be here', style: AppFonts.h8));
+              } else {
+                return Expanded(
+                  child: ListView.builder(
+                    itemCount: places.length,
+                    itemBuilder: (context, index) {
+                      final placeData = places[index];
+                            
+                      return HistoryCard(
+                              key: ValueKey(places[index].id),
+                              item: places[index],
+                            );
+                    },
+                  ),
+                );
+              }
+            },
+          ),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.35,),
+        ],
       ),
     );
   }

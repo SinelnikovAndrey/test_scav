@@ -24,7 +24,7 @@ class ItemDataAdapter extends TypeAdapter<ItemData> {
       form: reader.readString(),
       group: reader.readString(),
       description: reader.readString(),
-      photoUrl: reader.readString(),
+      relativeImagePath: reader.readString(),
     );
   }
 
@@ -36,7 +36,7 @@ class ItemDataAdapter extends TypeAdapter<ItemData> {
     writer.writeString(obj.form); 
     writer.writeString(obj.group);
     writer.writeString(obj.description);
-    writer.writeString(obj.photoUrl ?? '');
+    writer.writeString(obj.relativeImagePath);
   }
 }
 

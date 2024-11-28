@@ -23,7 +23,7 @@ class RoundButton extends StatelessWidget {
       width: 45,
       height: 45,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(17),
+        borderRadius: BorderRadius.circular(100),
         color: backgroundColor,
         border: Border.all(
           color: borderColor!,
@@ -31,7 +31,7 @@ class RoundButton extends StatelessWidget {
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(17),
+        borderRadius: BorderRadius.circular(100),
         child: Icon(
           icon,
           color: iconColor,

@@ -6,6 +6,7 @@ import 'package:test_scav/main.dart';
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/utils/file_utils.dart';
 import 'package:test_scav/widgets/color_box.dart';
 import 'package:test_scav/widgets/default_button.dart';
 import 'package:test_scav/widgets/left_button.dart';
@@ -27,9 +28,12 @@ class _EditItemPageState extends State<EditItemPage> {
   final _groupController = TextEditingController();
   final _descriptionController = TextEditingController();
   
-  final _imagePicker = ImagePicker();
-  File? _image;
-  String? _imageUrl;
+  final picker = ImagePicker();
+  // S? _image;
+  File? _imageFile;
+//  late final relativePath =  FileUtils.saveImage(_imageFile!);
+ String? _relativeImagePath;
+
 
   @override
   void initState() {
@@ -40,23 +44,20 @@ class _EditItemPageState extends State<EditItemPage> {
     _groupController.text = widget.itemData.group;
     _descriptionController.text = widget.itemData.description;
     
-    _imageUrl = widget.itemData.photoUrl;
+    _relativeImagePath = widget.itemData.relativeImagePath;
   }
 
-  Future<void> _selectImage() async {
-    final pickedFile = await _imagePicker.pickImage(
-      source: ImageSource.gallery, 
-    );
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-        _imageUrl = pickedFile.path;
-      });
-    }
+   Future<void> _pickImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _imageFile = pickedFile != null ? File(pickedFile.path) : null;
+    });
   }
 
   Future<void> _saveChanges() async {
     if (_formKey.currentState!.validate()) {
+      final relativePath = await FileUtils.saveImage(_imageFile!);
+        if(relativePath == null) throw Exception('Image save failed');
       final box = await Hive.openBox<ItemData>(itemBoxName);
 
       final updatedItem = ItemData(
@@ -66,7 +67,7 @@ class _EditItemPageState extends State<EditItemPage> {
         form: _formController.text.trim(),
         group: _groupController.text.trim(),
         description: _descriptionController.text.trim(),
-        photoUrl: _imageUrl,
+        relativeImagePath: relativePath,
       );
       await box.put(widget.itemData.id.toString(), updatedItem);
 
@@ -102,8 +103,8 @@ class _EditItemPageState extends State<EditItemPage> {
               children: [
 
                 GestureDetector(
-                  onTap: _selectImage,
-                  child: _imageUrl != null
+                  onTap: _pickImage,
+                  child: _imageFile != null
                       ? Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(20),
@@ -111,7 +112,7 @@ class _EditItemPageState extends State<EditItemPage> {
                           ),
                           height: MediaQuery.of(context).size.height * 0.4,
                           width: MediaQuery.of(context).size.width * 0.9,
-                          child: Image.file(File(_imageUrl!),
+                          child: Image.file(_imageFile!,
                               height: 200,
                               width: double.infinity,
                               fit: BoxFit.cover),
@@ -149,7 +150,7 @@ class _EditItemPageState extends State<EditItemPage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10),
+                                horizontal: 20.0, vertical: 5),
                             child: TextFormField(
                               controller: _nameController,
                               decoration: const InputDecoration(
@@ -185,7 +186,7 @@ class _EditItemPageState extends State<EditItemPage> {
                         width: MediaQuery.of(context).size.width * 0.68,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10),
+                              horizontal: 20.0, vertical: 5),
                           child: DropdownButton<String>(
                             value: selectedColorName,
                             onChanged: (String? newColorName) {
@@ -252,7 +253,7 @@ class _EditItemPageState extends State<EditItemPage> {
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10),
+                            horizontal: 20.0, vertical: 5),
                         child: TextFormField(
                           controller: _groupController,
                           decoration: const InputDecoration(
@@ -283,7 +284,7 @@ class _EditItemPageState extends State<EditItemPage> {
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10),
+                            horizontal: 20.0, vertical: 5),
                         child: TextFormField(
                           controller: _descriptionController,
                           decoration: const InputDecoration(

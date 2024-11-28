@@ -1,11 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/presentation/home/item_detail_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/utils/assets.dart';
+import 'package:test_scav/utils/file_utils.dart';
 
 class ItemCard extends StatelessWidget {
   final ItemData itemId;
@@ -21,6 +23,7 @@ class ItemCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: () {
+            print('Product object: $itemId'); 
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => ItemDetailPage(itemId: itemId.id)),
@@ -38,11 +41,25 @@ class ItemCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (itemId.photoUrl != null)
+                if (itemId.relativeImagePath != null)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image.file(File(itemId.photoUrl!),
-                        height: 146, width: 146, fit: BoxFit.cover),
+                    child: FutureBuilder<String>(
+                        future: FileUtils.getFullImagePath(itemId.relativeImagePath,
+                        ),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return Image.file(File(snapshot.data!,),
+                            height: MediaQuery.of(context).size.height * 0.35,
+                            width: MediaQuery.of(context).size.width * 0.35,
+                            );
+                          } else if (snapshot.hasError) {
+                            return const Icon(Icons.error);
+                          } else {
+                            return const CircularProgressIndicator();
+                          }
+                        },
+                      ),
                   )
                 else
                   const Icon(
@@ -60,13 +77,16 @@ class ItemCard extends StatelessWidget {
                       maxLines: 1,
                       style: AppFonts.h8,
                     ),
-                    const SizedBox(height: 15),
+                   SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
                     Row(
                           children: [
-                            const Icon(
-                              Icons.color_lens_outlined,
-                              size: 25,
-                            ),
+                             SvgPicture.asset(
+                SvgAssets.colorLens,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
                             const SizedBox(
                               width: 5,
                             ),
@@ -76,13 +96,16 @@ class ItemCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                      const SizedBox(height: 15),  
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.02,), 
                       Row(
                           children: [
-                            const Icon(
-                              Iconsax.box_1,
-                              size: 25,
-                            ),
+                             SvgPicture.asset(
+                SvgAssets.cube,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
                             const SizedBox(
                               width: 5,
                             ),

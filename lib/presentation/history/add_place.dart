@@ -7,7 +7,9 @@ import 'dart:math';
 
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/presentation/history/history_page.dart';
+import 'package:test_scav/presentation/home/my_items_page.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/default_button.dart';
 import 'package:test_scav/widgets/left_button.dart';
 
@@ -44,7 +46,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
     itemData = itemBox.get(widget.itemId.toString()) ??
         ItemData(
             name: '',
-            photoUrl: '',
+            relativeImagePath: '',
             id: '',
             color: '',
             form: '',
@@ -73,7 +75,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
           id: placeId,
           placeName: _placeNameController.text.trim(),
           saveDateTime: DateTime.now(),
-          photoUrl: itemData.photoUrl,
+          photoUrl: itemData.relativeImagePath,
           itemName: itemData.name,
           itemColor: itemData.color,
           itemForm: itemData.form,
@@ -86,12 +88,11 @@ class _AddPlacePageState extends State<AddPlacePage> {
         await historyBox.put(placeId.toString(), placeData);
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Place added history successfully!')));
-        Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HistoryPage(),
-                    ),
-                  );
+
+
+
+            Navigator.pop(context, placeData);
+      
       } catch (e) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Error: $e')));
@@ -158,7 +159,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
                   )),
               const SizedBox(height: 32.0),
               DefaultButton(
-                text: 'Add',
+                text: 'Save',
                 onTap: _addPlace,
               )
             ],

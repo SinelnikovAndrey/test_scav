@@ -76,7 +76,7 @@ class HistoryDetailPage extends StatelessWidget {
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
+                      height: MediaQuery.of(context).size.height * 0.1,
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -98,7 +98,7 @@ class HistoryDetailPage extends StatelessWidget {
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
+                      height: MediaQuery.of(context).size.height * 0.1,
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -120,7 +120,7 @@ class HistoryDetailPage extends StatelessWidget {
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
+                      height: MediaQuery.of(context).size.height * 0.1,
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -142,7 +142,7 @@ class HistoryDetailPage extends StatelessWidget {
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
+                      height: MediaQuery.of(context).size.height * 0.1,
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(

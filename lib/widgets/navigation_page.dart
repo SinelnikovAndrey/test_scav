@@ -1,17 +1,23 @@
 
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:flutter_svg/svg.dart';
+// import 'package:iconsax/iconsax.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/presentation/history/history_page.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
+import 'package:test_scav/presentation/home/test/my_items_page_copy.dart';
+import 'package:test_scav/presentation/home/test/test_my_items.dart';
+import 'package:test_scav/presentation/settings/settings_copy.dart';
 import 'package:test_scav/presentation/tips/tip_display.dart';
 import 'package:test_scav/presentation/settings/settings.dart';
+import 'package:test_scav/utils/assets.dart';
 
 
 
 class NavigationPage extends StatefulWidget {
   final Root rootData;
-  const NavigationPage({super.key, required this.rootData});
+  final String appDocumentsDirPath;
+  const NavigationPage({super.key, required this.rootData, required this.appDocumentsDirPath});
 
   @override
   State<NavigationPage> createState() => _HomePageState();
@@ -28,10 +34,12 @@ class _HomePageState extends State<NavigationPage> {
       bottomNavigationBar: 
       
       NavigationBarTheme(
+        
         data: NavigationBarThemeData(
+          height: MediaQuery.of(context).size.height * 0.1,
           indicatorColor: Colors.transparent,
           labelTextStyle: MaterialStateProperty.all(
-            const TextStyle(color: Colors.white),
+            const TextStyle(color: Colors.white, fontSize: 0),
           ),
         ),
         child: Container(
@@ -63,29 +71,21 @@ class _HomePageState extends State<NavigationPage> {
             },
             destinations: [
               NavigationDestination(
-                icon: Icon(selectedIndex == 0 ? Icons.home_filled : Icons.home_outlined,
-                color: Colors.white,
-                ), 
-                label: 'Home',
+                
+                icon: SvgPicture.asset(selectedIndex == 0 ? SvgAssets.homeFilled : SvgAssets.homeLight), label: '',
               ),
               NavigationDestination(
-                icon: Icon(selectedIndex == 1 ? Iconsax.clock5 : Iconsax.clock,
-                color: Colors.white,
-                ), 
-                label: 'History',
+                icon: SvgPicture.asset(selectedIndex == 1 ? SvgAssets.timeCircleFilled : SvgAssets.timeCircleLight), label: '',
               ),
               NavigationDestination(
-                icon: Icon(selectedIndex == 2 ? Iconsax.document : Iconsax.document_text4,
-                color: Colors.white,
-                ),
-                label: 'Tip', 
+                icon: SvgPicture.asset(selectedIndex == 2 ? SvgAssets.documentFilled : SvgAssets.documentLight), label: '', 
               ),
               NavigationDestination(
-                icon: Icon(selectedIndex == 3 ? Icons.settings : Iconsax.setting_2,
-                color: Colors.white,
-                ),
-                label: 'Settings',
+              icon: SvgPicture.asset(selectedIndex == 3 ? SvgAssets.settingsFilled : SvgAssets.settingsLight), label: '',
+  
               ),
+       
+          
             ],
           ),
         ),
@@ -93,7 +93,7 @@ class _HomePageState extends State<NavigationPage> {
       body: IndexedStack(
         index: selectedIndex,
         children: [
-          const MyItemsPage(),
+          MyItemsPage(appDocumentsDirPath: widget.appDocumentsDirPath),
           const HistoryPage(),
           TipDisplay(rootData: widget.rootData),
           const Settings(),

@@ -7,26 +7,33 @@ import 'package:test_scav/presentation/history/add_place.dart';
 import 'package:test_scav/presentation/home/edit_item.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/utils/file_utils.dart';
 import 'package:test_scav/widgets/color_box.dart';
 import 'package:test_scav/widgets/default_button.dart';
 import 'package:test_scav/widgets/left_button.dart';
+import 'package:path/path.dart' as p;
 
 class ItemDetailPage extends StatelessWidget {
   final String itemId;
-  const ItemDetailPage({super.key, required this.itemId});
+  final String appDocumentsDirPath; // Add this line
+
+  const ItemDetailPage(
+      {super.key, required this.itemId, required this.appDocumentsDirPath}); // Add this line
 
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Box<ItemData>>(
       valueListenable: Hive.box<ItemData>(itemBoxName).listenable(),
       builder: (context, box, _) {
+        print('Opening box: $itemBoxName');
         final item = box.get(itemId);
         if (item == null) {
-          return const Scaffold(body: Center(child: Text('Item not found')));
+          return const Scaffold(
+              body: Center(child: Text('Item not found')));
         }
         return Scaffold(
           appBar: AppBar(
-            title: Text(item.name, style: AppFonts.h10,),
+            title: Text(item.name, style: AppFonts.h10),
             automaticallyImplyLeading: false,
             centerTitle: true,
             backgroundColor: Colors.white,
@@ -62,16 +69,17 @@ class ItemDetailPage extends StatelessWidget {
               ),
             ],
           ),
-          bottomNavigationBar: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(right: 5.0),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
+              width: MediaQuery.of(context).size.width * 0.9,
               child: DefaultButton(
-                text: 'Add',
+                text: "Got it!",
                 onTap: () {
                   Future.delayed(Duration.zero, () {
-                    Navigator.of(context)
-                        .push(AddPlacePage.materialPageRoute(itemId: item.id));
+                    Navigator.of(context).push(AddPlacePage.materialPageRoute(
+                        itemId: item.id));
                   });
                 },
               ),
@@ -83,14 +91,21 @@ class ItemDetailPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (item.photoUrl!.isNotEmpty)
+                  if (item.relativeImagePath.isNotEmpty)
                     ClipRRect(
                       borderRadius: BorderRadius.circular(20),
                       child: Image.file(
-                        File(item.photoUrl!),
-                        height: MediaQuery.of(context).size.height * 0.4,
-                        width: MediaQuery.of(context).size.width * 0.9,
+                        File(p.join(appDocumentsDirPath, 'images',
+                            item.relativeImagePath)),
                         fit: BoxFit.cover,
+                        height: 200,
+                        width: double.infinity,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Icon(Icons.error),
+                        loadingBuilder: (context, child, progress) =>
+                            progress == null
+                                ? child
+                                : const CircularProgressIndicator(),
                       ),
                     ),
                   const SizedBox(height: 16.0),
@@ -98,7 +113,7 @@ class ItemDetailPage extends StatelessWidget {
                     decoration: BoxDecoration(
                         border: Border.all(),
                         borderRadius: BorderRadius.circular(20)),
-                    height: MediaQuery.of(context).size.height * 0.09,
+                    height: MediaQuery.of(context).size.height * 0.1,
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
@@ -122,7 +137,7 @@ class ItemDetailPage extends StatelessWidget {
                           decoration: BoxDecoration(
                               border: Border.all(),
                               borderRadius: BorderRadius.circular(20)),
-                          height: MediaQuery.of(context).size.height * 0.09,
+                          height: MediaQuery.of(context).size.height * 0.1,
                           width: MediaQuery.of(context).size.width * 0.68,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
@@ -147,7 +162,7 @@ class ItemDetailPage extends StatelessWidget {
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
+                      height: MediaQuery.of(context).size.height * 0.1,
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -165,27 +180,11 @@ class ItemDetailPage extends StatelessWidget {
                         ),
                       )),
                   const SizedBox(height: 16.0),
-                  Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Description',
-                              style: AppFonts.h6,
-                            ),
-                            // SizedBox(height: 5,),
-                            Text(item.description),
-                          ],
-                        ),
-                      )),
+                  TextField(
+                    title: 'Description',
+                    value: item.description,
+                  ),
+                   SizedBox(height: MediaQuery.of(context).size.height * 0.15,),
                 ],
               ),
             ),
@@ -193,5 +192,44 @@ class ItemDetailPage extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class TextField extends StatelessWidget {
+  const TextField({
+    super.key,
+    // required this.item,
+    required this.title,
+    required this.value,
+  });
+
+  // final ItemData item;
+  final String title;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+            border: Border.all(), borderRadius: BorderRadius.circular(20)),
+        height: MediaQuery.of(context).size.height * 0.1,
+        width: MediaQuery.of(context).size.width * 0.9,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: AppFonts.h6,
+              ),
+              // SizedBox(height: 5,),
+              Text(
+                value,
+                // '$item.$value'
+              ),
+            ],
+          ),
+        ));
   }
 }

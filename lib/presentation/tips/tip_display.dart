@@ -13,8 +13,13 @@ class TipDisplay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-       title: const Text('Tips',style: AppFonts.h10,),
-        centerTitle: true,
+       title: const Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+         children: [
+           Text('Tips',style: AppFonts.h10,),
+         ],
+       ),
+        // centerTitle: true,
       ),
       body: rootData.tips == null || rootData.tips!.isEmpty
           ? const Center(child: Text('No tips found.')) 

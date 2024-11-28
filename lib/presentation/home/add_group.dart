@@ -20,20 +20,12 @@ class _AddGroupPageState extends State<AddGroupPage> {
 
   final _titleController = TextEditingController();
 
-
-
-
-
-
-
    int _generateId() {
   var uuid = const Uuid();
   String uniqueId = uuid.v4(); 
 
   return int.tryParse(uniqueId.substring(0,8)) ?? 0; 
 }
-
-
 
 
    int _nextId = 1; 
@@ -89,7 +81,7 @@ class _AddGroupPageState extends State<AddGroupPage> {
           height: MediaQuery.of(context).size.height * 0.09,
           width: MediaQuery.of(context).size.width * 0.9,
           child: DefaultButton(
-              text: "Add",
+              text: "Save",
               onTap: _addGroup ),
         ),
       ),
@@ -116,7 +108,7 @@ class _AddGroupPageState extends State<AddGroupPage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10),
+                                horizontal: 20.0, vertical: 5),
                             child: TextFormField(
                               controller: _titleController,
                               decoration: const InputDecoration(

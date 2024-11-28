@@ -1,11 +1,12 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:test_scav/data/models/history_data.dart';
 import 'package:test_scav/presentation/history/detail_history.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/utils/assets.dart';
 
 class HistoryCard extends StatelessWidget {
   final HistoryData item;
@@ -16,7 +17,7 @@ class HistoryCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.2,
+        height: MediaQuery.of(context).size.height * 0.25,
         width: MediaQuery.of(context).size.width * 0.9,
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
@@ -44,7 +45,9 @@ class HistoryCard extends StatelessWidget {
                     ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.file(File(item.photoUrl!),
-                            height: 146, width: 146, fit: BoxFit.cover)),
+                            height: MediaQuery.of(context).size.height * 0.20,
+                             width: MediaQuery.of(context).size.width * 0.40,
+                            fit: BoxFit.cover)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Column(
@@ -54,15 +57,18 @@ class HistoryCard extends StatelessWidget {
                           item.itemName,
                           style: AppFonts.h8,
                         ),
-                        const SizedBox(height: 10.0),
+                         SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
 
                         // Text(formattedDateTime),
                         Row(
                           children: [
-                            const Icon(
-                              Iconsax.calendar_1,
-                              size: 25,
-                            ),
+                           SvgPicture.asset(
+                SvgAssets.calendar,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
                             const SizedBox(
                               width: 5,
                             ),
@@ -71,20 +77,32 @@ class HistoryCard extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10.0),
+                         SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
                         Row(
                           children: [
-                            const Icon(Iconsax.clock),
+                            SvgPicture.asset(
+                SvgAssets.timeCircle,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
                             const SizedBox(
                               width: 5,
                             ),
                             Text(item.formattedFetchTime),
                           ],
                         ),
-                        const SizedBox(height: 10.0),
+                         SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
                         Row(
                           children: [
-                            const Icon(Iconsax.location),
+                            SvgPicture.asset(
+                SvgAssets.location,
+                colorFilter: const ColorFilter.mode(
+                  Colors.black,
+                  BlendMode.srcIn,
+                ),
+              ),
                             const SizedBox(
                               width: 5,
                             ),

@@ -9,6 +9,7 @@ import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/utils/file_utils.dart';
 import 'package:test_scav/widgets/color_box.dart';
 import 'package:test_scav/widgets/default_button.dart';
 import 'package:test_scav/widgets/left_button.dart';
@@ -30,8 +31,8 @@ class _AddItemPageState extends State<AddItemPage> {
   final _formController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  final _imagePicker = ImagePicker();
-  String? _imageUrl;
+  final picker = ImagePicker();
+  File? _imageFile;
 
   @override
   void initState() {
@@ -44,15 +45,11 @@ class _AddItemPageState extends State<AddItemPage> {
     return 'item_$randomNumber';
   }
 
-  Future<void> _selectImage() async {
-    final pickedFile = await _imagePicker.pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      setState(() {
-        _imageUrl = pickedFile.path;
-      });
-    }
+  Future<void> _pickImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _imageFile = pickedFile != null ? File(pickedFile.path) : null;
+    });
   }
 
   Future<List<String>> _fetchReminderTitles() async {
@@ -60,38 +57,94 @@ class _AddItemPageState extends State<AddItemPage> {
     return box.values.map((reminder) => reminder.title).toList();
   }
 
-  Future<void> _submit() async {
-    if (_formKey.currentState!.validate()) {
-    }
-  }
+//  static Future<String> savePickedImageToAppFolder(File image) async {
+//     final String path = _applicationDocumentsDirectory;
+//     String relativePath = '/' +DateTime.now().millisecondsSinceEpoch.toString()+ Path.extension(image.path);
+
+//     String newPath = '$path' + relativePath;
+
+//     File res =  await image.copy(newPath);
+
+//     return res != null && res.existsSync() ? relativePath : null;
+//   }
+
+//   static String getDocumentsPathByRelativePath(String relativePath){
+//     return relativePath != null && relativePath.isNotEmpty ? _applicationDocumentsDirectory + relativePath : null;
+//   }
+
+  // Future<void> _addItem() async {
+  //   if (_formKey.currentState!.validate()) {
+  //     setState(() {});
+  //     try {
+  //       final relativePath = await FileUtils.saveImage(_imageFile!);
+  //       if(relativePath == null) throw Exception('Image save failed');
+
+  //       final box = await Hive.openBox<ItemData>(itemBoxName);
+  //       final newItem = ItemData(
+  //         id: FileUtils.generateId(),
+  //         relativeImagePath: relativePath,
+  //         name: _nameController.text.trim(),
+  //         color: selectedColorName,
+  //         form: _formController.text.trim(),
+  //         group: selectedReminderTitle ?? '',
+  //         description: _descriptionController.text.trim(),
+  //       );
+  //       await box.add(newItem);
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //           const SnackBar(content: Text('Item added successfully!')));
+  //       Navigator.pop(context, newItem);
+  //     } catch (e) {
+  //       ScaffoldMessenger.of(context)
+  //           .showSnackBar(SnackBar(content: Text('Error: $e')));
+  //     } finally {
+  //       setState(() {});
+  //     }
+  //   }
+  // }
+
 
   Future<void> _addItem() async {
-    if (_formKey.currentState!.validate()) {
-      setState(() {});
-      try {
-        final box = await Hive.openBox<ItemData>(itemBoxName);
-        final id = _generateId();
-        final newItem = ItemData(
-          id: id,
-          photoUrl: _imageUrl,
-          name: _nameController.text.trim(),
-          color: selectedColorName,
-          form: _formController.text.trim(),
-          group: selectedReminderTitle ?? '',
-          description: _descriptionController.text.trim(),
-        );
-        await box.put(id.toString(), newItem);
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Item added successfully!')));
-        Navigator.pop(context, newItem);
-      } catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Error: $e')));
-      } finally {
-        setState(() {});
+  if (_formKey.currentState!.validate()) {
+    setState(() {});
+    try {
+      final relativePath = await FileUtils.saveImage(_imageFile!);
+      if (relativePath == null) {
+        throw Exception('Image save failed');
       }
+
+      // Crucial change:  Get the existing box, or create a new one if necessary.
+      final box = Hive.box<ItemData>(itemBoxName); 
+      
+      // Generate a unique ID, crucial for uniqueness.
+      String newId;
+      do {
+        newId = FileUtils.generateId();
+      } while (box.containsKey(newId)); // Ensures the ID is unique
+
+
+      final newItem = ItemData(
+        id: newId, //Use the generated unique ID
+        relativeImagePath: relativePath,
+        name: _nameController.text.trim(),
+        color: selectedColorName,
+        form: _formController.text.trim(),
+        group: selectedReminderTitle ?? '',
+        description: _descriptionController.text.trim(),
+      );
+
+      await box.put(newId, newItem); //Put using the generated ID
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Item added successfully!')));
+      Navigator.pop(context, newItem);
+    } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
+    } finally {
+      setState(() {});
     }
   }
+}
 
 
   Widget build(BuildContext context) {
@@ -129,8 +182,8 @@ class _AddItemPageState extends State<AddItemPage> {
                       child: Column(
                         children: [
                           GestureDetector(
-                            onTap: _selectImage,
-                            child: _imageUrl != null
+                            onTap: _pickImage,
+                            child: _imageFile != null
                                 ? Container(
                                     decoration: BoxDecoration(
                                       borderRadius: BorderRadius.circular(20),
@@ -140,7 +193,7 @@ class _AddItemPageState extends State<AddItemPage> {
                                         0.4,
                                     width:
                                         MediaQuery.of(context).size.width * 0.9,
-                                    child: Image.file(File(_imageUrl!),
+                                    child: Image.file(_imageFile!,
                                         height: 200,
                                         width: double.infinity,
                                         fit: BoxFit.cover),
@@ -175,14 +228,14 @@ class _AddItemPageState extends State<AddItemPage> {
                                         borderRadius:
                                             BorderRadius.circular(20)),
                                     height: MediaQuery.of(context).size.height *
-                                        0.09,
+                                        0.1,
                                     width:
                                         MediaQuery.of(context).size.width * 0.9,
                                     child: Column(
                                       children: [
                                         Padding(
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 20.0, vertical: 10),
+                                              horizontal: 20.0, vertical: 5),
                                           child: TextFormField(
                                             controller: _nameController,
                                             decoration: const InputDecoration(
@@ -217,12 +270,12 @@ class _AddItemPageState extends State<AddItemPage> {
                                               BorderRadius.circular(20)),
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              0.09,
+                                              0.1,
                                       width: MediaQuery.of(context).size.width *
                                           0.68,
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            horizontal: 20.0, vertical: 10),
+                                            horizontal: 20.0, vertical: 5),
                                         child: DropdownButton<String>(
                                           value: selectedColorName,
                                           onChanged: (String? newColorName) {
@@ -260,12 +313,12 @@ class _AddItemPageState extends State<AddItemPage> {
                                         borderRadius:
                                             BorderRadius.circular(20)),
                                     height: MediaQuery.of(context).size.height *
-                                        0.09,
+                                        0.1,
                                     width:
                                         MediaQuery.of(context).size.width * 0.9,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 20.0, vertical: 10),
+                                          horizontal: 20.0, vertical: 5),
                                       child: TextFormField(
                                         controller: _formController,
                                         decoration: const InputDecoration(
@@ -293,16 +346,15 @@ class _AddItemPageState extends State<AddItemPage> {
                                       border: Border.all(),
                                       borderRadius: BorderRadius.circular(20)),
                                   height:
-                                      MediaQuery.of(context).size.height * 0.09,
+                                      MediaQuery.of(context).size.height * 0.1,
                                   width:
                                       MediaQuery.of(context).size.width * 0.9,
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0, vertical: 10),
+                                        horizontal: 20.0, vertical: 5),
                                     child: DropdownButtonFormField<String>(
                                       value: selectedReminderTitle,
                                       decoration: const InputDecoration(
-                                          labelText: 'Select Group',
                                           enabledBorder: UnderlineInputBorder(
                                               borderSide: BorderSide(
                                                   color: Colors.white))),
@@ -339,7 +391,7 @@ class _AddItemPageState extends State<AddItemPage> {
                                         MediaQuery.of(context).size.width * 0.9,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          horizontal: 20.0, vertical: 10),
+                                          horizontal: 20.0, vertical: 5),
                                       child: TextFormField(
                                         controller: _descriptionController,
                                         decoration: const InputDecoration(

@@ -5,6 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:test_scav/main.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
+import 'package:test_scav/presentation/notification/notification.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/default_button.dart';
@@ -22,23 +23,107 @@ class _SettingsState extends State<Settings> {
 
   final InAppReview inAppReview = InAppReview.instance;
 
-  final ValueNotifier<bool> _allNotificationsEnabled =
-      ValueNotifier(false); 
+  // final ValueNotifier<bool> _allNotificationsEnabled =
+  //     ValueNotifier(false);
+
+  TimeOfDay _selectedTime = TimeOfDay.now();
+  bool _notificationPermissionRequested = false;
+  final _formKey = GlobalKey<FormState>();
+
+  bool _notificationScheduled = false; //This line was missing
+  int _notificationId = 0;
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
+    if (picked != null && picked != _selectedTime) {
+      setState(() {
+        _selectedTime = picked;
+      });
+    }
+  }
+
+  final _allNotificationsEnabled = ValueNotifier<bool>(false);
+  int _notificationIdCounter = 0;
+  List<int> _scheduledNotificationIds =
+      []; //Keep track of scheduled notification IDs
+
+  int _generateUniqueId() {
+    _notificationIdCounter++;
+    return _notificationIdCounter;
+  }
 
   Future<void> _updateAllNotifications(bool enabled) async {
     final box = await Hive.openBox<Reminder>(reminderBoxName);
     final reminders = box.values.toList();
-    await box.clear(); 
+    await box.clear();
+
+    _scheduledNotificationIds.forEach(NotificationService.cancelNotification);
+    _scheduledNotificationIds.clear();
 
     for (final reminder in reminders) {
       final updatedReminder = reminder.copyWith(active: enabled);
       await box.add(updatedReminder);
+      if (enabled && updatedReminder.active) {
+        final id = _generateUniqueId();
+        final timeOfDay = TimeOfDay.fromDateTime(
+            updatedReminder.dateTime); // Extract TimeOfDay
+        await NotificationService.scheduleDailyNotification(
+            id,
+            updatedReminder.title,
+            updatedReminder.body,
+            timeOfDay,
+            id.toString());
+        _scheduledNotificationIds.add(id);
+      }
     }
 
-    _allNotificationsEnabled.value = enabled; 
+    _allNotificationsEnabled.value = enabled;
     String message =
         enabled ? 'All notifications enabled' : 'All notifications disabled';
     Fluttertoast.showToast(msg: message, gravity: ToastGravity.BOTTOM);
+  }
+
+  Future<void> _toggleNotification(BuildContext context) async {
+    setState(() {
+      _notificationScheduled = !_notificationScheduled;
+    });
+
+    if (_notificationScheduled) {
+      if (!_notificationPermissionRequested ||
+          await NotificationService.checkPermission() == false) {
+        final permissionGranted = await NotificationService.requestPermission();
+        if (!permissionGranted) {
+          setState(() => _notificationScheduled = false);
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Notification permission denied.')));
+          return;
+        }
+        _notificationPermissionRequested = true;
+      }
+      _notificationId = _generateUniqueId();
+      try {
+        await NotificationService.scheduleDailyNotification(
+            _notificationId,
+            'Daily Reminder',
+            'Your daily reminder!',
+            _selectedTime,
+            'daily_reminder');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Notification Scheduled!')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error: $e')));
+        setState(() => _notificationScheduled = false);
+      }
+    } else {
+      await NotificationService.cancelDailyNotification(_notificationId);
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Daily Notification Cancelled')));
+    }
   }
 
   @override
@@ -195,15 +280,14 @@ class _SettingsState extends State<Settings> {
                                     ),
                                     SizedBox(
                                       width: MediaQuery.of(context).size.width *
-                                          0.25,
+                                          0.20,
                                     ),
                                     Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 10), 
+                                      padding: const EdgeInsets.only(left: 10),
                                       child: Switch(
-                                        value: enabled,
+                                        value: _notificationScheduled,
                                         onChanged: (value) =>
-                                            _updateAllNotifications(value),
+                                            _toggleNotification(context),
                                       ),
                                     ),
                                   ],
@@ -216,7 +300,8 @@ class _SettingsState extends State<Settings> {
                     );
                   },
                 ),
-              ])
+              ]),
+              const SizedBox(height: 12),
             ],
           ),
         ));

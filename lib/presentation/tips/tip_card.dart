@@ -14,7 +14,7 @@ class TipCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.2,
+        height: MediaQuery.of(context).size.height * 0.25,
         width: MediaQuery.of(context).size.width * 0.9,
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
@@ -42,21 +42,23 @@ class TipCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image.asset(tip.photo!,
-                        width: 146, height: 146, fit: BoxFit.cover,
+                        height: MediaQuery.of(context).size.height * 0.25,
+                        width: MediaQuery.of(context).size.width * 0.38,
+                        fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
                       return const Text(
                           'Image not found');
                     }),
                   )
                 ],
-                const SizedBox(width: 15),
+                 SizedBox(width: MediaQuery.of(context).size.width * 0.03,),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
             
                     Expanded(
                       child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.45,
+                        width: MediaQuery.of(context).size.width * 0.50,
                         height: MediaQuery.of(context).size.height * 0.1,
                         child: Text(
                           tip.header ?? 'No Header',

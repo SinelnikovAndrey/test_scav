@@ -180,7 +180,7 @@ class _ReminderListState extends State<ReminderList> {
                               children: [
                                 SizedBox(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.65,
+                                      MediaQuery.of(context).size.width * 0.60,
                                   child: TextFormField(
                                     decoration: const InputDecoration(
                                       focusedBorder: InputBorder.none,

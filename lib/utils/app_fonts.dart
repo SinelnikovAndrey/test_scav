@@ -18,7 +18,7 @@ static const Color darkText = Color(0xFF1C1D20);
       static const h9 = TextStyle(
       color: darkText,
       fontFamily: 'SF Pro Display',
-      fontSize: 34,
+      fontSize: 32,
       fontWeight: FontWeight.w500,
       height: 1.5
       );
@@ -30,6 +30,12 @@ static const Color darkText = Color(0xFF1C1D20);
       fontWeight: FontWeight.w500,
       height: 1.5,
       );
+      static const h07 = TextStyle(
+      color: darkText,
+      fontFamily: 'SF Pro Display',
+      fontSize: 19,
+      fontWeight: FontWeight.w500,
+      height: 1.5);
 
       static const h7 = TextStyle(
       color: darkText,

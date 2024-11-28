@@ -3,6 +3,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_scav/main.dart';
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
+import 'package:test_scav/presentation/home/widgets/new_item_card.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
@@ -11,7 +12,8 @@ import 'package:test_scav/presentation/home/widgets/item_card.dart';
 import 'package:test_scav/widgets/round_button.dart';
 
 class MyItemsPage extends StatefulWidget {
-  const MyItemsPage({Key? key}) : super(key: key);
+  final String appDocumentsDirPath;
+  const MyItemsPage({Key? key,required this.appDocumentsDirPath}) : super(key: key);
 
   @override
   State<MyItemsPage> createState() => _MyItemsPageState();
@@ -78,7 +80,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
                 valueListenable: _reminderTitles,
                 builder: (context, reminderTitles, child) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 7.0),
                     child: _buildDropdown(reminderTitles), 
                   );
                 },
@@ -88,24 +90,31 @@ class _MyItemsPageState extends State<MyItemsPage> {
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(right: 5.0),
             child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.09,
+              height: MediaQuery.of(context).size.height * 0.1,
               width: MediaQuery.of(context).size.width * 0.9,
-              child: DefaultButton(text: "Add", onTap: () {
+              child: DefaultButton(text: "Add new item", onTap: () {
                 Navigator.of(context).pushNamed(AppRouter.addItemRoute);
               }),
             ),
           ),
-          body: sortedItems.isEmpty
+          body: items.isEmpty
               ? const Center(child: Text('Your items will be here', style: AppFonts.h8))
               : SingleChildScrollView(
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height,
-                    child: ListView.builder(
-                      itemCount: sortedItems.length,
-                      itemBuilder: (context, index) {
-                        final item = sortedItems[index];
-                        return ItemCard(key: ValueKey(item.id), itemId: item);
-                      },
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: sortedItems.length,
+                            itemBuilder: (context, index) {
+                              final item = sortedItems[index];
+                              return ItemCard(key: ValueKey(item.id), itemId: item);
+                            },
+                          ),
+                        ),
+                         SizedBox(height: MediaQuery.of(context).size.height * 0.35,),
+                      ],
                     ),
                   ),
                 ),
@@ -116,8 +125,10 @@ class _MyItemsPageState extends State<MyItemsPage> {
 
   Widget _buildDropdown(List<String> reminderTitles) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-      width: MediaQuery.of(context).size.width * 0.37,
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
+      width: MediaQuery.of(context).size.width * 0.40,
+      
+      
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(15.0),
         border: Border.all(color: AppColors.gray, style: BorderStyle.solid, width: 1),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/widgets/left_button.dart';
 
 
 class TipPage extends StatelessWidget {
@@ -11,9 +12,20 @@ class TipPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Tip',style: AppFonts.h10,),
         centerTitle: true,
+        leading: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: LeftButton(
+                icon: Icons.arrow_left,
+                onTap: () {
+                  Navigator.pop(context);
+                },
+                iconColor: Colors.black,
+                backgroundColor: Colors.transparent,
+                borderColor: Colors.black12,
+              ),
+            ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -36,7 +48,7 @@ class TipPage extends StatelessWidget {
                   decoration: BoxDecoration(
                       border: Border.all(),
                       borderRadius: BorderRadius.circular(20)),
-                  height: MediaQuery.of(context).size.height * 0.55,
+                  height: MediaQuery.of(context).size.height * 0.8,
                   width: MediaQuery.of(context).size.width * 0.9,
 
                   child: Padding(

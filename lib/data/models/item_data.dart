@@ -11,7 +11,7 @@ class ItemData extends Equatable {
   final String form;
   final String group;
   final String description;
-  final String? photoUrl;
+  final String relativeImagePath;
 
   ItemData({
     required this.id,
@@ -20,7 +20,7 @@ class ItemData extends Equatable {
     required this.form,
     required this.group,
     required this.description,
-    this.photoUrl,
+    required this.relativeImagePath,
   });
 
   ItemData copyWith({
@@ -30,7 +30,7 @@ class ItemData extends Equatable {
     String? form,
     String? group,
     String? description,
-    String? photoUrl,
+    String? relativeImagePath,
    
   }) {
     return ItemData(
@@ -40,7 +40,7 @@ class ItemData extends Equatable {
       form: form ?? this.form,
       group: group ?? this.group,
       description: description ?? this.description,
-      photoUrl: photoUrl ?? this.photoUrl,
+      relativeImagePath: relativeImagePath ?? this.relativeImagePath,
     );
   }
 
@@ -53,7 +53,7 @@ class ItemData extends Equatable {
       'form': form,
       'group': group, 
       'description': description,
-      'photoUrl': photoUrl,
+      'photoUrl': relativeImagePath,
       
     };
   }
@@ -66,7 +66,7 @@ class ItemData extends Equatable {
       form: map['form'] as String,
       group: map['group'] as String,
       description: map['description'] as String,
-      photoUrl: map['form'] as String,
+      relativeImagePath: map['form'] as String,
 
     );
   }
@@ -81,11 +81,11 @@ class ItemData extends Equatable {
 
     @override
   String toString() {
-    return 'ItemData{id: $id, name: $name, color: $color, form: $form, group: $group, description: $description, photoUrl: $photoUrl}';
+    return 'ItemData{id: $id, name: $name, color: $color, form: $form, group: $group, description: $description, photoUrl: $relativeImagePath}';
   }
 
   @override
-  List<Object?> get props => [id, name, color, form, group, description, photoUrl];
+  List<Object?> get props => [id, name, color, form, group, description, relativeImagePath];
 
   
 }
