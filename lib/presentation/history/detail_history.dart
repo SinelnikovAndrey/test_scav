@@ -18,32 +18,31 @@ class HistoryDetailPage extends StatefulWidget {
 }
 
 class _HistoryDetailPageState extends State<HistoryDetailPage> {
-  late ValueNotifier<HistoryData> _placeDataNotifier; // No longer nullable
+  late ValueNotifier<HistoryData> _placeDataNotifier; 
 
   @override
   void initState() {
     super.initState();
-     _placeDataNotifier = ValueNotifier(HistoryData.empty()); // Initial value
+     _placeDataNotifier = ValueNotifier(HistoryData.empty()); 
     _loadItemData();
   }
 
   Future<void> _loadItemData() async {
     final box = await Hive.openBox<HistoryData>(historyBoxName);
     final item = box.get(widget.itemId);
+    // await box.close();
 
     if (item == null) {
-      // Handle the case where the item is not found
-      // Show an error message or navigate back.
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Item not found!')),
       );
-      // Important:  Don't proceed if the item is null
       return;
     }
 
 
     setState(() {
-      _placeDataNotifier.value = item; // Assign the retrieved item
+      _placeDataNotifier.value = item; 
     });
     await box.close();
   }
@@ -56,12 +55,12 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
 
    @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<HistoryData?>( // Allow null values
+    return ValueListenableBuilder<HistoryData?>( 
       valueListenable: _placeDataNotifier,
       builder: (context, item, child) {
         if (item == null) {
           return const Scaffold(
-              body: Center(child: CircularProgressIndicator())); // Show loading
+              body: Center(child: CircularProgressIndicator())); 
         } else {
         return  Scaffold(
           appBar: AppBar(
@@ -94,7 +93,7 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
                         builder: (context) => EditHistoryPage(
                           placeData: item,
                           placeDataNotifier:
-                              _placeDataNotifier, // Pass the notifier
+                              _placeDataNotifier, 
                         ),
                       ),
                     );
@@ -227,29 +226,26 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
                   const SizedBox(
                     height: 15,
                   ),
-                   if (item.placePhotoUrl.isNotEmpty)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: FutureBuilder<String>(
-                      future: FileUtils.getFullImagePath(
-                        item.placePhotoUrl,
-                      ),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Image.file(
-                            File(
-                              snapshot.data!,
-                            ),
-                            width: MediaQuery.of(context).size.width * 0.9,
-                          );
-                        } else if (snapshot.hasError) {
-                          return const Icon(Icons.error);
-                        } else {
-                          return const CircularProgressIndicator();
-                        }
-                      },
-                    ),
-                  ),
+                   if (item.placePhotoUrl != null && item.placePhotoUrl!.isNotEmpty)
+                      FutureBuilder<String>(
+                        future: FileUtils.getFullImagePath(item.placePhotoUrl!),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const CircularProgressIndicator();
+                          } else if (snapshot.hasError) {
+                            return Text('Error loading image: ${snapshot.error}');
+                          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                            return Image.file(File(snapshot.data!),
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              fit: BoxFit.cover,
+                            );
+                          } else {
+                            return const SizedBox.shrink(); 
+                          }
+                        },
+                      )
+                    else
+                      const SizedBox.shrink(), 
                 ],
               ),
             ),

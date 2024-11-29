@@ -39,12 +39,12 @@ class HistoryData {
         relativeImagePath = '',
         placeDescription = '',
         itemName = '',
-        itemColor = selectedColorName, // Or a suitable default color
+        itemColor = selectedColorName,
         itemForm = '',
         itemGroup = '',
         itemDescription = '',
         placePhotoUrl = 'null',
-        saveDateTime = DateTime.now(), // Or a suitable default date and time
+        saveDateTime = DateTime.now(), 
         fetchDateTime = DateTime.now();
   
 

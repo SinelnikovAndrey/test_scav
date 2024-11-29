@@ -36,7 +36,7 @@ class ItemDataAdapter extends TypeAdapter<ItemData> {
     writer.writeString(obj.form); 
     writer.writeString(obj.group);
     writer.writeString(obj.description);
-    writer.writeString(obj.relativeImagePath);
+    writer.writeString(obj.relativeImagePath ?? '');
   }
 }
 

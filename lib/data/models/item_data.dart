@@ -11,7 +11,7 @@ class ItemData extends Equatable {
   final String form;
   final String group;
   final String description;
-  final String relativeImagePath;
+  final String? relativeImagePath;
 
   ItemData({
     required this.id,
@@ -20,7 +20,7 @@ class ItemData extends Equatable {
     required this.form,
     required this.group,
     required this.description,
-    required this.relativeImagePath,
+    this.relativeImagePath,
   });
 
   ItemData copyWith({

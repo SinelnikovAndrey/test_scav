@@ -16,59 +16,55 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  late Box<HistoryData> placeBox;
+  // late Box<HistoryData> placeBox;
 
-  @override
-  void initState() {
-    super.initState();
-    placeBox = Hive.box<HistoryData>(historyBoxName);
-  }
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   placeBox = Hive.box<HistoryData>(historyBoxName);
+  // }
 
-  @override
-  void dispose() {
-    placeBox.close();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   placeBox.close();
+  //   super.dispose();
+  // }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('History',style: AppFonts.h10,),
+        title: const Text('History', style: AppFonts.h10),
         centerTitle: true,
-
       ),
-      body: Column(
-        children: [
-          ValueListenableBuilder(
-            valueListenable: placeBox.listenable(),
-            builder: (context, Box<HistoryData> box, widget) {
-              final places = box.values.toList();
-          
-              if (places.isEmpty) {
-                return const Center(child: Text('The history of your items will be here', style: AppFonts.h8));
-              } else {
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: places.length,
-                    itemBuilder: (context, index) {
-                      final placeData = places[index];
-                            
-                      return HistoryCard(
-                              key: ValueKey(places[index].id),
-                              item: places[index],
-                            );
-                    },
-                  ),
-                );
-              }
-            },
-          ),
-          // SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
-        ],
+      body: ValueListenableBuilder<Box<HistoryData>>(
+        valueListenable: Hive.box<HistoryData>(historyBoxName).listenable(),
+        builder: (context, box, child) { 
+          final places = box.values.toList(); 
+
+          if (places.isEmpty) {
+            return const Center(
+                child: Text('The history of your items will be here',
+                    style: AppFonts.h8));
+          } else {
+            return Expanded(
+              child: ListView.builder(
+                itemCount: places.length,
+                itemBuilder: (context, index) {
+                  final placeData = places[index];
+                  return HistoryCard(
+                    key: ValueKey(placeData.id), 
+                    item: placeData,
+                  );
+                },
+              ),
+            );
+          }
+        },
       ),
     );
   }
+
 }
 
 

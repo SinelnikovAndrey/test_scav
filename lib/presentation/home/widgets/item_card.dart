@@ -13,7 +13,7 @@ class ItemCard extends StatelessWidget {
   final ItemData itemId;
   const ItemCard({super.key, required this.itemId});
 
-  @override
+   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(10.0),
@@ -23,43 +23,54 @@ class ItemCard extends StatelessWidget {
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: () {
-            print('Product object: $itemId'); 
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => ItemDetailPage(itemId: itemId.id)),
-        );
-      },
-
+            print('Product object: $itemId');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ItemDetailPage(itemId: itemId.id)),
+            );
+          },
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: AppColors.lightBorderGray,
-              ),
+              border: Border.all(color: AppColors.lightBorderGray),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (itemId.relativeImagePath != null)
+                // Improved Image handling
+                if (itemId.relativeImagePath != null &&
+                    itemId.relativeImagePath!.isNotEmpty)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: FutureBuilder<String>(
-                        future: FileUtils.getFullImagePath(itemId.relativeImagePath,
-                        ),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Image.file(File(snapshot.data!,),
-                            height: MediaQuery.of(context).size.height * 0.35,
-                            width: MediaQuery.of(context).size.width * 0.45,
-                            );
-                          } else if (snapshot.hasError) {
-                            return const Icon(Icons.error);
-                          } else {
-                            return const CircularProgressIndicator();
-                          }
-                        },
-                      ),
+                      future: FileUtils.getFullImagePath(
+                          itemId.relativeImagePath!), 
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const SizedBox(
+                              height: 100,
+                              width: 100,
+                              child: Center(
+                                  child: CircularProgressIndicator()));
+                        } else if (snapshot.hasError) {
+                          return const Icon(Icons.error);
+                        } else if (snapshot.hasData &&
+                            snapshot.data!.isNotEmpty) {
+                          return Image.file(
+                            File(snapshot.data!),
+                            height:
+                                MediaQuery.of(context).size.height * 0.15, 
+                            width: MediaQuery.of(context).size.width * 0.3, 
+                            fit: BoxFit.cover,
+                          );
+                        } else {
+                          return const SizedBox.shrink();
+                        }
+                      },
+                    ),
                   )
                 else
                   const Icon(

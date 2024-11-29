@@ -15,96 +15,106 @@ import 'package:path/path.dart' as p;
 
 class ItemDetailPage extends StatelessWidget {
   final String itemId;
-  // final String appDocumentsDirPath; // Add this line
   const ItemDetailPage({super.key, required this.itemId});
 
   @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<Box<ItemData>>(
-      valueListenable: Hive.box<ItemData>(itemBoxName).listenable(),
-      builder: (context, box, _) {
-        final item = box.get(itemId);
-        if (item == null) {
-          return const Scaffold(body: Center(child: Text('Item not found')));
-        }
-        return Scaffold(
-          appBar: AppBar(
-            title: Text(
-              item.name,
-              style: AppFonts.h10,
+Widget build(BuildContext context) {
+  return ValueListenableBuilder<Box<ItemData>>(
+    valueListenable: Hive.box<ItemData>(itemBoxName).listenable(),
+    builder: (context, box, _) {
+      final item = box.get(itemId);
+      if (item == null) {
+        return const Scaffold(
+            body: Center(child: Text('Item not found')));
+      }
+
+      final itemDataNotifier = ValueNotifier(item); 
+
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            item.name,
+            style: AppFonts.h10,
+          ),
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          backgroundColor: Colors.white,
+          leading: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: LeftButton(
+              icon: Icons.arrow_left,
+              onTap: () {
+                Navigator.pop(context);
+              },
+              iconColor: Colors.black,
+              backgroundColor: Colors.transparent,
+              borderColor: Colors.black12,
             ),
-            automaticallyImplyLeading: false,
-            centerTitle: true,
-            backgroundColor: Colors.white,
-            leading: Padding(
-              padding: const EdgeInsets.all(10.0),
+          ),
+          actions: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: LeftButton(
-                icon: Icons.arrow_left,
                 onTap: () {
-                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditItemPage(
+                        itemData: item,
+                        itemDataNotifier: itemDataNotifier,
+                      ),
+                    ),
+                  );
                 },
+                icon: Icons.edit,
                 iconColor: Colors.black,
                 backgroundColor: Colors.transparent,
                 borderColor: Colors.black12,
               ),
             ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: LeftButton(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditItemPage(itemData: item),
-                      ),
-                    );
-                  },
-                  icon: Icons.edit,
-                  iconColor: Colors.black,
-                  backgroundColor: Colors.transparent,
-                  borderColor: Colors.black12,
-                ),
-              ),
-            ],
-          ),
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(right: 5.0),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.1,
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: DefaultButton(
-                  text: "Got it!",
-                  onTap: () {
-                    Future.delayed(Duration.zero, () {
-                      Navigator.of(context).push(
-                          AddPlacePage.materialPageRoute(itemId: item.id));
-                    });
-                  }),
+          ],
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(right: 5.0),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.1,
+            width: MediaQuery.of(context).size.width * 0.9,
+            child: DefaultButton(
+              text: "Gotit!",
+              onTap: () {
+                Future.delayed(Duration.zero, () {
+                  Navigator.of(context).push(
+                      AddPlacePage.materialPageRoute(itemId: item.id));
+                });
+              },
             ),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (item.relativeImagePath.isNotEmpty)
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(20),
-                      child: FutureBuilder<String>(
-                        future: FileUtils.getFullImagePath(item.relativeImagePath),
-                        builder: (context, snapshot) {
-                          if (snapshot.hasData) {
-                            return Image.file(File(snapshot.data!));
-                          } else if (snapshot.hasError) {
-                            return const Icon(Icons.error);
-                          } else {
-                            return const CircularProgressIndicator();
-                          }
-                        },
-                      ),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+            
+                if (item.relativeImagePath != null &&
+                    item.relativeImagePath!.isNotEmpty)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: FutureBuilder<String>(
+                      future: FileUtils.getFullImagePath(
+                          item.relativeImagePath!),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Image.file(File(snapshot.data!));
+                        } else if (snapshot.hasError) {
+                          return const Icon(Icons.error);
+                        } else {
+                          return const CircularProgressIndicator();
+                        }
+                      },
                     ),
+                  ),
                   const SizedBox(height: 16.0),
                   Container(
                     decoration: BoxDecoration(

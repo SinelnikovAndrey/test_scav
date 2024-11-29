@@ -151,7 +151,7 @@ class NotificationService {
         final granted = await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
                 AndroidFlutterLocalNotificationsPlugin>()
             ?.requestNotificationsPermission();
-        return granted ?? false; //Handle the case where requestNotificationsPermission returns null
+        return granted ?? false; 
     } catch (e){
       print("Error Requesting Permissions: $e");
       return false;
@@ -163,7 +163,7 @@ class NotificationService {
       final granted = await flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
                 AndroidFlutterLocalNotificationsPlugin>()
             ?.areNotificationsEnabled();
-      return granted ?? false; //Handle the case where areNotificationsEnabled returns null.
+      return granted ?? false; 
     } catch (e){
       print("Error Checking Permissions: $e");
       return false;
@@ -209,7 +209,6 @@ class NotificationService {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
-    // Correct Android notification details for daily repetition
     final androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'daily_notification_channel_id',
       'Daily Notifications',

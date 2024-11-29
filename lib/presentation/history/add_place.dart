@@ -75,7 +75,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
           id: placeId,
           placeName: _placeNameController.text.trim(),
           saveDateTime: DateTime.now(),
-          relativeImagePath: itemData.relativeImagePath,
+          relativeImagePath: itemData.relativeImagePath ?? '',
           itemName: itemData.name,
           itemColor: itemData.color,
           itemForm: itemData.form,

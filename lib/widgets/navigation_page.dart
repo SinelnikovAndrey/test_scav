@@ -1,13 +1,10 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-// import 'package:iconsax/iconsax.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/presentation/history/history_page.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
-import 'package:test_scav/presentation/home/test/my_items_page_copy.dart';
-import 'package:test_scav/presentation/home/test/test_my_items.dart';
-import 'package:test_scav/presentation/settings/settings_copy.dart';
+
 import 'package:test_scav/presentation/tips/tip_display.dart';
 import 'package:test_scav/presentation/settings/settings.dart';
 import 'package:test_scav/utils/assets.dart';

@@ -57,51 +57,6 @@ class _AddItemPageState extends State<AddItemPage> {
     return box.values.map((reminder) => reminder.title).toList();
   }
 
-//  static Future<String> savePickedImageToAppFolder(File image) async {
-//     final String path = _applicationDocumentsDirectory;
-//     String relativePath = '/' +DateTime.now().millisecondsSinceEpoch.toString()+ Path.extension(image.path);
-
-//     String newPath = '$path' + relativePath;
-
-//     File res =  await image.copy(newPath);
-
-//     return res != null && res.existsSync() ? relativePath : null;
-//   }
-
-//   static String getDocumentsPathByRelativePath(String relativePath){
-//     return relativePath != null && relativePath.isNotEmpty ? _applicationDocumentsDirectory + relativePath : null;
-//   }
-
-  // Future<void> _addItem() async {
-  //   if (_formKey.currentState!.validate()) {
-  //     setState(() {});
-  //     try {
-  //       final relativePath = await FileUtils.saveImage(_imageFile!);
-  //       if(relativePath == null) throw Exception('Image save failed');
-
-  //       final box = await Hive.openBox<ItemData>(itemBoxName);
-  //       final newItem = ItemData(
-  //         id: FileUtils.generateId(),
-  //         relativeImagePath: relativePath,
-  //         name: _nameController.text.trim(),
-  //         color: selectedColorName,
-  //         form: _formController.text.trim(),
-  //         group: selectedReminderTitle ?? '',
-  //         description: _descriptionController.text.trim(),
-  //       );
-  //       await box.add(newItem);
-  //       ScaffoldMessenger.of(context).showSnackBar(
-  //           const SnackBar(content: Text('Item added successfully!')));
-  //       Navigator.pop(context, newItem);
-  //     } catch (e) {
-  //       ScaffoldMessenger.of(context)
-  //           .showSnackBar(SnackBar(content: Text('Error: $e')));
-  //     } finally {
-  //       setState(() {});
-  //     }
-  //   }
-  // }
-
 
   Future<void> _addItem() async {
   if (_formKey.currentState!.validate()) {
@@ -112,18 +67,18 @@ class _AddItemPageState extends State<AddItemPage> {
         throw Exception('Image save failed');
       }
 
-      // Crucial change:  Get the existing box, or create a new one if necessary.
+      
       final box = Hive.box<ItemData>(itemBoxName); 
       
-      // Generate a unique ID, crucial for uniqueness.
+      
       String newId;
       do {
         newId = FileUtils.generateId();
-      } while (box.containsKey(newId)); // Ensures the ID is unique
+      } while (box.containsKey(newId)); 
 
 
       final newItem = ItemData(
-        id: newId, //Use the generated unique ID
+        id: newId,
         relativeImagePath: relativePath,
         name: _nameController.text.trim(),
         color: selectedColorName,
@@ -132,7 +87,7 @@ class _AddItemPageState extends State<AddItemPage> {
         description: _descriptionController.text.trim(),
       );
 
-      await box.put(newId, newItem); //Put using the generated ID
+      await box.put(newId, newItem); 
 
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Item added successfully!')));

@@ -30,7 +30,7 @@ class _SettingsState extends State<Settings> {
   bool _notificationPermissionRequested = false;
   final _formKey = GlobalKey<FormState>();
 
-  bool _notificationScheduled = false; //This line was missing
+  bool _notificationScheduled = false;
   int _notificationId = 0;
 
   Future<void> _selectTime(BuildContext context) async {
@@ -48,7 +48,7 @@ class _SettingsState extends State<Settings> {
   final _allNotificationsEnabled = ValueNotifier<bool>(false);
   int _notificationIdCounter = 0;
   List<int> _scheduledNotificationIds =
-      []; //Keep track of scheduled notification IDs
+      []; 
 
   int _generateUniqueId() {
     _notificationIdCounter++;
@@ -69,7 +69,7 @@ class _SettingsState extends State<Settings> {
       if (enabled && updatedReminder.active) {
         final id = _generateUniqueId();
         final timeOfDay = TimeOfDay.fromDateTime(
-            updatedReminder.dateTime); // Extract TimeOfDay
+            updatedReminder.dateTime); 
         await NotificationService.scheduleDailyNotification(
             id,
             updatedReminder.title,
