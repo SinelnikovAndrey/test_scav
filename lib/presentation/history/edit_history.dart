@@ -15,10 +15,10 @@ import 'package:test_scav/widgets/left_button.dart';
 
 class EditHistoryPage extends StatefulWidget {
   final HistoryData placeData;
-  final ValueNotifier<HistoryData> placeDataNotifier;
+  // final ValueNotifier<HistoryData> placeDataNotifier;
 
   const EditHistoryPage(
-      {Key? key, required this.placeData, required this.placeDataNotifier})
+      {Key? key, required this.placeData, })
       : super(key: key);
 
   @override
@@ -35,9 +35,11 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
   final TextEditingController _dateController = TextEditingController();
   DateTime _selectedDate = DateTime.now();
   TimeOfDay _selectedTime = TimeOfDay.now();
-  late Box<HistoryData> historyBox;
-  final picker = ImagePicker();
-  File? _imageUrl;
+  late final Box<HistoryData> historyBox;
+  
+  final _imagePicker = ImagePicker();
+  // File? _imageUrl;
+  File? _imageFile;
 
   DateTime _selectedDateTime = DateTime.now();
   final TextEditingController _dateTimeController = TextEditingController();
@@ -49,6 +51,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
   @override
   void initState() {
     super.initState();
+    _openHistoryBox();
     // historyBox = Hive.box<HistoryData>(historyBoxName);
     _placeNameController.text = widget.placeData.placeName;
     _placeDescriptionController.text = widget.placeData.placeDescription;
@@ -57,6 +60,19 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
 
     _updateDateTimeController();
   }
+
+  Future<void> _openHistoryBox() async {
+  try {
+    historyBox = await Hive.openBox<HistoryData>(historyBoxName);
+    setState(() {}); // Rebuild the widget after the box is opened.
+  } catch (e) {
+    // Handle errors opening the box, such as a missing box.
+    print('Error opening history box: $e');
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Error opening history box: $e'),
+    ));
+  }
+}
 
   void _updateTimeController() {
     _timeController.text = _selectedTime.format(context);
@@ -117,10 +133,21 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
   }
 
   Future<void> _pickImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _imageUrl = pickedFile != null ? File(pickedFile.path) : null;
-    });
+    try {
+      final pickedFile =
+          await _imagePicker.pickImage(source: ImageSource.gallery);
+      if (pickedFile != null) {
+        setState(() {
+          _imageFile = File(pickedFile.path); //Set the image
+        });
+      } else {
+        // Handle the case where the user cancels the image selection.
+      }
+    } on Exception catch (e) {
+      //Show error
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Image picking error: $e')));
+    }
   }
 
   @override
@@ -134,9 +161,34 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
 
   Future<void> _updatePlace() async {
     if (_formKey.currentState!.validate()) {
-      final placeRelativePath = await FileUtils.saveImage(_imageUrl!);
-      if (placeRelativePath == null) throw Exception('Image save failed');
-      final updatedPlaceData = HistoryData(
+      // Input validation
+      if (_placeNameController.text.trim().isEmpty ||
+          _placeDescriptionController.text.trim().isEmpty ||
+          _dateTimeController.text.trim().isEmpty 
+          ) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please fill in all fields')));
+        return;
+      }
+
+      // Check if an image has been selected
+      if (_imageFile == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please select an image')));
+        return;
+      }
+      try {
+      String? newPlaceRelativePath; //Declare here
+
+      if (_imageFile != null) {
+          newPlaceRelativePath = await FileUtils.saveImage(_imageFile!);
+          if (newPlaceRelativePath == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Error saving image')));
+            return;
+          }
+      }
+      final updatedPlaceData =  widget.placeData.copyWith( 
         id: widget.placeData.id,
         placeName: _placeNameController.text.trim(),
         relativeImagePath: widget.placeData.relativeImagePath,
@@ -146,24 +198,29 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
         itemForm: widget.placeData.itemForm,
         itemGroup: widget.placeData.itemGroup,
         itemDescription: widget.placeData.itemDescription,
-        placePhotoUrl: placeRelativePath,
+        placePhotoUrl: newPlaceRelativePath ?? widget.placeData.placePhotoUrl, 
         saveDateTime: widget.placeData.saveDateTime,
         fetchDateTime: widget.placeData.fetchDateTime,
       );
 
-      final placeBox = await Hive.openBox<HistoryData>(historyBoxName);
-      await placeBox.put(widget.placeData.id.toString(), updatedPlaceData);
+      await historyBox.put(widget.placeData.id , updatedPlaceData);
 
-      widget.placeDataNotifier.value = updatedPlaceData;
-      Navigator.pop(context);
+      
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Item updated successfully!')));
+        Navigator.pop(context, updatedPlaceData); // Return the new item
+      } on HiveError catch (e) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Hive error: ${e.message}')));
+      } on Exception catch (e) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Error adding item: $e')));
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<HistoryData>(
-        valueListenable: widget.placeDataNotifier, // Listen to ValueNotifier
-        builder: (context, placeData, child) {
           return Scaffold(
             appBar: AppBar(
               centerTitle: true,
@@ -196,7 +253,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                         borderRadius: BorderRadius.circular(10),
                         child: FutureBuilder<String>(
                           future: FileUtils.getFullImagePath(
-                            placeData.relativeImagePath,
+                            widget.placeData.relativeImagePath,
                           ),
                           builder: (context, snapshot) {
                             if (snapshot.hasData) {
@@ -314,8 +371,9 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                             const SizedBox(height: 20.0),
                             GestureDetector(
                               onTap: _pickImage,
-                              child: _imageUrl != null
+                              child: _imageFile != null
                                   ? Container(
+                                      // Show the new image if it's selected
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(20),
                                         color: AppColors.gray,
@@ -325,26 +383,29 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                                               0.4,
                                       width: MediaQuery.of(context).size.width *
                                           0.9,
-                                      child: Image.file(_imageUrl!,
-                                          height: 200,
-                                          width: double.infinity,
-                                          fit: BoxFit.cover),
-                                    )
-                                  : Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: AppColors.darkBorderGray,
+                                      child: Image.file(
+                                        _imageFile!,
+                                        height: 200,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
                                       ),
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.4,
-                                      width: MediaQuery.of(context).size.width *
-                                          0.9,
-                                      child: const Center(
-                                          child: Text(
-                                        '+ Add Photo',
-                                        style: AppFonts.h6,
-                                      )),
+                                    )
+                                  : FutureBuilder<String>(
+                                      // Show existing image otherwise
+                                      future: FileUtils.getFullImagePath(
+                                          widget.placeData.placePhotoUrl!),
+                                      builder: (context, snapshot) {
+                                        if (snapshot.hasData) {
+                                          return Image.file(
+                                              File(snapshot.data!));
+                                        } else if (snapshot.hasError) {
+                                          return Container(
+                                              // ... (placeholder for error as before) ...
+                                              );
+                                        } else {
+                                          return const CircularProgressIndicator();
+                                        }
+                                      },
                                     ),
                             ),
                             const SizedBox(height: 20.0),
@@ -360,6 +421,6 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
               ),
             ),
           );
-        });
+        }
   }
-}
+

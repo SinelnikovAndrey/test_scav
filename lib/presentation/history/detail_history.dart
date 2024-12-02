@@ -8,57 +8,18 @@ import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/file_utils.dart';
 import 'package:test_scav/widgets/left_button.dart';
 
-class HistoryDetailPage extends StatefulWidget {
-  final String itemId;
 
+class HistoryDetailPage extends StatelessWidget {
+  final String itemId;
   const HistoryDetailPage({super.key, required this.itemId});
 
-  @override
-  State<HistoryDetailPage> createState() => _HistoryDetailPageState();
-}
-
-class _HistoryDetailPageState extends State<HistoryDetailPage> {
-  late ValueNotifier<HistoryData> _placeDataNotifier; 
-
-  @override
-  void initState() {
-    super.initState();
-     _placeDataNotifier = ValueNotifier(HistoryData.empty()); 
-    _loadItemData();
-  }
-
-  Future<void> _loadItemData() async {
-    final box = await Hive.openBox<HistoryData>(historyBoxName);
-    final item = box.get(widget.itemId);
-    // await box.close();
-
-    if (item == null) {
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Item not found!')),
-      );
-      return;
-    }
-
-
-    setState(() {
-      _placeDataNotifier.value = item; 
-    });
-    await box.close();
-  }
-
-  @override
-  void dispose() {
-    _placeDataNotifier.dispose();
-    super.dispose();
-  }
-
    @override
-  Widget build(BuildContext context) {
-    return ValueListenableBuilder<HistoryData?>( 
-      valueListenable: _placeDataNotifier,
-      builder: (context, item, child) {
-        if (item == null) {
+Widget build(BuildContext context) {
+  return ValueListenableBuilder<Box<HistoryData>>(
+    valueListenable: Hive.box<HistoryData>(historyBoxName).listenable(),
+    builder: (context, box, _) {
+      final item = box.get(itemId);
+      if (item == null) {
           return const Scaffold(
               body: Center(child: CircularProgressIndicator())); 
         } else {
@@ -92,8 +53,6 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
                       MaterialPageRoute(
                         builder: (context) => EditHistoryPage(
                           placeData: item,
-                          placeDataNotifier:
-                              _placeDataNotifier, 
                         ),
                       ),
                     );
@@ -226,26 +185,24 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
                   const SizedBox(
                     height: 15,
                   ),
-                   if (item.placePhotoUrl != null && item.placePhotoUrl!.isNotEmpty)
-                      FutureBuilder<String>(
-                        future: FileUtils.getFullImagePath(item.placePhotoUrl!),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const CircularProgressIndicator();
-                          } else if (snapshot.hasError) {
-                            return Text('Error loading image: ${snapshot.error}');
-                          } else if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                            return Image.file(File(snapshot.data!),
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              fit: BoxFit.cover,
-                            );
-                          } else {
-                            return const SizedBox.shrink(); 
-                          }
-                        },
-                      )
-                    else
-                      const SizedBox.shrink(), 
+                   if (item.relativeImagePath != null &&
+                    item.relativeImagePath!.isNotEmpty)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(20),
+                    child: FutureBuilder<String>(
+                      future: FileUtils.getFullImagePath(
+                          item.placePhotoUrl!),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          return Image.file(File(snapshot.data!));
+                        } else if (snapshot.hasError) {
+                          return const Icon(Icons.error);
+                        } else {
+                          return const CircularProgressIndicator();
+                        }
+                      },
+                    ),
+                  ),
                 ],
               ),
             ),

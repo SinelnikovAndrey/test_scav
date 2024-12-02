@@ -209,7 +209,7 @@ class NotificationService {
       scheduledDate = scheduledDate.add(const Duration(days: 1));
     }
 
-    final androidPlatformChannelSpecifics = AndroidNotificationDetails(
+    const androidPlatformChannelSpecifics = AndroidNotificationDetails(
       'daily_notification_channel_id',
       'Daily Notifications',
       channelDescription: 'Daily notifications channel.',
@@ -220,7 +220,7 @@ class NotificationService {
 
     );
     
-    final iOSPlatformChannelSpecifics = DarwinNotificationDetails(
+    const iOSPlatformChannelSpecifics = DarwinNotificationDetails(
       presentAlert: true,
       presentBadge: true,
       presentSound: true,

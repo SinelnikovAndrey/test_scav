@@ -19,34 +19,41 @@ import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
 
+
 const String itemBoxName = 'itemsBox';
 const String historyBoxName = 'historyBox';
 const String reminderBoxName = 'remindersBox';
-
-String appDocumentsDirPath = ''; 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
 
-  final appDocDir = await getApplicationDocumentsDirectory();
-  final appDocumentsDirPath = appDocDir.path;
-  
-
-  await _initHive(appDocumentsDirPath); 
-  tz.initializeTimeZones();
-
-  runApp(MyApp(appDocumentsDirPath: appDocumentsDirPath));
-  FlutterNativeSplash.remove();
+  try {
+    final appDocDir = await getApplicationDocumentsDirectory();
+    await _initHive(appDocDir.path); // Pass the path directly
+    tz.initializeTimeZones();
+    runApp(MyApp(appDocumentsDirPath: appDocDir.path)); // Pass directly
+  } catch (e) {
+    // Handle initialization errors appropriately (log, display error message, etc.)
+    print("Error during initialization: $e");
+  } finally {
+    FlutterNativeSplash.remove();
+  }
 }
 
-Future<void> _initHive(appDocumentsDirPath) async {
-  Hive.init(appDocumentsDirPath);
-  registerAdapters(); 
+Future<void> _initHive(String appDocumentsDirPath) async { // Specify String type
+  try {
+    Hive.init(appDocumentsDirPath);
+    registerAdapters(); // Call your adapter registration function
 
-  await Future.wait([
-    Hive.openBox<ItemData>(itemBoxName),
-    Hive.openBox<HistoryData>(historyBoxName),
-    Hive.openBox<Reminder>(reminderBoxName),
-  ]);
+    await Future.wait([
+      Hive.openBox<HistoryData>(historyBoxName),
+      Hive.openBox<ItemData>(itemBoxName),
+      Hive.openBox<Reminder>(reminderBoxName),
+    ]);
+  } catch (e) {
+    // Handle Hive initialization errors
+    print('Hive initialization error: $e');
+    //Consider displaying an error message to the user.  Or take some other recovery action.
+  }
 }
