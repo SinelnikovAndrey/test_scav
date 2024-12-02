@@ -80,7 +80,7 @@ Widget build(BuildContext context) {
             height: MediaQuery.of(context).size.height * 0.1,
             width: MediaQuery.of(context).size.width * 0.9,
             child: DefaultButton(
-              text: "Gotit!",
+              text: "Got it!",
               onTap: () {
                 Future.delayed(Duration.zero, () {
                   Navigator.of(context).push(

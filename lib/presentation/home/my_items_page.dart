@@ -161,8 +161,8 @@ class _MyItemsPageState extends State<MyItemsPage> {
                           return Image.file(
                             File(snapshot.data!),
                             height:
-                                MediaQuery.of(context).size.height * 0.15, 
-                            width: MediaQuery.of(context).size.width * 0.3, 
+                                MediaQuery.of(context).size.height * 0.25, 
+                            width: MediaQuery.of(context).size.width * 0.4, 
                             fit: BoxFit.cover,
                           );
                         } else {

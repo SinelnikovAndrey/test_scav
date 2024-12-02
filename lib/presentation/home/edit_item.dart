@@ -45,6 +45,7 @@ class _EditItemPageState extends State<EditItemPage> {
   @override
   void initState() {
     super.initState();
+    _selectedReminderTitle = widget.itemData.group;
     _itemBox = Hive.box<ItemData>(itemBoxName); 
     _nameController.text = widget.itemData.name;
     _colorController.text = widget.itemData.color;
@@ -94,12 +95,7 @@ class _EditItemPageState extends State<EditItemPage> {
         return;
       }
 
-      // Check if an image has been selected
-      if (_imageFile == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select an image')));
-        return;
-      }
+   
 
       try {
       String? newRelativePath; //Declare here
@@ -109,7 +105,7 @@ class _EditItemPageState extends State<EditItemPage> {
           if (newRelativePath == null) {
             ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Error saving image')));
-            return;
+            return ;
           }
       }
 
@@ -299,40 +295,40 @@ class _EditItemPageState extends State<EditItemPage> {
                     style: AppFonts.h6,
                   ),
                   Container(
-          decoration: BoxDecoration(
-            border: Border.all(),
-            borderRadius: BorderRadius.circular(20),
+  decoration: BoxDecoration(
+    border: Border.all(),
+    borderRadius: BorderRadius.circular(20),
+  ),
+  height: MediaQuery.of(context).size.height * 0.09,
+  width: MediaQuery.of(context).size.width * 0.9,
+  child: Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+    child: _reminders.isEmpty
+        ? const Center(child: Text('Loading reminders...'))
+        : DropdownButtonFormField<String>(
+            value: _selectedReminderTitle ?? widget.itemData.group, // Initial value
+            decoration: const InputDecoration(border: InputBorder.none),
+            hint: const Text('Select Reminder'), // Removed dynamic hint
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedReminderTitle = newValue;
+              });
+            },
+            items: _reminders.map((reminder) {
+              return DropdownMenuItem<String>(
+                value: reminder.title,
+                child: Text(reminder.title),
+              );
+            }).toList(),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Please select a reminder';
+              }
+              return null;
+            },
           ),
-          height: MediaQuery.of(context).size.height * 0.09,
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
-            child: _reminders.isEmpty
-                ? const Center(child: Text('Loading reminders...')) //Show while loading.
-                : DropdownButtonFormField<String>(
-                    value: _selectedReminderTitle,
-                    decoration: const InputDecoration(border: InputBorder.none),
-                    hint:  Text(widget.itemData.group),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        _selectedReminderTitle = newValue;
-                      });
-                    },
-                    items: _reminders.map((reminder) {
-                      return DropdownMenuItem<String>(
-                        value: reminder.title,
-                        child: Text(reminder.title),
-                      );
-                    }).toList(),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please select a reminder';
-                      }
-                      return null;
-                    },
-                  ),
-          ),
-        ),
+  ),
+),
                   const SizedBox(height: 10.0),
                   const Text(
                     'Description',
@@ -369,7 +365,7 @@ class _EditItemPageState extends State<EditItemPage> {
                 ]),
 
                 DefaultButton(
-                  text: 'Add',
+                  text: 'Save',
                   onTap: _editFile,
                 )
               ],

@@ -18,8 +18,7 @@ class SvgAssets {
   static const String colorLens = '${_basePath}color_lens.svg';
   static const String cube = '${_basePath}cube.svg';
   static const String plus = '${_basePath}plus.svg';
-  
-
+  static const String splash = '${_basePath}daily_scavenger.svg';
 }
 
 class PngAssets {

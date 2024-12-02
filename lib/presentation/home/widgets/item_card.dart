@@ -61,9 +61,9 @@ class ItemCard extends StatelessWidget {
                             snapshot.data!.isNotEmpty) {
                           return Image.file(
                             File(snapshot.data!),
-                            height:
-                                MediaQuery.of(context).size.height * 0.15, 
-                            width: MediaQuery.of(context).size.width * 0.3, 
+                            // height:
+                            //     MediaQuery.of(context).size.height * 0.15, 
+                            width: MediaQuery.of(context).size.width * 0.5, 
                             fit: BoxFit.cover,
                           );
                         } else {

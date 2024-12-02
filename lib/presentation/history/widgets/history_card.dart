@@ -18,40 +18,41 @@ class HistoryCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.23,
+        height: MediaQuery.of(context).size.height * 0.21,
         width: MediaQuery.of(context).size.width * 0.9,
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: () {
+            print('Product object: $item');
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => HistoryDetailPage(itemId: item.id,)),
+                  builder: (context) => HistoryDetailPage(itemId: item.id)),
             );
           },
           child: Container(
-            padding: const EdgeInsets.all(5),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(
-                color: AppColors.lightBorderGray,
-              ),
+              border: Border.all(color: AppColors.lightBorderGray),
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Improved Image handling
+                if (item.relativeImagePath != null &&
+                    item.relativeImagePath!.isNotEmpty)
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                     child: FutureBuilder<String>(
                         future: FileUtils.getFullImagePath(item.relativeImagePath,
                         ),
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return Image.file(File(snapshot.data!,),
-                            height: MediaQuery.of(context).size.height * 0.40,
-                            width: MediaQuery.of(context).size.width * 0.5,
+                            height:
+                                MediaQuery.of(context).size.height * 0.25, 
+                            width: MediaQuery.of(context).size.width * 0.4, 
                             );
                           } else if (snapshot.hasError) {
                             return const Icon(Icons.error);
@@ -130,7 +131,7 @@ class HistoryCard extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      
     );
   }
 }

@@ -4,48 +4,30 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
+import 'package:test_scav/utils/assets.dart';
 import 'package:test_scav/widgets/navigation_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_router.dart';
 class MyApp extends StatefulWidget {
-  final String appDocumentsDirPath;
-  const MyApp({super.key, required this.appDocumentsDirPath});
+  const MyApp({super.key, });
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  late final Future<Root> _rootDataFuture;
 
   @override
   void initState() {
     super.initState();
-    _rootDataFuture = _loadRootData();
-  }
-
-  Future<Root> _loadRootData() async {
-    final jsonData = await rootBundle.loadString('assets/en.json');
-    return Root.fromJson(json.decode(jsonData));
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<Root>(
-      future: _rootDataFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const MaterialApp(
-            home: Center(child: CircularProgressIndicator()),
-          );
-        } else if (snapshot.hasError) {
-          return MaterialApp(
-            home: Center(
-              child: Text('Error loading data: ${snapshot.error}'),
-            ),
-          );
-        } else {
+    
+        
           return MaterialApp(
             title: 'Scavenger',
             debugShowCheckedModeBanner: false,
@@ -54,10 +36,71 @@ class _MyAppState extends State<MyApp> {
               useMaterial3: true,
             ),
             onGenerateRoute: AppRouter.onGenerateRoute,
-            home: NavigationPage(rootData: snapshot.data!, appDocumentsDirPath: widget.appDocumentsDirPath),
+            home: const SplashPage(),
           );
         }
-      },
+      }
+
+
+
+
+
+class SplashPage extends StatefulWidget {
+  const SplashPage({super.key});
+
+  @override
+  State<SplashPage> createState() => _SplashPageState();
+}
+
+class _SplashPageState extends State<SplashPage> {
+  @override
+  void initState() {
+    // after 1 seconds, navigate to onboarding page
+    Future.delayed(
+      const Duration(seconds: 1),
+      () => Navigator.pushReplacementNamed(
+        context,
+        AppRouter.navigationPageRoute,
+      ),
+    );
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.primary,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SvgPicture.asset(
+              SvgAssets.splash,
+              width: MediaQuery.of(context).size.width * 0.6,
+              colorFilter: const ColorFilter.mode(
+                Colors.white,
+                BlendMode.srcIn,
+              ),
+            ),
+            const SizedBox(height: 40),
+            const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Daily Scavenger',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 34,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+          
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

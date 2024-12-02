@@ -48,8 +48,8 @@ class HistoryData {
         fetchDateTime = DateTime.now();
   
 
-  String get formattedFetchDate => DateFormat('dd.MM.yy').format(fetchDateTime);
-  String get formattedFetchTime => DateFormat('HH:mm').format(fetchDateTime);
+  String get formattedFetchDate => DateFormat('dd.MM.yy').format(saveDateTime);
+  String get formattedFetchTime => DateFormat('HH:mm').format(saveDateTime);
 
   
 

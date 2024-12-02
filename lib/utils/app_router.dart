@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/presentation/home/add_group.dart';
 import 'package:test_scav/presentation/home/add_item.dart';
 // import 'package:test_scav/presentation/home/add_item.dart';
@@ -9,6 +10,7 @@ import 'package:test_scav/presentation/home/my_items_page.dart';
 // import 'package:test_scav/presentation/home/test_add_item.dart';
 import 'package:test_scav/presentation/notification/reminder_body_list.dart';
 import 'package:test_scav/presentation/notification/reminder_list.dart';
+import 'package:test_scav/widgets/navigation_page.dart';
 class AppRouter {
   static const String myItemsPageRoute = '/myItemsPage';
   static const String navigationPageRoute = '/navigationPage';
@@ -27,8 +29,16 @@ class AppRouter {
 
       // case myItemsPageRoute:
       //   return MaterialPageRoute<void>(builder: (_) => const MyItemsPage());
-        // case itemDetailRoute:
-        // return MaterialPageRoute<void>(builder: (_) => const ProductDetailPage(productId: '',));
+        case navigationPageRoute:
+        // IMPORTANT:  You need to provide data here
+        // Correctly use named parameters with required types.
+        final arguments = settings.arguments as Map<String, dynamic>?;
+        return MaterialPageRoute<dynamic>(
+          builder: (_) => NavigationPage(
+            rootData: arguments?['rootData'] ?? Root(), //Default Root object
+          appDocumentsDirPath: arguments?['appDocumentsDirPath'] ?? '', 
+          ),
+        );
       case addItemRoute:
         return MaterialPageRoute<void>(builder: (_) => const AddItemPage());
       case reminderItemRoute:

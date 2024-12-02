@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart'; 
@@ -26,18 +25,18 @@ const String reminderBoxName = 'remindersBox';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
+  // FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
 
   try {
     final appDocDir = await getApplicationDocumentsDirectory();
     await _initHive(appDocDir.path); // Pass the path directly
     tz.initializeTimeZones();
-    runApp(MyApp(appDocumentsDirPath: appDocDir.path)); // Pass directly
+    runApp(const MyApp()); // Pass directly
   } catch (e) {
     // Handle initialization errors appropriately (log, display error message, etc.)
     print("Error during initialization: $e");
   } finally {
-    FlutterNativeSplash.remove();
+    // FlutterNativeSplash.remove();
   }
 }
 

@@ -301,7 +301,7 @@ class _AddItemPageState extends State<AddItemPage> {
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 10),
+                          horizontal: 20.0, vertical: 5),
                       child: _reminders.isEmpty
                           ? const Center(
                               child: Text(

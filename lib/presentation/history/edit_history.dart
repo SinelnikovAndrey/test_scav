@@ -59,6 +59,16 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
     _selectedDate = widget.placeData.saveDateTime;
 
     _updateDateTimeController();
+    _setInitialDateTime();
+  }
+
+
+  void _setInitialDateTime() {
+    if (widget.placeData.saveDateTime != null) {
+      _selectedDateTime = widget.placeData.saveDateTime;
+      _dateTimeController.text = DateFormat('yyyy-MM-dd HH:mm')
+          .format(widget.placeData.saveDateTime!);
+    }
   }
 
   Future<void> _openHistoryBox() async {
@@ -155,7 +165,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
     _placeNameController.dispose();
     _placeDescriptionController.dispose();
     _placePhotoUrlController.dispose();
-    _dateTimeController.dispose();
+    // _dateTimeController.dispose();
     super.dispose();
   }
 
@@ -163,8 +173,8 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
     if (_formKey.currentState!.validate()) {
       // Input validation
       if (_placeNameController.text.trim().isEmpty ||
-          _placeDescriptionController.text.trim().isEmpty ||
-          _dateTimeController.text.trim().isEmpty 
+          _placeDescriptionController.text.trim().isEmpty
+          // _dateTimeController.text.trim().isEmpty 
           ) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Please fill in all fields')));
@@ -172,11 +182,11 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
       }
 
       // Check if an image has been selected
-      if (_imageFile == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please select an image')));
-        return;
-      }
+      // if (_imageFile == null) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //       const SnackBar(content: Text('Please select an image')));
+      //   return;
+      // }
       try {
       String? newPlaceRelativePath; //Declare here
 
@@ -199,8 +209,8 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
         itemGroup: widget.placeData.itemGroup,
         itemDescription: widget.placeData.itemDescription,
         placePhotoUrl: newPlaceRelativePath ?? widget.placeData.placePhotoUrl, 
-        saveDateTime: widget.placeData.saveDateTime,
-        fetchDateTime: widget.placeData.fetchDateTime,
+        saveDateTime: _selectedDateTime ?? widget.placeData.saveDateTime,
+        fetchDateTime: _selectedDateTime ?? widget.placeData.fetchDateTime,
       );
 
       await historyBox.put(widget.placeData.id , updatedPlaceData);
@@ -391,22 +401,45 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                                       ),
                                     )
                                   : FutureBuilder<String>(
-                                      // Show existing image otherwise
-                                      future: FileUtils.getFullImagePath(
-                                          widget.placeData.placePhotoUrl!),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.hasData) {
-                                          return Image.file(
-                                              File(snapshot.data!));
-                                        } else if (snapshot.hasError) {
-                                          return Container(
-                                              // ... (placeholder for error as before) ...
-                                              );
-                                        } else {
-                                          return const CircularProgressIndicator();
-                                        }
-                                      },
-                                    ),
+          future: FileUtils.getFullImagePath(widget.placeData.placePhotoUrl!),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircularProgressIndicator();
+            } else if (snapshot.hasError) {
+              return const PlaceholderImage(); //Placeholder for error
+            } else if (snapshot.hasData) {
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: AppColors.gray,
+                ),
+                height: MediaQuery.of(context).size.height * 0.4,
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: Image.file(
+                  File(snapshot.data!),
+                  height: 200,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                ),
+              );
+            } else {
+              return Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: AppColors.darkBorderGray,
+                ),
+                height: MediaQuery.of(context).size.height * 0.4,
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: const Center(
+                  child: Text(
+                    '+ Add Photo',
+                    style: AppFonts.h6,
+                  ),
+                ),
+              );
+            }
+          },
+        ),
                             ),
                             const SizedBox(height: 20.0),
                           ]),
@@ -424,3 +457,24 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
         }
   }
 
+class PlaceholderImage extends StatelessWidget {
+  const PlaceholderImage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: AppColors.darkBorderGray,
+      ),
+      height: MediaQuery.of(context).size.height * 0.4,
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: const Center(
+        child: Text(
+          '+ Add Photo',
+          style: AppFonts.h6,
+        ),
+      ),
+    );
+  }
+}

@@ -194,9 +194,11 @@ Widget build(BuildContext context) {
                           item.placePhotoUrl!),
                       builder: (context, snapshot) {
                         if (snapshot.hasData) {
-                          return Image.file(File(snapshot.data!));
+                          return Image.file(File(snapshot.data!),
+                          width: MediaQuery.of(context).size.width * 0.9,
+                          );
                         } else if (snapshot.hasError) {
-                          return const Icon(Icons.error);
+                          return const SizedBox();
                         } else {
                           return const CircularProgressIndicator();
                         }
