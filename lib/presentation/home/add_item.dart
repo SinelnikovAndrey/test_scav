@@ -29,10 +29,9 @@ class _AddItemPageState extends State<AddItemPage> {
   final _descriptionController = TextEditingController();
 
   final _imagePicker = ImagePicker();
-  // String _imageUrl;
   File? _imageFile;
 
-  List<Reminder> _reminders = []; // List to hold reminders
+  List<Reminder> _reminders = []; 
   String? _selectedReminderTitle;
 
   late final Box<ItemData> _itemBox;
@@ -40,8 +39,7 @@ class _AddItemPageState extends State<AddItemPage> {
   @override
   void initState() {
     super.initState();
-    // _imageFile = File(widget.imagePath);
-    // _imageFile = File(FileUtils.saveImage(image).imagePath);
+
     _itemBox = Hive.box<ItemData>(itemBoxName);
     _loadReminders();
   }
@@ -59,26 +57,44 @@ class _AddItemPageState extends State<AddItemPage> {
     return 'item_$randomNumber';
   }
 
-
   Future<void> _pickImage() async {
     try {
-      final pickedFile =
-          await _imagePicker.pickImage(source: ImageSource.gallery);
+      final pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+      );
+
       if (pickedFile != null) {
+        final fileSizeInBytes = await File(pickedFile.path).length();
+        final fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+        if (fileSizeInMB > 10) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: const Text(
+                  'Image file is too large (over 10MB). Please select a smaller image.')));
+          return;
+        }
+
         setState(() {
-          _imageFile = File(pickedFile.path); //Set the image
+          _imageFile = File(pickedFile.path);
         });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Image selected successfully!')),
+        );
       } else {
-        // Handle the case where the user cancels the image selection.
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Image selection cancelled.')),
+        );
       }
-    } on Exception catch (e) {
-      //Show error
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Image picking error: $e')));
+    } catch (e) {
+      debugPrintStack(label: 'Image picker error:');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error picking image: $e'),
+      ));
     }
   }
 
- 
   Future<void> _addFile() async {
     if (_formKey.currentState!.validate()) {
       // Input validation
@@ -91,7 +107,6 @@ class _AddItemPageState extends State<AddItemPage> {
         return;
       }
 
-      // Check if an image has been selected
       if (_imageFile == null) {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Please select an image')));
@@ -101,7 +116,6 @@ class _AddItemPageState extends State<AddItemPage> {
       try {
         final relativePath = await FileUtils.saveImage(_imageFile!);
         if (relativePath == null) {
-          // Handle the case where FileUtils.saveImage failed
           ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Error saving image')));
           return;
@@ -113,15 +127,15 @@ class _AddItemPageState extends State<AddItemPage> {
           name: _nameController.text.trim(),
           color: selectedColorName,
           form: _formController.text.trim(),
-          group: _selectedReminderTitle ?? '', // Handle potential null
+          group: _selectedReminderTitle ?? '',
           description: _descriptionController.text.trim(),
         );
 
-        await _itemBox.put(newItem.id, newItem); // Use the opened box
+        await _itemBox.put(newItem.id, newItem);
 
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Item added successfully!')));
-        Navigator.pop(context, newItem); // Return the new item
+        Navigator.pop(context, newItem); 
       } on HiveError catch (e) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Hive error: ${e.message}')));
@@ -147,41 +161,41 @@ class _AddItemPageState extends State<AddItemPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: _pickImage,
-                  child: _imageFile != null
-                      ? Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: AppColors.gray,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(20),
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: _imageFile != null
+                        ? Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: AppColors.darkBorderGray,
+                            ),
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: Image.file(
+                              _imageFile!,
+                              // height: 200,
+                              // width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: AppColors.darkBorderGray,
+                            ),
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: const Center(
+                                child: Text(
+                              '+ Add Photo',
+                              style: AppFonts.h6,
+                            )),
                           ),
-                          height: MediaQuery.of(context).size.height * 0.4,
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: Image.file(
-                            _imageFile!,
-                            height: 200,
-                            width: double.infinity,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20),
-                            color: AppColors.darkBorderGray,
-                          ),
-                          height: MediaQuery.of(context).size.height * 0.4,
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: const Center(
-                              child: Text(
-                            '+ Add Photo',
-                            style: AppFonts.h6,
-                          )),
-                        ),
+                  ),
                 ),
-
                 const SizedBox(height: 20.0),
-
-                /////////FORM------FORM////////
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   const Text(
                     'Name',
@@ -305,12 +319,12 @@ class _AddItemPageState extends State<AddItemPage> {
                       child: _reminders.isEmpty
                           ? const Center(
                               child: Text(
-                                  'Loading reminders...')) //Show while loading.
+                                  'Loading groups...'))
                           : DropdownButtonFormField<String>(
                               value: _selectedReminderTitle,
                               decoration: const InputDecoration(
                                   border: InputBorder.none),
-                              hint: const Text('Select Reminder'),
+                              hint: const Text('Select group'),
                               onChanged: (String? newValue) {
                                 setState(() {
                                   _selectedReminderTitle = newValue;
@@ -322,12 +336,7 @@ class _AddItemPageState extends State<AddItemPage> {
                                   child: Text(reminder.title),
                                 );
                               }).toList(),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please select a reminder';
-                                }
-                                return null;
-                              },
+                             
                             ),
                     ),
                   ),
@@ -365,7 +374,6 @@ class _AddItemPageState extends State<AddItemPage> {
                   const SizedBox(height: 20.0),
                   const SizedBox(height: 20.0),
                 ]),
-
                 DefaultButton(
                   text: 'Add',
                   onTap: _addFile,

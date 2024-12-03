@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart'; 
@@ -25,34 +26,54 @@ const String reminderBoxName = 'remindersBox';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
+  FlutterNativeSplash.preserve(widgetsBinding: WidgetsBinding.instance);
+  String appDocumentsDirPath = '';
 
   try {
     final appDocDir = await getApplicationDocumentsDirectory();
-    await _initHive(appDocDir.path); // Pass the path directly
+    appDocumentsDirPath = appDocDir.path; // Assign the path
+    await _initHive(appDocumentsDirPath);
     tz.initializeTimeZones();
-    runApp(const MyApp()); // Pass directly
-  } catch (e) {
-    // Handle initialization errors appropriately (log, display error message, etc.)
-    print("Error during initialization: $e");
+  } on Exception catch (e) {
+    debugPrint("Error during initialization: $e");
+    // Display a user-friendly error message here.
   } finally {
-    // FlutterNativeSplash.remove();
+    FlutterNativeSplash.remove();
+  }
+
+  runApp(MyApp(appDocumentsDirPath: appDocumentsDirPath)); // Pass the path
+
+}
+
+Future<void> _initHive(String appDocumentsDirPath) async {
+  try {
+    await Hive.initFlutter(appDocumentsDirPath); 
+    registerAdapters();
+    try {
+       await Hive.openBox<HistoryData>(historyBoxName);
+    } catch (e) {
+      debugPrint('Error opening history box: $e');
+    }
+
+    try {
+       await Hive.openBox<ItemData>(itemBoxName);
+    } catch (e) {
+      debugPrint('Error opening items box: $e');
+    }
+    
+    try {
+       await Hive.openBox<Reminder>(reminderBoxName);
+    } catch (e) {
+      debugPrint('Error opening reminders box: $e');
+    }
+
+  } catch (e) {
+    debugPrint('Hive initialization error: $e');
   }
 }
 
-Future<void> _initHive(String appDocumentsDirPath) async { // Specify String type
-  try {
-    Hive.init(appDocumentsDirPath);
-    registerAdapters(); // Call your adapter registration function
-
-    await Future.wait([
-      Hive.openBox<HistoryData>(historyBoxName),
-      Hive.openBox<ItemData>(itemBoxName),
-      Hive.openBox<Reminder>(reminderBoxName),
-    ]);
-  } catch (e) {
-    // Handle Hive initialization errors
-    print('Hive initialization error: $e');
-    //Consider displaying an error message to the user.  Or take some other recovery action.
-  }
+void registerAdapters() {
+    Hive.registerAdapter(HistoryDataAdapter());
+    Hive.registerAdapter(ItemDataAdapter());
+    Hive.registerAdapter(ReminderAdapter());
 }

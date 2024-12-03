@@ -5,8 +5,21 @@ import 'package:path/path.dart' as p;
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/main.dart';
 import 'package:uuid/uuid.dart';
+class AppPaths {
+  static final AppPaths _instance = AppPaths._internal();
+  factory AppPaths() => _instance;
+  AppPaths._internal();
 
+  String? _appDocumentsDirPath; //Use String? for null safety
+
+  Future<String> getAppDocumentsDirPath() async {
+    _appDocumentsDirPath ??= (await getApplicationDocumentsDirectory()).path;
+    return _appDocumentsDirPath!; //Safe because we check for null
+  }
+}
 class FileUtils {
+
+  
   static Future<String?> saveImage(File image) async {
     try {
       final appDocDir = await getApplicationDocumentsDirectory();
@@ -35,21 +48,26 @@ class FileUtils {
   }
 
   static Future<String> getFullImagePath(String relativePath) async {
-    try {
-      final appDocDir = await getApplicationDocumentsDirectory();
-      final fullPath = p.join(appDocDir.path, relativePath);
-
-      // Check if the file exists
-      if (!await File(fullPath).exists()) {
-          throw Exception('File not found at $fullPath'); // or a more descriptive error
-      }
-
-      return fullPath;
-    } catch (e) {
-      // If there's an error, re-throw it
-      rethrow;
-    }
+    final appDir = await AppPaths().getAppDocumentsDirPath(); // Use your singleton!
+    return p.join(appDir, relativePath);
   }
+
+  // static Future<String> getFullImagePath(String relativePath) async {
+  //   try {
+  //     final appDocDir = await getApplicationDocumentsDirectory();
+  //     final fullPath = p.join(appDocDir.path, relativePath);
+
+  //     // Check if the file exists
+  //     if (!await File(fullPath).exists()) {
+  //         throw Exception('File not found at $fullPath'); // or a more descriptive error
+  //     }
+
+  //     return fullPath;
+  //   } catch (e) {
+  //     // If there's an error, re-throw it
+  //     rethrow;
+  //   }
+  // }
 }
 // class FileUtils {
 //   static Future<String?> saveImage(File image) async {

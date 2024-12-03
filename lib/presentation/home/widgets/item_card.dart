@@ -2,23 +2,28 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:test_scav/data/models/item_data.dart';
+import 'package:test_scav/my_app.dart';
 import 'package:test_scav/presentation/home/item_detail_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/assets.dart';
 import 'package:test_scav/utils/file_utils.dart';
+import 'package:path/path.dart' as p;
 
 class ItemCard extends StatelessWidget {
   final ItemData itemId;
   const ItemCard({super.key, required this.itemId});
 
-   @override
+  @override
   Widget build(BuildContext context) {
+    final appDocumentsDirPath =
+        Provider.of<AppData>(context).appDocumentsDirPath;
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.2,
+        height: MediaQuery.of(context).size.height * 0.21,
         width: MediaQuery.of(context).size.width * 0.9,
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
@@ -42,36 +47,25 @@ class ItemCard extends StatelessWidget {
                 // Improved Image handling
                 if (itemId.relativeImagePath != null &&
                     itemId.relativeImagePath!.isNotEmpty)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: FutureBuilder<String>(
-                      future: FileUtils.getFullImagePath(
-                          itemId.relativeImagePath!), 
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const SizedBox(
-                              height: 100,
-                              width: 100,
-                              child: Center(
-                                  child: CircularProgressIndicator()));
-                        } else if (snapshot.hasError) {
-                          return const Icon(Icons.error);
-                        } else if (snapshot.hasData &&
-                            snapshot.data!.isNotEmpty) {
-                          return Image.file(
-                            File(snapshot.data!),
-                            // height:
-                            //     MediaQuery.of(context).size.height * 0.15, 
-                            width: MediaQuery.of(context).size.width * 0.5, 
-                            fit: BoxFit.cover,
-                          );
-                        } else {
-                          return const SizedBox.shrink();
-                        }
-                      },
-                    ),
-                  )
+                  Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Center(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.17,
+                              width: MediaQuery.of(context).size.width * 0.4,
+                              child: Image.file(
+                                fit: BoxFit.cover,
+                                File(p.join(appDocumentsDirPath,
+                                    itemId.relativeImagePath!)), 
+                              ),
+                            ),
+                          ),
+                        )
+                      ])
                 else
                   const Icon(
                     Icons.inventory,
@@ -88,48 +82,48 @@ class ItemCard extends StatelessWidget {
                       maxLines: 1,
                       style: AppFonts.h8,
                     ),
-                   SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.02,
+                    ),
                     Row(
-                          children: [
-                             SvgPicture.asset(
-                SvgAssets.colorLens,
-                colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcIn,
-                ),
-              ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              itemId.color,
-                              
-                            ),
-                          ],
+                      children: [
+                        SvgPicture.asset(
+                          SvgAssets.colorLens,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
+                          ),
                         ),
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.02,), 
-                      Row(
-                          children: [
-                             SvgPicture.asset(
-                SvgAssets.cube,
-                colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcIn,
-                ),
-              ),
-                            const SizedBox(
-                              width: 5,
-                            ),
-                            Text(
-                              itemId.form,
-                            ),
-                          ],
+                        const SizedBox(
+                          width: 5,
                         ),
-             
+                        Text(
+                          itemId.color,
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.02,
+                    ),
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          SvgAssets.cube,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          itemId.form,
+                        ),
+                      ],
+                    ),
                   ],
                 ),
-
-                
               ],
             ),
           ),

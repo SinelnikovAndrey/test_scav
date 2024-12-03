@@ -2,9 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/main.dart';
+import 'package:test_scav/my_app.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/file_utils.dart';
@@ -12,6 +14,8 @@ import 'package:test_scav/widgets/color_box.dart';
 import 'package:test_scav/widgets/default_button.dart';
 import 'package:test_scav/widgets/left_button.dart';
 import 'package:uuid/uuid.dart';
+import 'package:path/path.dart' as p;
+
 
 class EditItemPage extends StatefulWidget {
   final ItemData itemData;
@@ -66,22 +70,43 @@ class _EditItemPageState extends State<EditItemPage> {
 
 
   Future<void> _pickImage() async {
-    try {
-      final pickedFile =
-          await _imagePicker.pickImage(source: ImageSource.gallery);
-      if (pickedFile != null) {
-        setState(() {
-          _imageFile = File(pickedFile.path); //Set the image
-        });
-      } else {
-        // Handle the case where the user cancels the image selection.
+  try {
+    final pickedFile = await _imagePicker.pickImage(
+      source: ImageSource.gallery,
+      maxWidth: 1920, 
+      maxHeight: 1080, 
+    );
+
+    if (pickedFile != null) {
+     
+      final fileSizeInBytes = await File(pickedFile.path).length();
+      final fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+
+      if (fileSizeInMB > 10) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: const Text(
+                'Image file is too large (over 10MB). Please select a smaller image.')));
+        return;
       }
-    } on Exception catch (e) {
-      //Show error
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Image picking error: $e')));
+
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Image selected successfully!')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Image selection cancelled.')),
+      );
     }
+  } catch (e) {
+    debugPrintStack(label: 'Image picker error:');
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text('Error picking image: $e'),
+    ));
   }
+}
 
  Future<void> _editFile() async {
     if (_formKey.currentState!.validate()) {
@@ -133,8 +158,82 @@ class _EditItemPageState extends State<EditItemPage> {
     }
   }
 
+
+  //Helper functions
+Widget _buildImageWidget(File imageFile, BuildContext context) {
+  return Container(
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(20),
+      color: AppColors.gray,
+    ),
+    height: MediaQuery.of(context).size.height * 0.4,
+    width: MediaQuery.of(context).size.width * 0.9,
+    child: Image.file(
+      imageFile,
+      height: 200,
+      width: double.infinity,
+      fit: BoxFit.cover,
+    ),
+  );
+}
+
+Widget _buildAddPhotoOverlay(BuildContext context) {
+  final mediaQuery = MediaQuery.of(context);
+  return Positioned.fill(
+    child: Container(
+      color: Colors.black.withOpacity(0.5), // Semi-transparent black
+      child: Center(
+        child: Text(
+          '+ Add New',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
+    ),
+  );
+}
+
+
+Widget _buildPlaceholder(BuildContext context) {
+  final mediaQuery = MediaQuery.of(context);
+  return Container(
+      height: mediaQuery.size.height * 0.4,
+      width: mediaQuery.size.width * 0.9,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: AppColors.darkBorderGray,
+      ),
+      child: const Center(child: Text('+ Add Photo')));
+}
+
+Widget _buildLoadingWidget(BuildContext context) {
+  final mediaQuery = MediaQuery.of(context);
+  return Container(
+    height: mediaQuery.size.height * 0.4,
+    width: mediaQuery.size.width * 0.9,
+    child: Center(child: CircularProgressIndicator()),
+  );
+}
+
+Widget _buildErrorWidget(String error) {
+  return Center(child: Text('Error: $error'));
+}
+
+Future<File?> _getImageFile(String relativePath) async {
+  try {
+    final imagePath = await FileUtils.getFullImagePath(relativePath);
+    final file = File(imagePath);
+    if (await file.exists()) {
+      return file;
+    }
+    return null;
+  } catch (e) {
+    return null; // Or handle this error appropriately if needed.
+  }
+}
+
     @override
   Widget build(BuildContext context) {
+    final appDocumentsDirPath = Provider.of<AppData>(context).appDocumentsDirPath;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Item'),
@@ -148,42 +247,43 @@ class _EditItemPageState extends State<EditItemPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-  onTap: _pickImage,
-  child: _imageFile != null
-      ? Container( // Show the new image if it's selected
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            color: AppColors.gray,
-          ),
-          height: MediaQuery.of(context).size.height * 0.4,
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: Image.file(
-            _imageFile!,
-            height: 200,
-            width: double.infinity,
-            fit: BoxFit.cover,
-          ),
-        )
-      : FutureBuilder<String>( // Show existing image otherwise
-          future: FileUtils.getFullImagePath(widget.itemData.relativeImagePath!),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Image.file(File(snapshot.data!));
-            } else if (snapshot.hasError) {
-              return Container(
-                  // ... (placeholder for error as before) ...
-                  );
-            } else {
-              return const CircularProgressIndicator();
-            }
-          },
-        ),
-),
+                ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // The image or placeholder
+                        _imageFile != null
+                            ? _buildImageWidget(_imageFile!, context)
+                            : widget.itemData.relativeImagePath!.isNotEmpty
+                                ? FutureBuilder<File?>(
+                    future: _getImageFile(widget.itemData.relativeImagePath!),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return _buildLoadingWidget(context);
+                      } else if (snapshot.hasError) {
+                        return _buildErrorWidget(snapshot.error.toString());
+                      } else if (snapshot.hasData && snapshot.data != null) {
+                        return _buildImageWidget(snapshot.data!, context);
+                      } else {
+                        return _buildPlaceholder(context);
+                      }
+                    },
+                  )
+                                : _buildPlaceholder(context),
+                  
+                        if (_imageFile == null && widget.itemData.relativeImagePath!.isNotEmpty)
+                          _buildAddPhotoOverlay(context),
+                      ],
+                    ),
+                  ),
+                ),
 
                 const SizedBox(height: 20.0),
 
-                /////////FORM------FORM////////
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   const Text(
                     'Name',
@@ -376,3 +476,5 @@ class _EditItemPageState extends State<EditItemPage> {
     );
   }
 }
+
+

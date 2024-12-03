@@ -5,30 +5,30 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/utils/assets.dart';
 import 'package:test_scav/widgets/navigation_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_router.dart';
 class MyApp extends StatefulWidget {
-  const MyApp({super.key, });
+  final String appDocumentsDirPath;
+  const MyApp({super.key, required this.appDocumentsDirPath});
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
   @override
   Widget build(BuildContext context) {
-    
-        
-          return MaterialApp(
+    return ChangeNotifierProvider<AppData>(
+      create: (context) {
+        final appData = AppData();
+        appData.setAppDocumentsDirPath(widget.appDocumentsDirPath);
+        return appData; //return the initialized AppData instance
+      },
+      child: MaterialApp(
             title: 'Scavenger',
             debugShowCheckedModeBanner: false,
             theme: ThemeData(
@@ -36,8 +36,8 @@ class _MyAppState extends State<MyApp> {
               useMaterial3: true,
             ),
             onGenerateRoute: AppRouter.onGenerateRoute,
-            home: const SplashPage(),
-          );
+            home: SplashPage(), 
+          ));
         }
       }
 
@@ -55,7 +55,7 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
-    // after 1 seconds, navigate to onboarding page
+    super.initState();
     Future.delayed(
       const Duration(seconds: 1),
       () => Navigator.pushReplacementNamed(
@@ -63,8 +63,8 @@ class _SplashPageState extends State<SplashPage> {
         AppRouter.navigationPageRoute,
       ),
     );
-    super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -106,3 +106,12 @@ class _SplashPageState extends State<SplashPage> {
 }
 
 
+class AppData with ChangeNotifier {
+  String _appDocumentsDirPath = '';
+  String get appDocumentsDirPath => _appDocumentsDirPath;
+
+  void setAppDocumentsDirPath(String path) {
+    _appDocumentsDirPath = path;
+    notifyListeners();
+  }
+}

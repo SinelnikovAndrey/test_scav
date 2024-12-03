@@ -11,6 +11,7 @@ import 'package:test_scav/presentation/home/my_items_page.dart';
 import 'package:test_scav/presentation/notification/reminder_body_list.dart';
 import 'package:test_scav/presentation/notification/reminder_list.dart';
 import 'package:test_scav/widgets/navigation_page.dart';
+
 class AppRouter {
   static const String myItemsPageRoute = '/myItemsPage';
   static const String navigationPageRoute = '/navigationPage';
@@ -27,16 +28,14 @@ class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
 
-      // case myItemsPageRoute:
-      //   return MaterialPageRoute<void>(builder: (_) => const MyItemsPage());
-        case navigationPageRoute:
-        // IMPORTANT:  You need to provide data here
-        // Correctly use named parameters with required types.
+      case navigationPageRoute:
         final arguments = settings.arguments as Map<String, dynamic>?;
-        return MaterialPageRoute<dynamic>(
+        final appDocumentsDirPath = arguments?['appDocumentsDirPath'] ?? '';
+        // Here you will also need to pass the rootData
+        return MaterialPageRoute<void>(
           builder: (_) => NavigationPage(
-            rootData: arguments?['rootData'] ?? Root(), //Default Root object
-          appDocumentsDirPath: arguments?['appDocumentsDirPath'] ?? '', 
+            appDocumentsDirPath: appDocumentsDirPath, //Use passed path
+            rootData: Root(),
           ),
         );
       case addItemRoute:

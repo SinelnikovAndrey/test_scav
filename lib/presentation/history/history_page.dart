@@ -16,19 +16,7 @@ class HistoryPage extends StatefulWidget {
 }
 
 class _HistoryPageState extends State<HistoryPage> {
-  // late Box<HistoryData> placeBox;
 
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   placeBox = Hive.box<HistoryData>(historyBoxName);
-  // }
-
-  // @override
-  // void dispose() {
-  //   placeBox.close();
-  //   super.dispose();
-  // }
 
  @override
   Widget build(BuildContext context) {

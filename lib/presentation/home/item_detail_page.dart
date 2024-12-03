@@ -1,10 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/main.dart';
+import 'package:test_scav/my_app.dart';
 import 'package:test_scav/presentation/history/add_place.dart';
 import 'package:test_scav/presentation/home/edit_item.dart';
+import 'package:test_scav/presentation/home/my_items_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/file_utils.dart';
@@ -18,103 +21,97 @@ class ItemDetailPage extends StatelessWidget {
   const ItemDetailPage({super.key, required this.itemId});
 
   @override
-Widget build(BuildContext context) {
-  return ValueListenableBuilder<Box<ItemData>>(
-    valueListenable: Hive.box<ItemData>(itemBoxName).listenable(),
-    builder: (context, box, _) {
-      final item = box.get(itemId);
-      if (item == null) {
-        return const Scaffold(
-            body: Center(child: Text('Item not found')));
-      }
+  Widget build(BuildContext context) {
+    final appDocumentsDirPath =
+        Provider.of<AppData>(context).appDocumentsDirPath;
 
-      final itemDataNotifier = ValueNotifier(item); 
+    return ValueListenableBuilder<Box<ItemData>>(
+      valueListenable: Hive.box<ItemData>(itemBoxName).listenable(),
+      builder: (context, box, _) {
+        final item = box.get(itemId);
+        if (item == null) {
+          return const Scaffold(body: Center(child: Text('Item not found')));
+        }
 
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            item.name,
-            style: AppFonts.h10,
-          ),
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          backgroundColor: Colors.white,
-          leading: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: LeftButton(
-              icon: Icons.arrow_left,
-              onTap: () {
-                Navigator.pop(context);
-              },
-              iconColor: Colors.black,
-              backgroundColor: Colors.transparent,
-              borderColor: Colors.black12,
+        final itemDataNotifier = ValueNotifier(item);
+
+        return Scaffold(
+          appBar: AppBar(
+            title: Text(
+              item.name,
+              style: AppFonts.h10,
             ),
-          ),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+            automaticallyImplyLeading: false,
+            centerTitle: true,
+            backgroundColor: Colors.white,
+            leading: Padding(
+              padding: const EdgeInsets.all(10.0),
               child: LeftButton(
+                icon: Icons.arrow_left,
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditItemPage(
-                        itemData: item,
-                        itemDataNotifier: itemDataNotifier,
-                      ),
-                    ),
-                  );
+                  Navigator.pop(context);
                 },
-                icon: Icons.edit,
                 iconColor: Colors.black,
                 backgroundColor: Colors.transparent,
                 borderColor: Colors.black12,
               ),
             ),
-          ],
-        ),
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(right: 5.0),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.1,
-            width: MediaQuery.of(context).size.width * 0.9,
-            child: DefaultButton(
-              text: "Got it!",
-              onTap: () {
-                Future.delayed(Duration.zero, () {
-                  Navigator.of(context).push(
-                      AddPlacePage.materialPageRoute(itemId: item.id));
-                });
-              },
+            actions: [
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: LeftButton(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditItemPage(
+                          itemData: item,
+                          itemDataNotifier: itemDataNotifier,
+                        ),
+                      ),
+                    );
+                  },
+                  icon: Icons.edit,
+                  iconColor: Colors.black,
+                  backgroundColor: Colors.transparent,
+                  borderColor: Colors.black12,
+                ),
+              ),
+            ],
+          ),
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(right: 5.0),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.1,
+              width: MediaQuery.of(context).size.width * 0.9,
+              child: DefaultButton(
+                text: "Got it!",
+                onTap: () {
+                  Future.delayed(Duration.zero, () {
+                    Navigator.of(context)
+                        .push(AddPlacePage.materialPageRoute(itemId: item.id));
+                  });
+                },
+              ),
             ),
           ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-            
-                if (item.relativeImagePath != null &&
-                    item.relativeImagePath!.isNotEmpty)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: FutureBuilder<String>(
-                      future: FileUtils.getFullImagePath(
-                          item.relativeImagePath!),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Image.file(File(snapshot.data!));
-                        } else if (snapshot.hasError) {
-                          return const Icon(Icons.error);
-                        } else {
-                          return const CircularProgressIndicator();
-                        }
-                      },
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (item.relativeImagePath != null &&
+                      item.relativeImagePath!.isNotEmpty)
+                    ClipRRect(
+                      
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.file(
+                        // height: MediaQuery.of(context).size.height * 0.4,
+                        File(p.join(appDocumentsDirPath,
+                            item.relativeImagePath!)), // Use the cached path
+                      ),
                     ),
-                  ),
                   const SizedBox(height: 16.0),
                   Container(
                     decoration: BoxDecoration(
@@ -191,7 +188,9 @@ Widget build(BuildContext context) {
                     title: 'Description',
                     value: item.description,
                   ),
-                   SizedBox(height: MediaQuery.of(context).size.height * 0.15,),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.15,
+                  ),
                 ],
               ),
             ),

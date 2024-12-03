@@ -1,12 +1,15 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:provider/provider.dart';
 import 'package:test_scav/data/models/history_data.dart';
 import 'package:test_scav/main.dart';
+import 'package:test_scav/my_app.dart';
 import 'package:test_scav/presentation/history/edit_history.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/file_utils.dart';
 import 'package:test_scav/widgets/left_button.dart';
+import 'package:path/path.dart' as p;
 
 
 class HistoryDetailPage extends StatelessWidget {
@@ -15,6 +18,8 @@ class HistoryDetailPage extends StatelessWidget {
 
    @override
 Widget build(BuildContext context) {
+  final appDocumentsDirPath =
+        Provider.of<AppData>(context).appDocumentsDirPath;
   return ValueListenableBuilder<Box<HistoryData>>(
     valueListenable: Hive.box<HistoryData>(historyBoxName).listenable(),
     builder: (context, box, _) {
@@ -74,24 +79,9 @@ Widget build(BuildContext context) {
                   if (item.relativeImagePath.isNotEmpty)
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: FutureBuilder<String>(
-                      future: FileUtils.getFullImagePath(
-                      item.relativeImagePath,
-                      ),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Image.file(
-                            File(
-                              snapshot.data!,
-                            ),
-                            width: MediaQuery.of(context).size.width * 0.9,
-                          );
-                        } else if (snapshot.hasError) {
-                          return const Icon(Icons.error);
-                        } else {
-                          return const CircularProgressIndicator();
-                        }
-                      },
+                    child: Image.file(
+                      File(p.join(appDocumentsDirPath,
+                          item.relativeImagePath!)), 
                     ),
                   ),
                   const SizedBox(height: 16.0),
@@ -185,24 +175,12 @@ Widget build(BuildContext context) {
                   const SizedBox(
                     height: 15,
                   ),
-                   if (item.relativeImagePath != null &&
-                    item.relativeImagePath!.isNotEmpty)
+                   if (item.placePhotoUrl.isNotEmpty)
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: FutureBuilder<String>(
-                      future: FileUtils.getFullImagePath(
-                          item.placePhotoUrl!),
-                      builder: (context, snapshot) {
-                        if (snapshot.hasData) {
-                          return Image.file(File(snapshot.data!),
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          );
-                        } else if (snapshot.hasError) {
-                          return const SizedBox();
-                        } else {
-                          return const CircularProgressIndicator();
-                        }
-                      },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.file(
+                      File(p.join(appDocumentsDirPath,
+                          item.placePhotoUrl!)), 
                     ),
                   ),
                 ],
