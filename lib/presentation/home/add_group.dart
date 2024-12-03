@@ -96,7 +96,7 @@ class _AddGroupPageState extends State<AddGroupPage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 5),
+                                  horizontal: 20.0, vertical: 10),
                               child: TextFormField(
                                 controller: _titleController,
                                 decoration: const InputDecoration(

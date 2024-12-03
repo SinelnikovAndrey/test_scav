@@ -1,23 +1,16 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:provider/provider.dart';
 import 'package:test_scav/main.dart';
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
-import 'package:test_scav/my_app.dart';
-import 'package:test_scav/presentation/home/item_detail_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
-import 'package:test_scav/utils/assets.dart';
-import 'package:test_scav/utils/file_utils.dart';
 import 'package:test_scav/widgets/default_button.dart';
 import 'package:test_scav/presentation/home/widgets/item_card.dart';
 import 'package:test_scav/widgets/round_button.dart';
-import 'package:path/path.dart' as p;
+
 
 class MyItemsPage extends StatefulWidget {
   final String appDocumentsDirPath;
@@ -34,11 +27,11 @@ class _MyItemsPageState extends State<MyItemsPage> {
   String? selectedGroup = 'All';
   final ValueNotifier<List<String>> _reminderTitles = ValueNotifier(['All']);
 
-  // late final String appDocumentsDirPath;
 
   @override
   void initState() {
     super.initState();
+    itemBox = Hive.box<ItemData>(itemBoxName);
     reminderBox = Hive.box<Reminder>(reminderBoxName);
     _updateReminderTitles();
     reminderBox.listenable().addListener(_updateReminderTitles);
@@ -72,8 +65,6 @@ class _MyItemsPageState extends State<MyItemsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final appDocumentsDirPath =
-        Provider.of<AppData>(context).appDocumentsDirPath;
 
     return ValueListenableBuilder<Box<ItemData>>(
       valueListenable: Hive.box<ItemData>(itemBoxName).listenable(),
@@ -114,33 +105,26 @@ class _MyItemsPageState extends State<MyItemsPage> {
             ),
           ),
           body: items.isEmpty
-              ? const Center(
-                  child: Text('Your items will be here', style: AppFonts.h8))
-              : SingleChildScrollView(
-                  child: SizedBox(
-                    height: MediaQuery.of(context).size.height,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: sortedItems.length,
-                            itemBuilder: (context, index) {
-                              final item = sortedItems[index];
-                              return ItemCard(
-                                key: ValueKey(item.id),
-                                itemId: item,
-                              );
-                            },
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.35,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-        );
+            ? const Center(
+                child: Text('Your items will be here', style: AppFonts.h8))
+            : items.isEmpty
+            ? const Center(child: Text('Your items will be here'))
+            : Padding(
+              padding: const EdgeInsets.only(bottom: 100.0),
+              child: SingleChildScrollView( // Wrap with SingleChildScrollView
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: sortedItems.length,
+                  itemBuilder: (context, index) {
+                    final item = sortedItems[index];
+                    return ItemCard(
+                      key: ValueKey(item.id),
+                      itemId: item,
+                    );
+                  },
+                )),
+            ));
       },
     );
   }

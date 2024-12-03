@@ -34,8 +34,8 @@ class AddPlacePage extends StatefulWidget {
 }
 
 class _AddPlacePageState extends State<AddPlacePage> {
-  final _formKey = GlobalKey<FormState>(); 
-  final _placeNameController = TextEditingController(); 
+  final _formKey = GlobalKey<FormState>();
+  final _placeNameController = TextEditingController();
   late Box<ItemData> itemBox;
   late ItemData itemData;
 
@@ -81,7 +81,9 @@ class _AddPlacePageState extends State<AddPlacePage> {
           itemForm: itemData.form,
           itemGroup: itemData.group,
           itemDescription: itemData.description,
-          fetchDateTime: DateTime.now(), placeDescription: '', placePhotoUrl: '',
+          fetchDateTime: DateTime.now(),
+          placeDescription: '',
+          placePhotoUrl: '',
         );
 
         final historyBox = await Hive.openBox<HistoryData>(historyBoxName);
@@ -89,10 +91,11 @@ class _AddPlacePageState extends State<AddPlacePage> {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Place added history successfully!')));
 
-
-
-            Navigator.pop(context, placeData);
-      
+        Navigator.pushReplacementNamed(
+          context,
+          AppRouter.navigationPageRoute,
+        );
+        // Navigator.pop(context, placeData);
       } catch (e) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Error: $e')));
@@ -106,19 +109,22 @@ class _AddPlacePageState extends State<AddPlacePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Place', style: AppFonts.h10,),
+        title: const Text(
+          'Add Place',
+          style: AppFonts.h10,
+        ),
         leading: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: LeftButton(
-                icon: Icons.arrow_left,
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                iconColor: Colors.black,
-                backgroundColor: Colors.transparent,
-                borderColor: Colors.black12,
-              ),
-            ),
+          padding: const EdgeInsets.all(10.0),
+          child: LeftButton(
+            icon: Icons.arrow_left,
+            onTap: () {
+              Navigator.pop(context);
+            },
+            iconColor: Colors.black,
+            backgroundColor: Colors.transparent,
+            borderColor: Colors.black12,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

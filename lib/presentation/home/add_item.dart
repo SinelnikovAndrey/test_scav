@@ -211,7 +211,7 @@ class _AddItemPageState extends State<AddItemPage> {
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 5),
+                                horizontal: 20.0, vertical: 10),
                             child: TextFormField(
                               controller: _nameController,
                               decoration: const InputDecoration(
@@ -315,11 +315,11 @@ class _AddItemPageState extends State<AddItemPage> {
                     width: MediaQuery.of(context).size.width * 0.9,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 5),
+                          horizontal: 20.0, vertical: 10),
                       child: _reminders.isEmpty
                           ? const Center(
                               child: Text(
-                                  'Loading groups...'))
+                                  'Create groups on My Items Page'))
                           : DropdownButtonFormField<String>(
                               value: _selectedReminderTitle,
                               decoration: const InputDecoration(

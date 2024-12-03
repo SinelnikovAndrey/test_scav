@@ -299,7 +299,7 @@ Future<File?> _getImageFile(String relativePath) async {
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 5),
+                                horizontal: 20.0, vertical: 10),
                             child: TextFormField(
                               controller: _nameController,
                               decoration: const InputDecoration(
@@ -402,7 +402,7 @@ Future<File?> _getImageFile(String relativePath) async {
   height: MediaQuery.of(context).size.height * 0.09,
   width: MediaQuery.of(context).size.width * 0.9,
   child: Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
     child: _reminders.isEmpty
         ? const Center(child: Text('Loading reminders...'))
         : DropdownButtonFormField<String>(
