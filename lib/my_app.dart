@@ -1,5 +1,4 @@
 
-
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,21 +12,28 @@ import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_router.dart';
 class MyApp extends StatefulWidget {
   final String appDocumentsDirPath;
-  const MyApp({super.key, required this.appDocumentsDirPath});
+  final Root rootData; // Add rootData here
+
+  const MyApp({super.key, required this.appDocumentsDirPath, required this.rootData}); // Pass rootData
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
+  late AppData _appData; //Declare here
+
+  @override
+  void initState() {
+    super.initState();
+    _appData = AppData(appDocumentsDirPath: widget.appDocumentsDirPath, rootData: widget.rootData);
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AppData>(
-      create: (context) {
-        final appData = AppData();
-        appData.setAppDocumentsDirPath(widget.appDocumentsDirPath);
-        return appData; //return the initialized AppData instance
-      },
+    return ChangeNotifierProvider<AppData>.value( // Use .value
+      value: _appData, 
       child: MaterialApp(
             title: 'Scavenger',
             debugShowCheckedModeBanner: false,
@@ -68,6 +74,7 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
+   final appData = Provider.of<AppData>(context, listen: false);
     return Scaffold(
       backgroundColor: AppColors.primary,
       body: Center(
@@ -107,8 +114,13 @@ class _SplashPageState extends State<SplashPage> {
 
 
 class AppData with ChangeNotifier {
-  String _appDocumentsDirPath = '';
+   String _appDocumentsDirPath = '';
   String get appDocumentsDirPath => _appDocumentsDirPath;
+  final Root rootData; //Add rootData here
+
+  AppData({required String appDocumentsDirPath, required this.rootData})
+    : _appDocumentsDirPath = appDocumentsDirPath;
+
 
   void setAppDocumentsDirPath(String path) {
     _appDocumentsDirPath = path;

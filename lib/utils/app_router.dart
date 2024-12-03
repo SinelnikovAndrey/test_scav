@@ -3,15 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/presentation/home/add_group.dart';
 import 'package:test_scav/presentation/home/add_item.dart';
-// import 'package:test_scav/presentation/home/add_item.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
-
-// import 'package:test_scav/presentation/home/add_group.dart';
-// import 'package:test_scav/presentation/home/test_add_item.dart';
 import 'package:test_scav/presentation/notification/reminder_body_list.dart';
 import 'package:test_scav/presentation/notification/reminder_list.dart';
 import 'package:test_scav/widgets/navigation_page.dart';
-
 class AppRouter {
   static const String myItemsPageRoute = '/myItemsPage';
   static const String navigationPageRoute = '/navigationPage';
@@ -31,10 +26,9 @@ class AppRouter {
       case navigationPageRoute:
         final arguments = settings.arguments as Map<String, dynamic>?;
         final appDocumentsDirPath = arguments?['appDocumentsDirPath'] ?? '';
-        // Here you will also need to pass the rootData
         return MaterialPageRoute<void>(
           builder: (_) => NavigationPage(
-            appDocumentsDirPath: appDocumentsDirPath, //Use passed path
+            appDocumentsDirPath: appDocumentsDirPath, 
             rootData: Root(),
           ),
         );

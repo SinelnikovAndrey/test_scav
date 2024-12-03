@@ -1,5 +1,6 @@
 
 
+
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -41,7 +42,10 @@ Future<void> main() async {
     FlutterNativeSplash.remove();
   }
 
-  runApp(MyApp(appDocumentsDirPath: appDocumentsDirPath)); // Pass the path
+  final jsonData = await rootBundle.loadString('assets/en.json');
+  final rootData = Root.fromJson(json.decode(jsonData));
+
+  runApp(MyApp(appDocumentsDirPath: appDocumentsDirPath, rootData: rootData)); // Pass the path
 
 }
 

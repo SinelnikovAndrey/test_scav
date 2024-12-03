@@ -92,7 +92,7 @@ class _HomePageState extends State<NavigationPage> {
         children: [
           MyItemsPage(appDocumentsDirPath: widget.appDocumentsDirPath),
           const HistoryPage(),
-          TipDisplay(rootData: widget.rootData),
+          TipDisplay(),
           const Settings(),
         ],
       ),
