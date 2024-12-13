@@ -10,15 +10,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart'; 
 import 'package:test_scav/data/models/history_data.dart';
 import 'package:test_scav/data/models/item_data.dart';
-
 import 'package:test_scav/data/models/tips/tips_data.dart';
-
 import 'package:test_scav/my_app.dart';
 import 'package:test_scav/data/services/hive_adapters.dart';
-// import 'package:test_scav/presentation/notification/notification.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
-import 'package:test_scav/presentation/dev_notification/dev_note_state.dart';
-import 'package:test_scav/presentation/dev_notification/dev_notification.dart';
 import 'package:test_scav/presentation/notification/note_state.dart';
 import 'package:test_scav/presentation/notification/notification.dart';
 
@@ -37,13 +32,13 @@ Future<void> main() async {
 
   try {
     final appDocDir = await getApplicationDocumentsDirectory();
-    appDocumentsDirPath = appDocDir.path; // Assign the path
+    appDocumentsDirPath = appDocDir.path; 
     await _initHive(appDocumentsDirPath);
     tz.initializeTimeZones();
-    // await NotificationService().initialize();
+  
   } on Exception catch (e) {
     debugPrint("Error during initialization: $e");
-    // Display a user-friendly error message here.
+  
   } finally {
     FlutterNativeSplash.remove();
   }
@@ -55,8 +50,8 @@ Future<void> main() async {
     runApp(
   MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (_) => DevNotificationState()),
-      Provider<DevNNotificationService>(create: (_) => DevNNotificationService()),
+      ChangeNotifierProvider(create: (_) => NotificationState()),
+      Provider<NotificationService>(create: (_) => NotificationService()),
     ],
     child: MyApp(appDocumentsDirPath: appDocumentsDirPath, rootData: rootData),
   ),

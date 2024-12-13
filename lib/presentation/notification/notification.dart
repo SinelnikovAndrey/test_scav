@@ -1,61 +1,64 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
-import 'package:rxdart/subjects.dart';
-import 'package:test_scav/data/models/reminder/reminder.dart';
+import 'package:rxdart/rxdart.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-void backgroundNotificationHandler(NotificationResponse? details) async {}
 
-Future<void> onNotificationTapped(NotificationResponse? payload) async {
-}
-class NNotificationService {
-  static final NNotificationService _notificationService =
-      NNotificationService._internal();
+Future<void> emptyBackgroundHandler(NotificationResponse? details) async {}
 
-  factory NNotificationService() {
+
+class NotificationService {
+  static final NotificationService _notificationService =
+      NotificationService._internal();
+
+  factory NotificationService() {
     return _notificationService;
   }
 
-  static final onClickNotification = BehaviorSubject<String>();
+  static final BehaviorSubject<String> onClickNotification =
+      BehaviorSubject<String>();
 
-  int generateUniqueId(int reminderId) {
-    return reminderId;
-  }
+  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  int generateUniqueId(int reminderId) => reminderId;
 
   Future<NotificationResponse?> getInitialNotification() async {
     final launchDetails =
-        await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+        await _flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
     if (launchDetails?.didNotificationLaunchApp ?? false) {
-      return NotificationResponse(
-          notificationResponseType:
-              NotificationResponseType.selectedNotification,
-          payload: launchDetails!.notificationResponse!.payload);
+      return launchDetails!.notificationResponse;
     }
     return null;
   }
 
-  NNotificationService._internal();
+  NotificationService._internal();
 
-  static const channelId = "1";
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  static const channelId = '1'; 
 
   static const AndroidNotificationDetails _androidNotificationDetails =
       AndroidNotificationDetails(
     channelId,
-    "randomString",
-    channelDescription: "This channel is responsible for all the local notifications",
+    'Daily Reminders', 
+    channelDescription:
+        'This channel is responsible for daily reminder notifications',
     playSound: true,
     priority: Priority.high,
     importance: Importance.high,
+    sound: RawResourceAndroidNotificationSound('notification_sound'),
   );
 
   static const DarwinNotificationDetails _darwinNotificationDetails =
-      DarwinNotificationDetails();
+      DarwinNotificationDetails(
+    presentAlert: true,
+    presentBadge: true,
+    presentSound: true,
+  );
 
-  final NotificationDetails notificationDetails = const NotificationDetails(
+  final NotificationDetails _notificationDetails = NotificationDetails(
     android: _androidNotificationDetails,
     iOS: _darwinNotificationDetails,
   );
@@ -63,11 +66,12 @@ class NNotificationService {
   Future<void> init() async {
     const AndroidInitializationSettings androidInitializationSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
+
     final DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
-      requestSoundPermission: false,
-      requestBadgePermission: false,
-      requestAlertPermission: false,
+      requestSoundPermission: true,
+      requestBadgePermission: true,
+      requestAlertPermission: true,
     );
 
     final InitializationSettings initializationSettings = InitializationSettings(
@@ -75,124 +79,112 @@ class NNotificationService {
       iOS: initializationSettingsDarwin,
     );
 
+
     tz.initializeTimeZones();
-    final String currentTimeZone = await FlutterTimezone.getLocalTimezone();
-    tz.setLocalLocation(tz.getLocation(currentTimeZone));
+    final String? currentTimeZone = await FlutterTimezone.getLocalTimezone();
+    if(currentTimeZone != null){
+      tz.setLocalLocation(tz.getLocation(currentTimeZone));
+    }
 
-    await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-      onDidReceiveBackgroundNotificationResponse: backgroundNotificationHandler,
-      onDidReceiveNotificationResponse: onNotificationTapped,
+    await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
+      onDidReceiveNotificationResponse: _onNotificationTapped,
+      onDidReceiveBackgroundNotificationResponse: emptyBackgroundHandler
+      // onDidReceiveBackgroundNotificationResponse: null,
     );
+
+     await _requestPermissions();
+
   }
 
-  Future<void> requestPermissions() async {
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-            alert: true, badge: true, sound: true);
+  Future<void> _requestPermissions() async {
+    try {
+      if (Platform.isAndroid) {
+        final androidPlugin = _flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                AndroidFlutterLocalNotificationsPlugin>();
+        if (androidPlugin != null) {
+          await androidPlugin.requestNotificationsPermission();
+        }
+      } else if (Platform.isIOS) {
+        final iosPlugin = _flutterLocalNotificationsPlugin
+            .resolvePlatformSpecificImplementation<
+                IOSFlutterLocalNotificationsPlugin>();
+        if (iosPlugin != null) {
+          await iosPlugin.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+        }
+      }
+    } catch (e) {
+      print("Error requesting permissions: $e");
+    }
   }
 
-  Future<void> requestAndroidPermission() async {
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()!
-        .requestNotificationsPermission();
-  }
 
-  Future<void> requestIOSPermissions() async {
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-            IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-            alert: true, badge: true, sound: true);
-  }
+  Future<void> backgroundNotificationHandler(NotificationResponse? details) async {
+
+    NotificationService.onClickNotification.add(details?.payload ?? '');
+  print("Background notification received: ${details?.payload}");
+}
+Future<void> _onNotificationTapped(NotificationResponse details) async {
+  onClickNotification.add(details.payload ?? ''); 
+}
 
   Future<void> showNotification(
       int id, String title, String body, String payload) async {
-    await flutterLocalNotificationsPlugin.show(
+    await _flutterLocalNotificationsPlugin.show(
       id,
       title,
       body,
-      notificationDetails,
+      _notificationDetails,
       payload: payload,
     );
   }
 
-  Future<void> updateNotification(Reminder reminder) async {
-    if (reminder.active) {
-      await scheduleNotification(
-          reminder.id,
-          reminder.title,
-          reminder.body ?? '',
-          reminder.dateTime,
-          TimeOfDay.fromDateTime(reminder.dateTime),
-          'daily',
-          'dailyReminderChannel',
-          null);
-    } else {
-      await cancelNotification(reminder.id);
-    }
-  }
 
   Future<void> scheduleNotification(
       int id,
       String title,
       String body,
-      DateTime eventDate,
-      TimeOfDay eventTime,
+      DateTime scheduledDate,
+      TimeOfDay scheduledTime,
       String payload,
       String time,
       int? hours,
-      [DateTimeComponents? dateTimeComponents]) async {
-    eventDate = DateTime(eventDate.year, eventDate.month, eventDate.day);
-    final scheduledTime = eventDate.add(Duration(
-      hours: eventTime.hour,
-      minutes: eventTime.minute,
-    ));
+      [DateTimeComponents? dateTimeComponents]
+      ) async {
+    final scheduledDateTime = DateTime(
+      scheduledDate.year,
+      scheduledDate.month,
+      scheduledDate.day,
+      scheduledTime.hour,
+      scheduledTime.minute,
+    );
 
-    tz.TZDateTime nextInstanceOfTenAM() {
-      final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-      tz.TZDateTime scheduledDate =
-          tz.TZDateTime.from(scheduledTime, tz.local);
-      if (time == 'daily') {
-        if (scheduledDate.isBefore(now)) {
-          scheduledDate = scheduledDate.add(const Duration(days: 1));
-        }
-      } else if (time == 'hourly') {
-        if (scheduledDate.isBefore(now)) {
-          scheduledDate = scheduledDate.add(Duration(hours: hours!));
-        }
-      }
-      return scheduledDate;
-    }
+    final tzDateTime = tz.TZDateTime.from(scheduledDateTime, tz.local);
 
-    await flutterLocalNotificationsPlugin.zonedSchedule(
+    await _flutterLocalNotificationsPlugin.zonedSchedule(
       id,
       title,
       body,
-      nextInstanceOfTenAM(),
-      notificationDetails,
+      tzDateTime,
+      _notificationDetails,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
       payload: payload,
-      matchDateTimeComponents: dateTimeComponents,
     );
   }
 
+
   Future<void> cancelNotification(int id) async {
-    await flutterLocalNotificationsPlugin.cancel(id);
+    await _flutterLocalNotificationsPlugin.cancel(id);
   }
 
-   Future<void> cancelAllNotifications() async {
-    await flutterLocalNotificationsPlugin.cancelAll();
+  Future<void> cancelAllNotifications() async {
+    await _flutterLocalNotificationsPlugin.cancelAll();
   }
-
-  
 }

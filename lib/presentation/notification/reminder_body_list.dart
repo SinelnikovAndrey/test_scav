@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/main.dart';
-import 'package:test_scav/presentation/notification/notification.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/left_button.dart';
 
 
 
-class OldReminderBodyList extends StatefulWidget {
-  const OldReminderBodyList({super.key});
+class ReminderBodyList extends StatefulWidget {
+  const ReminderBodyList({super.key});
 
   @override
-  State<OldReminderBodyList> createState() => _ReminderBodyListState();
+  State<ReminderBodyList> createState() => _ReminderBodyListState();
 }
 
-class _ReminderBodyListState extends State<OldReminderBodyList> {
+class _ReminderBodyListState extends State<ReminderBodyList> {
 
 
   @override
@@ -85,8 +84,8 @@ class _ReminderBodyListState extends State<OldReminderBodyList> {
                                   decoration: BoxDecoration(
                                       // border: Border.all(),
                                       borderRadius: BorderRadius.circular(20)),
-                                  height: MediaQuery.of(context).size.height * 0.09,
-                                  width: MediaQuery.of(context).size.width * 0.9,
+                                  height: 72,
+                                  width: 382,
                                   child:  Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10.0, vertical: 10),
@@ -94,7 +93,7 @@ class _ReminderBodyListState extends State<OldReminderBodyList> {
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
                                         SizedBox(
-                                          width: MediaQuery.of(context).size.width * 0.7,
+                                          // width: MediaQuery.of(context).size.width * 0.7,
                                           child: Text(reminder.body, style: AppFonts.h7,)),
                                
                                         Text(reminder.formattedReminderTime, style: AppFonts.h7,),

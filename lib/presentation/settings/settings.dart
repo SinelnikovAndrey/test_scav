@@ -27,19 +27,18 @@ class _SettingsState extends State<Settings> {
 
    Future<void> _updateRemindersActiveState(
       BuildContext context, bool value) async {
-    final notificationService = Provider.of<DevNNotificationService>(context, listen: false);
     final box = Hive.box<Reminder>(reminderBoxName);
     final reminders = box.values.toList();
     for (final reminder in reminders) {
       try {
-        reminder.active = value; // Correct logic: directly set active state
+        reminder.active = value; 
         await reminder.save();
         final notificationService = Provider.of<DevNNotificationService>(context, listen: false);
         if (reminder.active) {
           notificationService.scheduleNotification(
             reminder.id,
             reminder.title,
-            reminder.body ?? '',
+            reminder.body ,
             reminder.dateTime,
             TimeOfDay.fromDateTime(reminder.dateTime),
             reminder.id.toString(),
@@ -51,7 +50,7 @@ class _SettingsState extends State<Settings> {
         }
       } catch (e) {
         print('Error updating reminder ${reminder.id}: $e');
-        // ... (Error handling remains the same) ...
+      
       }
     }
   }

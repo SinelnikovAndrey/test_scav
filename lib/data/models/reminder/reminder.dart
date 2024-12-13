@@ -2,9 +2,8 @@ import 'package:hive/hive.dart';
 import 'package:intl/intl.dart';
 
 
-part 'reminder.g.dart';
 
-@HiveType(typeId: 5) // Assign a unique type ID
+@HiveType(typeId: 5) 
 class Reminder extends HiveObject {
   @HiveField(0)
   String title;
@@ -13,7 +12,7 @@ class Reminder extends HiveObject {
   DateTime dateTime;
 
   @HiveField(2)
-  bool active; // Not final anymore
+  bool active; 
 
   @HiveField(3)
   final int id;

@@ -1,14 +1,25 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 class NotificationState with ChangeNotifier {
-  final uuid = const Uuid(); //add uuid here
-  int _notificationIdCounter = 0;
+  final uuid = const Uuid();
+
   final List<int> _scheduledNotificationIds = [];
+
+  bool _globalActive = false;
+
+
   bool _permissionRequested = false;
 
-  int get notificationIdCounter => _notificationIdCounter;
-  List<int> get scheduledNotificationIds => _scheduledNotificationIds;
+
+  bool get globalActive => _globalActive;
+
+
+  set globalActive(bool value) {
+    _globalActive = value;
+    notifyListeners();
+  }
+
   bool get permissionRequested => _permissionRequested;
 
   set permissionRequested(bool value) {
@@ -16,10 +27,9 @@ class NotificationState with ChangeNotifier {
     notifyListeners();
   }
 
-  int generateUniqueId(int reminderId) {
-    _notificationIdCounter = reminderId;
-    return _notificationIdCounter;
-  }
+
+  List<int> get scheduledNotificationIds => _scheduledNotificationIds;
+
 
   void addScheduledNotificationId(int id) {
     _scheduledNotificationIds.add(id);
@@ -34,5 +44,9 @@ class NotificationState with ChangeNotifier {
   void clearScheduledNotificationIds() {
     _scheduledNotificationIds.clear();
     notifyListeners();
+  }
+
+  int generateUniqueId() {
+    return int.parse(uuid.v4().replaceAll('-', ''));
   }
 }
