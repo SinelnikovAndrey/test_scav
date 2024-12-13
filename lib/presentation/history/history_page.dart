@@ -21,9 +21,11 @@ class _HistoryPageState extends State<HistoryPage> {
  @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
         title: const Text('History', style: AppFonts.h10),
-        centerTitle: true,
+        centerTitle: false,
+        automaticallyImplyLeading: false,
       ),
       body: ValueListenableBuilder<Box<HistoryData>>(
         valueListenable: Hive.box<HistoryData>(historyBoxName).listenable(),
@@ -33,7 +35,7 @@ class _HistoryPageState extends State<HistoryPage> {
           if (places.isEmpty) {
             return const Center(
                 child: Text('The history of your items will be here',
-                    style: AppFonts.h8));
+                    style: AppFonts.h7));
           } else {
             return Expanded(
               child: ListView.builder(

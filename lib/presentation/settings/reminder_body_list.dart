@@ -2,21 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/main.dart';
-import 'package:test_scav/presentation/notification/notification.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/left_button.dart';
 
 
 
-class OldReminderBodyList extends StatefulWidget {
-  const OldReminderBodyList({super.key});
+class ReminderBodyList extends StatefulWidget {
+  const ReminderBodyList({super.key});
 
   @override
-  State<OldReminderBodyList> createState() => _ReminderBodyListState();
+  State<ReminderBodyList> createState() => _ReminderBodyListState();
 }
 
-class _ReminderBodyListState extends State<OldReminderBodyList> {
+class _ReminderBodyListState extends State<ReminderBodyList> {
 
 
   @override
@@ -116,6 +115,3 @@ class _ReminderBodyListState extends State<OldReminderBodyList> {
     );
   }
 }
-
-
-

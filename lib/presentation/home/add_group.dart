@@ -63,15 +63,11 @@ class _AddGroupPageState extends State<AddGroupPage> {
         title: const Text('Add Group', style: AppFonts.h10),
         centerTitle: true,
       ),
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(right: 5.0),
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.09,
-          width: MediaQuery.of(context).size.width * 0.9,
-          child: DefaultButton(
-            text: "Save",
-            onTap: _addGroup,
-          ),
+      bottomNavigationBar: Padding(
+            padding: const EdgeInsets.only(bottom: 10.0, left: 20, right: 20),
+        child: DefaultButton(
+          text: "Save",
+          onTap: _addGroup,
         ),
       ),
       body: SingleChildScrollView(
@@ -90,13 +86,14 @@ class _AddGroupPageState extends State<AddGroupPage> {
                         decoration: BoxDecoration(
                             border: Border.all(),
                             borderRadius: BorderRadius.circular(20)),
-                        height: MediaQuery.of(context).size.height * 0.09,
-                        width: MediaQuery.of(context).size.width * 0.9,
+                            height: 52,
+                            width: 382,
+                   
                         child: Column(
                           children: [
                             Padding(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 10),
+                                  horizontal: 20.0, ),
                               child: TextFormField(
                                 controller: _titleController,
                                 decoration: const InputDecoration(

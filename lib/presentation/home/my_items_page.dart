@@ -92,39 +92,34 @@ class _MyItemsPageState extends State<MyItemsPage> {
               ),
             ],
           ),
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(right: 5.0),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.1,
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: DefaultButton(
-                  text: "Add new item",
-                  onTap: () {
-                    Navigator.of(context).pushNamed(AppRouter.addItemRoute);
-                  }),
-            ),
+          bottomNavigationBar: Padding(
+            padding: const EdgeInsets.only(bottom: 10.0, left: 20, right: 20),
+            child: DefaultButton(
+                    text: "Add new item",
+                    onTap: () {
+                      Navigator.of(context).pushNamed(AppRouter.addItemRoute);
+                    }),
           ),
+          
+       
           body: items.isEmpty
             ? const Center(
                 child: Text('Your items will be here', style: AppFonts.h8))
             : items.isEmpty
             ? const Center(child: Text('Your items will be here'))
-            : Padding(
-              padding: const EdgeInsets.only(bottom: 100.0),
-              child: SingleChildScrollView( // Wrap with SingleChildScrollView
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: sortedItems.length,
-                  itemBuilder: (context, index) {
-                    final item = sortedItems[index];
-                    return ItemCard(
-                      key: ValueKey(item.id),
-                      itemId: item,
-                    );
-                  },
-                )),
-            ));
+            : SingleChildScrollView( // Wrap with SingleChildScrollView
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: sortedItems.length,
+                itemBuilder: (context, index) {
+                  final item = sortedItems[index];
+                  return ItemCard(
+                    key: ValueKey(item.id),
+                    itemId: item,
+                  );
+                },
+              )));
       },
     );
   }

@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart'; 
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart'; 
 import 'package:test_scav/data/models/history_data.dart';
 import 'package:test_scav/data/models/item_data.dart';
 
@@ -14,8 +15,11 @@ import 'package:test_scav/data/models/tips/tips_data.dart';
 
 import 'package:test_scav/my_app.dart';
 import 'package:test_scav/data/services/hive_adapters.dart';
-import 'package:test_scav/presentation/notification/notification.dart';
+// import 'package:test_scav/presentation/notification/notification.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
+import 'package:test_scav/presentation/notification/note_state.dart';
+import 'package:test_scav/presentation/notification/notification.dart';
+import 'package:test_scav/presentation/settings/notification_service.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -35,6 +39,7 @@ Future<void> main() async {
     appDocumentsDirPath = appDocDir.path; // Assign the path
     await _initHive(appDocumentsDirPath);
     tz.initializeTimeZones();
+    // await NotificationService().initialize();
   } on Exception catch (e) {
     debugPrint("Error during initialization: $e");
     // Display a user-friendly error message here.
@@ -45,7 +50,16 @@ Future<void> main() async {
   final jsonData = await rootBundle.loadString('assets/en.json');
   final rootData = Root.fromJson(json.decode(jsonData));
 
-  runApp(MyApp(appDocumentsDirPath: appDocumentsDirPath, rootData: rootData)); // Pass the path
+  
+    runApp(
+  MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => NotificationState()),
+      Provider<NNotificationService>(create: (_) => NNotificationService()),
+    ],
+    child: MyApp(appDocumentsDirPath: appDocumentsDirPath, rootData: rootData),
+  ),
+);
 
 }
 

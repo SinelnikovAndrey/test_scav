@@ -16,7 +16,6 @@ import 'package:test_scav/widgets/left_button.dart';
 import 'package:uuid/uuid.dart';
 import 'package:path/path.dart' as p;
 
-
 class EditItemPage extends StatefulWidget {
   final ItemData itemData;
   final ValueNotifier<ItemData> itemDataNotifier;
@@ -43,23 +42,22 @@ class _EditItemPageState extends State<EditItemPage> {
 
   String? _imageUrl;
 
-   List<Reminder> _reminders = []; // List to hold reminders
+  List<Reminder> _reminders = []; // List to hold reminders
   String? _selectedReminderTitle;
 
   @override
   void initState() {
     super.initState();
     _selectedReminderTitle = widget.itemData.group;
-    _itemBox = Hive.box<ItemData>(itemBoxName); 
+    _itemBox = Hive.box<ItemData>(itemBoxName);
     _nameController.text = widget.itemData.name;
     _colorController.text = widget.itemData.color;
     _formController.text = widget.itemData.form;
     _groupController.text = widget.itemData.group;
     _descriptionController.text = widget.itemData.description;
     _relativeImagePath = widget.itemData.relativeImagePath;
-    _loadReminders(); 
+    _loadReminders();
   }
-
 
   Future<void> _loadReminders() async {
     final reminderBox = await Hive.openBox<Reminder>(reminderBoxName);
@@ -68,47 +66,45 @@ class _EditItemPageState extends State<EditItemPage> {
     });
   }
 
-
   Future<void> _pickImage() async {
-  try {
-    final pickedFile = await _imagePicker.pickImage(
-      source: ImageSource.gallery,
-      maxWidth: 1920, 
-      maxHeight: 1080, 
-    );
+    try {
+      final pickedFile = await _imagePicker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+      );
 
-    if (pickedFile != null) {
-     
-      final fileSizeInBytes = await File(pickedFile.path).length();
-      final fileSizeInMB = fileSizeInBytes / (1024 * 1024);
+      if (pickedFile != null) {
+        final fileSizeInBytes = await File(pickedFile.path).length();
+        final fileSizeInMB = fileSizeInBytes / (1024 * 1024);
 
-      if (fileSizeInMB > 10) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: const Text(
-                'Image file is too large (over 10MB). Please select a smaller image.')));
-        return;
+        if (fileSizeInMB > 10) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: const Text(
+                  'Image file is too large (over 10MB). Please select a smaller image.')));
+          return;
+        }
+
+        setState(() {
+          _imageFile = File(pickedFile.path);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Image selected successfully!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Image selection cancelled.')),
+        );
       }
-
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Image selected successfully!')),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Image selection cancelled.')),
-      );
+    } catch (e) {
+      debugPrintStack(label: 'Image picker error:');
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error picking image: $e'),
+      ));
     }
-  } catch (e) {
-    debugPrintStack(label: 'Image picker error:');
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Error picking image: $e'),
-    ));
   }
-}
 
- Future<void> _editFile() async {
+  Future<void> _editFile() async {
     if (_formKey.currentState!.validate()) {
       // Input validation
       if (_nameController.text.trim().isEmpty ||
@@ -120,30 +116,30 @@ class _EditItemPageState extends State<EditItemPage> {
         return;
       }
 
-   
-
       try {
-      String? newRelativePath; //Declare here
+        String? newRelativePath; //Declare here
 
-      if (_imageFile != null) {
+        if (_imageFile != null) {
           newRelativePath = await FileUtils.saveImage(_imageFile!);
           if (newRelativePath == null) {
             ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Error saving image')));
-            return ;
+            return;
           }
-      }
+        }
 
-        final editedItem = widget.itemData.copyWith( // Use copyWith for immutability
-        name: _nameController.text.trim(),
-        color: selectedColorName,
-        form: _formController.text.trim(),
-        group: _selectedReminderTitle ?? '',
-        description: _descriptionController.text.trim(),
-        relativeImagePath: newRelativePath ?? widget.itemData.relativeImagePath, //Keep old path if not changed
-      );
+        final editedItem = widget.itemData.copyWith(
+          // Use copyWith for immutability
+          name: _nameController.text.trim(),
+          color: selectedColorName,
+          form: _formController.text.trim(),
+          group: _selectedReminderTitle ?? '',
+          description: _descriptionController.text.trim(),
+          relativeImagePath: newRelativePath ??
+              widget.itemData.relativeImagePath, //Keep old path if not changed
+        );
 
-        await _itemBox.put(widget.itemData.id, editedItem); 
+        await _itemBox.put(widget.itemData.id, editedItem);
 
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Item updated successfully!')));
@@ -158,86 +154,96 @@ class _EditItemPageState extends State<EditItemPage> {
     }
   }
 
-
   //Helper functions
-Widget _buildImageWidget(File imageFile, BuildContext context) {
-  return Container(
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(20),
-      color: AppColors.gray,
-    ),
-    height: MediaQuery.of(context).size.height * 0.4,
-    width: MediaQuery.of(context).size.width * 0.9,
-    child: Image.file(
-      imageFile,
-      height: 200,
-      width: double.infinity,
-      fit: BoxFit.cover,
-    ),
-  );
-}
-
-Widget _buildAddPhotoOverlay(BuildContext context) {
-  final mediaQuery = MediaQuery.of(context);
-  return Positioned.fill(
-    child: Container(
-      color: Colors.black.withOpacity(0.5), // Semi-transparent black
-      child: Center(
-        child: Text(
-          '+ Add New',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-    ),
-  );
-}
-
-
-Widget _buildPlaceholder(BuildContext context) {
-  final mediaQuery = MediaQuery.of(context);
-  return Container(
-      height: mediaQuery.size.height * 0.4,
-      width: mediaQuery.size.width * 0.9,
+  Widget _buildImageWidget(File imageFile, BuildContext context) {
+    return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
-        color: AppColors.darkBorderGray,
+        color: AppColors.gray,
       ),
-      child: const Center(child: Text('+ Add Photo')));
-}
-
-Widget _buildLoadingWidget(BuildContext context) {
-  final mediaQuery = MediaQuery.of(context);
-  return Container(
-    height: mediaQuery.size.height * 0.4,
-    width: mediaQuery.size.width * 0.9,
-    child: Center(child: CircularProgressIndicator()),
-  );
-}
-
-Widget _buildErrorWidget(String error) {
-  return Center(child: Text('Error: $error'));
-}
-
-Future<File?> _getImageFile(String relativePath) async {
-  try {
-    final imagePath = await FileUtils.getFullImagePath(relativePath);
-    final file = File(imagePath);
-    if (await file.exists()) {
-      return file;
-    }
-    return null;
-  } catch (e) {
-    return null; // Or handle this error appropriately if needed.
+      height: MediaQuery.of(context).size.height * 0.4,
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: Image.file(
+        imageFile,
+        height: 200,
+        width: double.infinity,
+        fit: BoxFit.cover,
+      ),
+    );
   }
-}
 
-    @override
+  Widget _buildAddPhotoOverlay(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    return Positioned.fill(
+      child: Container(
+        color: Colors.black.withOpacity(0.5), // Semi-transparent black
+        child: Center(
+          child: Text(
+            '+ Add New',
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    return Container(
+        height: mediaQuery.size.height * 0.4,
+        width: mediaQuery.size.width * 0.9,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          color: AppColors.darkBorderGray,
+        ),
+        child: const Center(child: Text('+ Add Photo')));
+  }
+
+  Widget _buildLoadingWidget(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    return Container(
+      height: mediaQuery.size.height * 0.4,
+      width: mediaQuery.size.width * 0.9,
+      child: Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _buildErrorWidget(String error) {
+    return Center(child: Text('Error: $error'));
+  }
+
+  Future<File?> _getImageFile(String relativePath) async {
+    try {
+      final imagePath = await FileUtils.getFullImagePath(relativePath);
+      final file = File(imagePath);
+      if (await file.exists()) {
+        return file;
+      }
+      return null;
+    } catch (e) {
+      return null; // Or handle this error appropriately if needed.
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final appDocumentsDirPath = Provider.of<AppData>(context).appDocumentsDirPath;
+    final appDocumentsDirPath =
+        Provider.of<AppData>(context).appDocumentsDirPath;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Item'),
-        centerTitle: true,
+        centerTitle: false,
+        leading: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: LeftButton(
+            icon: Icons.arrow_left,
+            onTap: () {
+              Navigator.pop(context);
+            },
+            iconColor: Colors.black,
+            backgroundColor: Colors.transparent,
+            borderColor: Colors.black12,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -248,8 +254,7 @@ Future<File?> _getImageFile(String relativePath) async {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(20),
                   child: GestureDetector(
                     onTap: _pickImage,
                     child: Stack(
@@ -260,30 +265,34 @@ Future<File?> _getImageFile(String relativePath) async {
                             ? _buildImageWidget(_imageFile!, context)
                             : widget.itemData.relativeImagePath!.isNotEmpty
                                 ? FutureBuilder<File?>(
-                    future: _getImageFile(widget.itemData.relativeImagePath!),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return _buildLoadingWidget(context);
-                      } else if (snapshot.hasError) {
-                        return _buildErrorWidget(snapshot.error.toString());
-                      } else if (snapshot.hasData && snapshot.data != null) {
-                        return _buildImageWidget(snapshot.data!, context);
-                      } else {
-                        return _buildPlaceholder(context);
-                      }
-                    },
-                  )
+                                    future: _getImageFile(
+                                        widget.itemData.relativeImagePath!),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return _buildLoadingWidget(context);
+                                      } else if (snapshot.hasError) {
+                                        return _buildErrorWidget(
+                                            snapshot.error.toString());
+                                      } else if (snapshot.hasData &&
+                                          snapshot.data != null) {
+                                        return _buildImageWidget(
+                                            snapshot.data!, context);
+                                      } else {
+                                        return _buildPlaceholder(context);
+                                      }
+                                    },
+                                  )
                                 : _buildPlaceholder(context),
-                  
-                        if (_imageFile == null && widget.itemData.relativeImagePath!.isNotEmpty)
+
+                        if (_imageFile == null &&
+                            widget.itemData.relativeImagePath!.isNotEmpty)
                           _buildAddPhotoOverlay(context),
                       ],
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20.0),
-
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   const Text(
                     'Name',
@@ -293,13 +302,14 @@ Future<File?> _getImageFile(String relativePath) async {
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: 52,
+                      width: 382,
                       child: Column(
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10),
+                              horizontal: 20.0,
+                            ),
                             child: TextFormField(
                               controller: _nameController,
                               decoration: const InputDecoration(
@@ -308,8 +318,7 @@ Future<File?> _getImageFile(String relativePath) async {
                                   hintStyle: TextStyle(
                                     fontSize: 18,
                                     color: Colors.grey,
-                                  )
-                                  ),
+                                  )),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter a name';
@@ -331,8 +340,8 @@ Future<File?> _getImageFile(String relativePath) async {
                         decoration: BoxDecoration(
                             border: Border.all(),
                             borderRadius: BorderRadius.circular(20)),
-                        height: MediaQuery.of(context).size.height * 0.09,
-                        width: MediaQuery.of(context).size.width * 0.68,
+                        height: 52,
+                        width: MediaQuery.of(context).size.width * 0.74,
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                               horizontal: 20.0, vertical: 10),
@@ -340,7 +349,8 @@ Future<File?> _getImageFile(String relativePath) async {
                             value: selectedColorName,
                             onChanged: (String? newColorName) {
                               setState(() {
-                                selectedColorName = newColorName ?? widget.itemData.color;
+                                selectedColorName =
+                                    newColorName ?? widget.itemData.color;
                               });
                             },
                             items: colorMap.keys.map((colorName) {
@@ -350,85 +360,94 @@ Future<File?> _getImageFile(String relativePath) async {
                               );
                             }).toList(),
                             underline: Container(),
-                            menuWidth: MediaQuery.of(context).size.width * 0.7,
+                            menuWidth: MediaQuery.of(context).size.width * 0.72,
                           ),
                         ),
                       ),
                       const SizedBox(width: 10),
-                      ColorBox(color: colorMap[selectedColorName] ?? Colors.grey),
+                      ColorBox(
+                          height: 52,
+                          width: 52,
+                          color: colorMap[selectedColorName] ?? Colors.grey),
                     ],
                   ),
                   const SizedBox(height: 10.0),
                   const Text(
-                    'Format',
+                    'Form',
                     style: AppFonts.h6,
                   ),
                   Container(
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: 52,
+                      width: 382,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10),
+                          horizontal: 20.0,
+                        ),
                         child: TextFormField(
                           controller: _formController,
                           decoration: const InputDecoration(
                               border: InputBorder.none,
-                              hintText: 'Add format',
+                              hintText: 'Add form',
                               hintStyle: TextStyle(
                                 fontSize: 18,
                                 color: Colors.grey,
                               )),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a format';
+                              return 'Please enter a form';
                             }
                             return null;
                           },
                         ),
                       )),
                   const SizedBox(height: 10.0),
-               const Text(
+                  const Text(
                     'Group',
                     style: AppFonts.h6,
                   ),
                   Container(
-  decoration: BoxDecoration(
-    border: Border.all(),
-    borderRadius: BorderRadius.circular(20),
-  ),
-  height: MediaQuery.of(context).size.height * 0.09,
-  width: MediaQuery.of(context).size.width * 0.9,
-  child: Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-    child: _reminders.isEmpty
-        ? const Center(child: Text('Loading reminders...'))
-        : DropdownButtonFormField<String>(
-            value: _selectedReminderTitle ?? widget.itemData.group, // Initial value
-            decoration: const InputDecoration(border: InputBorder.none),
-            hint: const Text('Select Reminder'), // Removed dynamic hint
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedReminderTitle = newValue;
-              });
-            },
-            items: _reminders.map((reminder) {
-              return DropdownMenuItem<String>(
-                value: reminder.title,
-                child: Text(reminder.title),
-              );
-            }).toList(),
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return 'Please select a reminder';
-              }
-              return null;
-            },
-          ),
-  ),
-),
+                    decoration: BoxDecoration(
+                      border: Border.all(),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    height: 52,
+                    width: 382,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
+                      ),
+                      child: _reminders.isEmpty
+                          ? const Center(child: Text('Loading reminders...'))
+                          : DropdownButtonFormField<String>(
+                              value: _selectedReminderTitle ??
+                                  widget.itemData.group, // Initial value
+                              decoration: const InputDecoration(
+                                  border: InputBorder.none),
+                              hint: const Text(
+                                  'Select Reminder'), // Removed dynamic hint
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  _selectedReminderTitle = newValue;
+                                });
+                              },
+                              items: _reminders.map((reminder) {
+                                return DropdownMenuItem<String>(
+                                  value: reminder.title,
+                                  child: Text(reminder.title),
+                                );
+                              }).toList(),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please select a reminder';
+                                }
+                                return null;
+                              },
+                            ),
+                    ),
+                  ),
                   const SizedBox(height: 10.0),
                   const Text(
                     'Description',
@@ -438,11 +457,12 @@ Future<File?> _getImageFile(String relativePath) async {
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: 52,
+                      width: 382,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10),
+                          horizontal: 20.0,
+                        ),
                         child: TextFormField(
                           controller: _descriptionController,
                           decoration: const InputDecoration(
@@ -461,9 +481,7 @@ Future<File?> _getImageFile(String relativePath) async {
                         ),
                       )),
                   const SizedBox(height: 20.0),
-                  const SizedBox(height: 20.0),
                 ]),
-
                 DefaultButton(
                   text: 'Save',
                   onTap: _editFile,
@@ -476,5 +494,3 @@ Future<File?> _getImageFile(String relativePath) async {
     );
   }
 }
-
-

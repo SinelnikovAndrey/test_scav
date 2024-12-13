@@ -6,6 +6,9 @@ import 'package:test_scav/presentation/home/add_item.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
 import 'package:test_scav/presentation/notification/reminder_body_list.dart';
 import 'package:test_scav/presentation/notification/reminder_list.dart';
+import 'package:test_scav/presentation/settings/reminder_body_list.dart';
+import 'package:test_scav/presentation/settings/reminder_list.dart';
+
 import 'package:test_scav/widgets/navigation_page.dart';
 class AppRouter {
   static const String myItemsPageRoute = '/myItemsPage';
@@ -35,9 +38,9 @@ class AppRouter {
       case addItemRoute:
         return MaterialPageRoute<void>(builder: (_) => const AddItemPage());
       case reminderItemRoute:
-        return MaterialPageRoute<void>(builder: (_) => const ReminderList());
+        return MaterialPageRoute<void>(builder: (_) => const OldReminderList());
       case reminderBodyRoute:
-        return MaterialPageRoute<void>(builder: (_) => const ReminderBodyList());
+        return MaterialPageRoute<void>(builder: (_) => const OldReminderBodyList());
       case addGroupRoute:
         return MaterialPageRoute<void>(builder: (_) => const AddGroupPage());
       

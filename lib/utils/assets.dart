@@ -19,8 +19,8 @@ class SvgAssets {
   static const String cube = '${_basePath}cube.svg';
   static const String plus = '${_basePath}plus.svg';
   static const String splash = '${_basePath}daily_scavenger.svg';
+  static const String alarmClock = '${_basePath}Alarm_clock.svg';
 }
-
 class PngAssets {
   static const String _basePath = 'assets/png/';
   static const String fail = '${_basePath}fail.png';

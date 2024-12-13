@@ -7,6 +7,7 @@ class DefaultButton extends StatelessWidget {
   final Widget? leading;
   final Widget? trailing;
   final Color? backgroundColor;
+  final bool isEnabled;
 
   const DefaultButton({
     super.key,
@@ -15,6 +16,7 @@ class DefaultButton extends StatelessWidget {
     this.leading,
     this.trailing,
     this.backgroundColor = AppColors.primary,
+    this.isEnabled = true,
   });
 
   @override
@@ -26,11 +28,18 @@ class DefaultButton extends StatelessWidget {
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(100),
-        onTap: onTap,
+        onTap: isEnabled ? onTap : null,
         child: Container(
-          height: MediaQuery.of(context).size.height * 0.1,
-              width: MediaQuery.of(context).size.width * 0.9,
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 30),
+          height: 60,
+              width: 382,
+              decoration: BoxDecoration(
+          color: isEnabled
+              ? AppColors.primary 
+              : Colors.white.withOpacity(0.5), 
+          borderRadius: BorderRadius.circular(100),
+
+        ),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

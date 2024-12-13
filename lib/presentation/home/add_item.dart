@@ -22,6 +22,9 @@ class AddItemPage extends StatefulWidget {
 }
 
 class _AddItemPageState extends State<AddItemPage> {
+
+
+  
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -31,8 +34,13 @@ class _AddItemPageState extends State<AddItemPage> {
   final _imagePicker = ImagePicker();
   File? _imageFile;
 
-  List<Reminder> _reminders = []; 
+  List<Reminder> _reminders = [];
   String? _selectedReminderTitle;
+
+  bool _isFormValid = false; 
+
+
+  
 
   late final Box<ItemData> _itemBox;
 
@@ -95,6 +103,17 @@ class _AddItemPageState extends State<AddItemPage> {
     }
   }
 
+  void _updateFormValidity() {
+    setState(() {
+      _isFormValid = _nameController.text.isNotEmpty &&
+           _formController.text.isNotEmpty &&
+           _descriptionController.text.isNotEmpty &&
+           _selectedReminderTitle != null &&
+           selectedColorName.isNotEmpty;
+    });
+  }
+
+
   Future<void> _addFile() async {
     if (_formKey.currentState!.validate()) {
       // Input validation
@@ -135,7 +154,7 @@ class _AddItemPageState extends State<AddItemPage> {
 
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Item added successfully!')));
-        Navigator.pop(context, newItem); 
+        Navigator.pop(context, newItem);
       } on HiveError catch (e) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Hive error: ${e.message}')));
@@ -145,6 +164,8 @@ class _AddItemPageState extends State<AddItemPage> {
       }
     }
   }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -205,22 +226,21 @@ class _AddItemPageState extends State<AddItemPage> {
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: 52,
+                      width: 382,
                       child: Column(
                         children: [
                           Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10),
+                              horizontal: 20.0,
+                            ),
                             child: TextFormField(
                               controller: _nameController,
+                              onChanged: (_) => _updateFormValidity(),
                               decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   hintText: 'Add name',
-                                  hintStyle: TextStyle(
-                                    fontSize: 18,
-                                    color: Colors.grey,
-                                  )),
+                                  hintStyle: AppFonts.h6),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter a name';
@@ -238,64 +258,73 @@ class _AddItemPageState extends State<AddItemPage> {
                   ),
                   Row(
                     children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(),
-                            borderRadius: BorderRadius.circular(20)),
-                        height: MediaQuery.of(context).size.height * 0.09,
-                        width: MediaQuery.of(context).size.width * 0.68,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10),
-                          child: DropdownButton<String>(
-                            value: selectedColorName,
-                            onChanged: (String? newColorName) {
-                              setState(() {
-                                selectedColorName = newColorName ?? 'Grey';
-                              });
-                            },
-                            items: colorMap.keys.map((colorName) {
-                              return DropdownMenuItem<String>(
-                                value: colorName,
-                                child: Text(colorName),
-                              );
-                            }).toList(),
-                            underline: Container(),
-                            menuWidth: MediaQuery.of(context).size.width * 0.7,
+                      Expanded(
+                        child: Flexible(
+                          flex: 3,
+                          child: Container(
+                            decoration: BoxDecoration(
+                                border: Border.all(),
+                                borderRadius: BorderRadius.circular(20)),
+                            height: 52,
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0,
+                              ),
+                              child: DropdownButton<String>(
+                                value: selectedColorName,
+                                onChanged: (String? newColorName) {
+                                  setState(() {
+                                    selectedColorName = newColorName ?? 'Grey';
+                                    _updateFormValidity();
+                                  });
+                                },
+                                items: colorMap.keys.map((colorName) {
+                                  return DropdownMenuItem<String>(
+                                    value: colorName,
+                                    child: Text(colorName),
+                                  );
+                                }).toList(),
+                                underline: Container(),
+                                menuWidth:
+                                    MediaQuery.of(context).size.width * 0.5,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                       const SizedBox(width: 10),
                       ColorBox(
+                        height: 52,
+                        width: 52,
                           color: colorMap[selectedColorName] ?? Colors.grey),
                     ],
                   ),
                   const SizedBox(height: 10.0),
                   const Text(
-                    'Format',
+                    'Form',
                     style: AppFonts.h6,
                   ),
                   Container(
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: 52,
+                      width: 382,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10),
+                          horizontal: 20.0,
+                        ),
                         child: TextFormField(
                           controller: _formController,
+                          onChanged: (_) => _updateFormValidity(),
                           decoration: const InputDecoration(
                               border: InputBorder.none,
-                              hintText: 'Add format',
-                              hintStyle: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              )),
+                              hintText: 'Add form',
+                              hintStyle: AppFonts.h6),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter a format';
+                              return 'Please enter a form';
                             }
                             return null;
                           },
@@ -311,23 +340,23 @@ class _AddItemPageState extends State<AddItemPage> {
                       border: Border.all(),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    height: MediaQuery.of(context).size.height * 0.09,
-                    width: MediaQuery.of(context).size.width * 0.9,
+                    height: 52,
+                    width: 382,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 10),
+                          horizontal: 20.0, ),
                       child: _reminders.isEmpty
                           ? const Center(
-                              child: Text(
-                                  'Create groups on My Items Page'))
+                              child: Text('Create groups on My Items Page'))
                           : DropdownButtonFormField<String>(
                               value: _selectedReminderTitle,
                               decoration: const InputDecoration(
                                   border: InputBorder.none),
-                              hint: const Text('Select group'),
+                              hint: const Text('Choose group'),
                               onChanged: (String? newValue) {
                                 setState(() {
                                   _selectedReminderTitle = newValue;
+                                  _updateFormValidity();
                                 });
                               },
                               items: _reminders.map((reminder) {
@@ -336,7 +365,6 @@ class _AddItemPageState extends State<AddItemPage> {
                                   child: Text(reminder.title),
                                 );
                               }).toList(),
-                             
                             ),
                     ),
                   ),
@@ -349,12 +377,13 @@ class _AddItemPageState extends State<AddItemPage> {
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.09,
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: 52,
+                            width: 382,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 20.0, vertical: 10),
+                            horizontal: 20.0,),
                         child: TextFormField(
+                          onChanged: (_) => _updateFormValidity(),
                           controller: _descriptionController,
                           decoration: const InputDecoration(
                               border: InputBorder.none,
@@ -372,11 +401,12 @@ class _AddItemPageState extends State<AddItemPage> {
                         ),
                       )),
                   const SizedBox(height: 20.0),
-                  const SizedBox(height: 20.0),
+             
                 ]),
                 DefaultButton(
                   text: 'Add',
                   onTap: _addFile,
+                  isEnabled: _isFormValid,
                 )
               ],
             ),
@@ -385,4 +415,12 @@ class _AddItemPageState extends State<AddItemPage> {
       ),
     );
   }
+
+ @override
+  void dispose() {
+    _formController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
 }
+

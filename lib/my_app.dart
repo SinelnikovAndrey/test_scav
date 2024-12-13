@@ -1,27 +1,23 @@
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/utils/assets.dart';
-import 'package:test_scav/widgets/navigation_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_router.dart';
 class MyApp extends StatefulWidget {
   final String appDocumentsDirPath;
-  final Root rootData; // Add rootData here
+  final Root rootData; 
 
-  const MyApp({super.key, required this.appDocumentsDirPath, required this.rootData}); // Pass rootData
+  const MyApp({super.key, required this.appDocumentsDirPath, required this.rootData}); 
 
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
 class _MyAppState extends State<MyApp> {
-  late AppData _appData; //Declare here
+  late AppData _appData; 
 
   @override
   void initState() {
@@ -32,7 +28,7 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AppData>.value( // Use .value
+    return ChangeNotifierProvider<AppData>.value( 
       value: _appData, 
       child: MaterialApp(
             title: 'Scavenger',
@@ -42,7 +38,7 @@ class _MyAppState extends State<MyApp> {
               useMaterial3: true,
             ),
             onGenerateRoute: AppRouter.onGenerateRoute,
-            home: SplashPage(), 
+            home: const SplashPage(), 
           ));
         }
       }
@@ -74,7 +70,6 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-   final appData = Provider.of<AppData>(context, listen: false);
     return Scaffold(
       backgroundColor: AppColors.primary,
       body: Center(
@@ -116,7 +111,7 @@ class _SplashPageState extends State<SplashPage> {
 class AppData with ChangeNotifier {
    String _appDocumentsDirPath = '';
   String get appDocumentsDirPath => _appDocumentsDirPath;
-  final Root rootData; //Add rootData here
+  final Root rootData; 
 
   AppData({required String appDocumentsDirPath, required this.rootData})
     : _appDocumentsDirPath = appDocumentsDirPath;

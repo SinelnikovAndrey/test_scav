@@ -126,6 +126,13 @@ class _AddPlacePageState extends State<AddPlacePage> {
           ),
         ),
       ),
+      bottomNavigationBar: Padding(
+            padding: const EdgeInsets.only(bottom: 10.0, left: 20, right: 20),
+        child: DefaultButton(
+                  text: 'Save',
+                  onTap: _addPlace,
+                ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
@@ -134,7 +141,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Description',
+                'Place',
                 style: AppFonts.h6,
               ),
               Container(
@@ -163,11 +170,8 @@ class _AddPlacePageState extends State<AddPlacePage> {
                       },
                     ),
                   )),
-              const SizedBox(height: 32.0),
-              DefaultButton(
-                text: 'Save',
-                onTap: _addPlace,
-              )
+
+              
             ],
           ),
         ),

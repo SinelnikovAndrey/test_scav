@@ -1,9 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/main.dart';
+import 'package:test_scav/presentation/notification/note_state.dart';
 import 'package:test_scav/presentation/notification/notification.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/widgets/left_button.dart';
@@ -11,30 +15,26 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:uuid/uuid.dart';
 
 
-class ReminderList extends StatefulWidget {
-  const ReminderList({super.key});
+class OldReminderList extends StatefulWidget {
+  const OldReminderList({super.key});
 
   @override
-  State<ReminderList> createState() => _ReminderListState();
+  State<OldReminderList> createState() => _ReminderListState();
 }
 
-class _ReminderListState extends State<ReminderList> {
+class _ReminderListState extends State<OldReminderList> {
   final List<TextEditingController> dateTimeControllers = [];
-  final uuid = const Uuid();
-  final Map<int, bool> reminderNotificationStates = {};
+  final notificationService = NNotificationService(); 
 
   @override
   void initState() {
     super.initState();
-    LocalNotifications.init();
-  }
-
-  @override
-  void dispose() {
-    for (final controller in dateTimeControllers) {
-      controller.dispose();
-    }
-    super.dispose();
+    notificationService.init();
+    NNotificationService.onClickNotification.listen((String? payload) {
+      if (payload != null) {
+        Navigator.pushNamed(context, '/notificationPage');
+      }
+    });
   }
 
   Future<void> _showTimePicker(
@@ -52,74 +52,68 @@ class _ReminderListState extends State<ReminderList> {
         picked.minute,
       );
 
-      final updatedReminder =
-          box.getAt(index)!.copyWith(dateTime: newDateTime, active: true);
-      box.putAt(index, updatedReminder);
+      final updatedReminder = box
+          .getAt(index)!
+          .copyWith(dateTime: newDateTime, active: true);
+      await box.putAt(index, updatedReminder);
 
       setState(() {
         dateTimeControllers[index].text =
             DateFormat('HH:mm').format(newDateTime);
-        final isScheduled =
-            reminderNotificationStates[updatedReminder.id] ?? false;
-        if (isScheduled) {
-          _scheduleDailyTenAMNotification(updatedReminder.id, updatedReminder);
-        }
       });
+
+      _toggleReminderNotification(context, updatedReminder);
     }
   }
 
-  tz.TZDateTime _nextInstanceOfTenAM() {
-    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
-    tz.TZDateTime scheduledDate =
-        tz.TZDateTime(tz.local, now.year, now.month, now.day, 10);
-    if (scheduledDate.isBefore(now)) {
-      scheduledDate = scheduledDate.add(const Duration(days: 1));
-    }
-    return scheduledDate;
-  }
-
-  Future<void> _scheduleDailyTenAMNotification(
-      int id, Reminder reminder) async {
-    final notificationDetails = await LocalNotifications.notificationDetails();
-    if (notificationDetails == null) {
-      print('Error: Notification details are null');
-      return;
-    }
-
-    try {
-      await LocalNotifications.flutterLocalNotificationsPlugin.zonedSchedule(
-        id,
-        'Daily Scavenger',
-        'Check your ${reminder.title} items',
-        _nextInstanceOfTenAM(),
-        notificationDetails,
-        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
-        matchDateTimeComponents: DateTimeComponents.time,
-      );
+  Future<void> _toggleReminderNotification(
+      BuildContext context, Reminder reminder) async {
+    final notificationState = Provider.of<NotificationState>(context, listen: false);
+    if (reminder.active) {
+      final id = notificationService.generateUniqueId(reminder.id);
+      try {
+        await notificationService.scheduleNotification(
+          id,
+          'Daily Scavenger',
+          '🔔 Check your ${reminder.title} items',
+          reminder.dateTime,
+          TimeOfDay.fromDateTime(reminder.dateTime),
+          'dailyReminder',
+          'daily',
+          null,
+        );
+        notificationState.addScheduledNotificationId(id);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Notification for ${reminder.title} scheduled!'),
+        ));
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Error scheduling notification: $e'),
+        ));
+      }
+    } else {
+      notificationService.cancelNotification(reminder.id);
+      notificationState.removeScheduledNotificationId(reminder.id);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('reminder for ${reminder.title} added successfully!')));
-      print(
-          'Scheduled notification for ID: $id, title: ${reminder.title}, time: ${reminder.dateTime}');
-    } catch (e) {
-      print('Error scheduling notification for ID $id: $e');
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error: $e')));
-    } finally {
-      setState(() {});
+        content: Text('Notification for ${reminder.title} cancelled!'),
+      ));
     }
-  }
-
-  Future<void> _cancelNotification(int id) async {
-    await LocalNotifications.cancel(id);
-    setState(() {
-      reminderNotificationStates.remove(id);
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) => NotificationState(),
+      child: Consumer<NotificationState>(
+        builder: (context, notificationState, child) {
+          return _buildReminderList(context, notificationState);
+        },
+      ),
+    );
+  }
+
+  Widget _buildReminderList(
+      BuildContext context, NotificationState notificationState) {
     return ValueListenableBuilder<Box<Reminder>>(
       valueListenable: Hive.box<Reminder>(reminderBoxName).listenable(),
       builder: (context, box, child) {
@@ -132,6 +126,7 @@ class _ReminderListState extends State<ReminderList> {
             ));
           }
         }
+
         return Scaffold(
           appBar: AppBar(
             title: const Text(
@@ -155,74 +150,82 @@ class _ReminderListState extends State<ReminderList> {
           body: reminders.isEmpty
               ? const Center(child: Text('No reminders found'))
               : ListView.builder(
-                itemCount: reminders.length,
-                itemBuilder: (context, index) {
-                  final reminder = reminders[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                      Text(
-                        reminder.title,
-                        style: AppFonts.h8,
-                      ),
-                      Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(),
-                              borderRadius: BorderRadius.circular(20)),
-                          height: MediaQuery.of(context).size.height * 0.09,
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 15.0, vertical: 10),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.60,
-                                  child: TextFormField(
-                                    decoration: const InputDecoration(
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      contentPadding:
-                                          EdgeInsetsDirectional.only(
-                                              start: 10.0),
-                                    ),
-                                    // style: TextStyle( decoration: TextDecoration.none),
-                                    onTap: () =>
-                                        _showTimePicker(context, index, box),
-                                    controller: dateTimeControllers[index],
+                  itemCount: reminders.length,
+                  itemBuilder: (context, index) {
+                    final reminder = reminders[index];
+                    return SizedBox( 
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 20.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.60,
+                              child: Text(
+                                reminder.title,
+                                style: AppFonts.h8,
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.09,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 15.0, vertical: 10),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                        width: MediaQuery.of(context)
+                                                .size
+                                                .width *
+                                            0.60,
+                                        child: TextFormField(
+                                          decoration: const InputDecoration(
+                                            focusedBorder:
+                                                InputBorder.none,
+                                            enabledBorder: InputBorder.none,
+                                            contentPadding: EdgeInsetsDirectional
+                                                .only(start: 10.0),
+                                          ),
+                                          onTap: () => _showTimePicker(
+                                              context, index, box),
+                                          controller:
+                                              dateTimeControllers[index],
+                                          maxLines: 1,
+                                        ),
+                                      ),
+                                      Switch(
+                                        value: reminder.active,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            reminder.active = value;
+                                          });
+                                          _toggleReminderNotification(
+                                              context, reminder);
+                                        },
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                  
-                                //       SizedBox(
-                                //   width: MediaQuery.of(context).size.width * 0.5,
-                                // ),
-                                Switch(
-                                  value: reminder.active,
-                                  onChanged: (value) async {
-                                    final updatedReminder =
-                                        reminder.copyWith(active: value);
-                                    box.putAt(index, updatedReminder);
-                                    if (value) {
-                                      await _scheduleDailyTenAMNotification(
-                                          reminder.id, updatedReminder);
-                                    } else {
-                                      await _cancelNotification(reminder.id);
-                                    }
-                                    setState(() {});
-                                  },
-                                ),
-                              ],
+                              ),
                             ),
-                          )),
-                    ]),
-                  );
-                },
-              ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
         );
       },
     );
   }
 }
+

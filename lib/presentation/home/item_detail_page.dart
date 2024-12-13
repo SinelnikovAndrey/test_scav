@@ -79,20 +79,16 @@ class ItemDetailPage extends StatelessWidget {
               ),
             ],
           ),
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(right: 5.0),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.1,
-              width: MediaQuery.of(context).size.width * 0.9,
-              child: DefaultButton(
-                text: "Got it!",
-                onTap: () {
-                  Future.delayed(Duration.zero, () {
-                    Navigator.of(context)
-                        .push(AddPlacePage.materialPageRoute(itemId: item.id));
-                  });
-                },
-              ),
+          bottomSheet: Padding(
+            padding: const EdgeInsets.only(bottom: 10.0, left: 20, right: 20),
+            child: DefaultButton(
+              text: "Got it!",
+              onTap: () {
+                Future.delayed(Duration.zero, () {
+                  Navigator.of(context)
+                      .push(AddPlacePage.materialPageRoute(itemId: item.id));
+                });
+              },
             ),
           ),
           body: Padding(
@@ -117,8 +113,8 @@ class ItemDetailPage extends StatelessWidget {
                     decoration: BoxDecoration(
                         border: Border.all(),
                         borderRadius: BorderRadius.circular(20)),
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    width: MediaQuery.of(context).size.width * 0.9,
+                    height: 82,
+                            width: 382,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 10),
@@ -127,47 +123,53 @@ class ItemDetailPage extends StatelessWidget {
                         children: [
                           const Text(
                             'Form',
-                            style: AppFonts.h6,
+                            style: AppFonts.h8,
                           ),
-                          Text(item.form),
+                          Text(
+                            item.form,
+                          style: AppFonts.h6,
+                          ),
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  Row(
-                    children: [
-                      Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(),
-                              borderRadius: BorderRadius.circular(20)),
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.68,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Color',
-                                  style: AppFonts.h6,
-                                ),
-                                Text(item.color),
-                              ],
-                            ),
-                          )),
-                      const SizedBox(width: 10.0),
-                      ColorBox(color: colorMap[item.color]!)
-                    ],
                   ),
                   const SizedBox(height: 16.0),
                   Container(
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                      height: MediaQuery.of(context).size.height * 0.1,
-                      width: MediaQuery.of(context).size.width * 0.9,
+                      height: 82,
+                      width: 382,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 10),
+                        child: Row(
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text(
+                                  'Color',
+                                  style: AppFonts.h8,
+                                ),
+                                Text(item.color),
+                              ],
+                            ),
+                            const Spacer(),
+                             ColorBox(
+                    height: 50,
+                    width: 50,
+                    color: colorMap[item.color]!)
+                          ],
+                        ),
+                      )),
+                  const SizedBox(height: 16.0),
+                  Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(),
+                          borderRadius: BorderRadius.circular(20)),
+                       height: 82,
+                      width: 382,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 20.0, vertical: 10),
@@ -176,20 +178,43 @@ class ItemDetailPage extends StatelessWidget {
                           children: [
                             const Text(
                               'Group',
-                              style: AppFonts.h6,
+                              style: AppFonts.h8,
                             ),
                             // SizedBox(height: 5,),
-                            Text(item.group),
+                            Text(
+                              item.group,
+                               style: AppFonts.h6,
+                            ),
                           ],
                         ),
                       )),
                   const SizedBox(height: 16.0),
-                  TextField(
-                    title: 'Description',
-                    value: item.description,
-                  ),
+                  Container(
+                      decoration: BoxDecoration(
+                          border: Border.all(),
+                          borderRadius: BorderRadius.circular(20)),
+                       height: 82,
+                      width: 382,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Description',
+                              style: AppFonts.h8,
+                            ),
+                            // SizedBox(height: 5,),
+                            Text(
+                              item.description,
+                               style: AppFonts.h6,
+                            ),
+                          ],
+                        ),
+                      )),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.15,
+                    height: MediaQuery.of(context).size.height * 0.10,
                   ),
                 ],
               ),
@@ -201,41 +226,3 @@ class ItemDetailPage extends StatelessWidget {
   }
 }
 
-class TextField extends StatelessWidget {
-  const TextField({
-    super.key,
-    // required this.item,
-    required this.title,
-    required this.value,
-  });
-
-  // final ItemData item;
-  final String title;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        decoration: BoxDecoration(
-            border: Border.all(), borderRadius: BorderRadius.circular(20)),
-        height: MediaQuery.of(context).size.height * 0.1,
-        width: MediaQuery.of(context).size.width * 0.9,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: AppFonts.h6,
-              ),
-              // SizedBox(height: 5,),
-              Text(
-                value,
-                // '$item.$value'
-              ),
-            ],
-          ),
-        ));
-  }
-}
