@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
+import 'package:test_scav/my_app.dart';
 import 'package:test_scav/presentation/dev_notification/dev_reminder_body_list.dart';
 import 'package:test_scav/presentation/dev_notification/dev_reminder_list.dart';
 import 'package:test_scav/presentation/home/add_group.dart';
@@ -15,7 +16,7 @@ class AppRouter {
   static const String myItemsPageRoute = '/myItemsPage';
   static const String navigationPageRoute = '/navigationPage';
   static const String homeRoute = '/home';
-  static const String rateUsRoute = '/myHomePage';
+  static const String onTappedUsRoute = '/splash';
   static const String notificationsRoute = '/notifications';
   static const String addItemRoute = '/addProduct';
   static const String reminderItemRoute = '/reminderAddItem';
@@ -45,8 +46,8 @@ class AppRouter {
       case addGroupRoute:
         return MaterialPageRoute<void>(builder: (_) => const AddGroupPage());
       
-      // case rateUsRoute:
-      //   return MaterialPageRoute<void>(builder: (_) => const MyHomePage());
+      case onTappedUsRoute:
+        return MaterialPageRoute<void>(builder: (_) => const SplashPage());
       default:
         return MaterialPageRoute<void>(
           builder: (_) => Scaffold(

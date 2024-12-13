@@ -167,52 +167,43 @@ class _ReminderListState extends State<OldReminderList> {
                                 style: AppFonts.h8,
                               ),
                             ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.09,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15.0, vertical: 10),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                            0.60,
-                                        child: TextFormField(
-                                          decoration: const InputDecoration(
-                                            focusedBorder:
-                                                InputBorder.none,
-                                            enabledBorder: InputBorder.none,
-                                            contentPadding: EdgeInsetsDirectional
-                                                .only(start: 10.0),
-                                          ),
-                                          onTap: () => _showTimePicker(
-                                              context, index, box),
-                                          controller:
-                                              dateTimeControllers[index],
-                                          maxLines: 1,
-                                        ),
+                            Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              height:
+                                  52,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 15.0, vertical: 10),
+                                child: Row(
+                                  children: [
+                                    TextFormField(
+                                      decoration: const InputDecoration(
+                                        focusedBorder:
+                                            InputBorder.none,
+                                        enabledBorder: InputBorder.none,
+                                        contentPadding: EdgeInsetsDirectional
+                                            .only(start: 10.0),
                                       ),
-                                      Switch(
-                                        value: reminder.active,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            reminder.active = value;
-                                          });
-                                          _toggleReminderNotification(
-                                              context, reminder);
-                                        },
-                                      ),
-                                    ],
-                                  ),
+                                      onTap: () => _showTimePicker(
+                                          context, index, box),
+                                      controller:
+                                          dateTimeControllers[index],
+                                      maxLines: 1,
+                                    ),
+                                    Switch(
+                                      value: reminder.active,
+                                      onChanged: (value) {
+                                        setState(() {
+                                          reminder.active = value;
+                                        });
+                                        _toggleReminderNotification(
+                                            context, reminder);
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),

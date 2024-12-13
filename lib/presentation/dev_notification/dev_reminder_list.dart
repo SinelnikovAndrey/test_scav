@@ -13,7 +13,6 @@ import 'package:test_scav/widgets/left_button.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:uuid/uuid.dart';
 
-
 class DevOldReminderList extends StatefulWidget {
   const DevOldReminderList({super.key});
 
@@ -23,81 +22,99 @@ class DevOldReminderList extends StatefulWidget {
 
 class _ReminderListState extends State<DevOldReminderList> {
   final List<TextEditingController> dateTimeControllers = [];
-  final notificationService = DevNNotificationService(); 
+  final devNotificationService = DevNNotificationService();
+  final scheduledNotifications = <int>{}; // Используем Set для уникальности ID
 
   @override
   void initState() {
     super.initState();
-    notificationService.init();
+    devNotificationService.init();
     DevNNotificationService.onClickNotification.listen((String? payload) {
       if (payload != null) {
         Navigator.pushNamed(context, '/notificationPage');
       }
     });
   }
+  Future<void> _showTimePicker(BuildContext context, int index, Box<Reminder> box) async {
+    final reminder = box.getAt(index);
+    if (reminder == null) {
+      return; // Or handle the case where the reminder is null
+    }
 
-  Future<void> _showTimePicker(
-      BuildContext context, int index, Box<Reminder> box) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(box.getAt(index)!.dateTime),
+      initialTime: TimeOfDay.fromDateTime(reminder.dateTime),
     );
+
     if (picked != null) {
       final newDateTime = DateTime(
-        box.getAt(index)!.dateTime.year,
-        box.getAt(index)!.dateTime.month,
-        box.getAt(index)!.dateTime.day,
+        reminder.dateTime.year,
+        reminder.dateTime.month,
+        reminder.dateTime.day,
         picked.hour,
         picked.minute,
       );
 
-      final updatedReminder = box
-          .getAt(index)!
-          .copyWith(dateTime: newDateTime, active: true);
+      final updatedReminder = reminder.copyWith(dateTime: newDateTime); // Updated: don't change active here
       await box.putAt(index, updatedReminder);
-
       setState(() {
-        dateTimeControllers[index].text =
-            DateFormat('HH:mm').format(newDateTime);
+        dateTimeControllers[index].text = DateFormat('HH:mm').format(newDateTime);
       });
 
+      // This is the critical part:
       _toggleReminderNotification(context, updatedReminder);
     }
   }
 
+
+
   Future<void> _toggleReminderNotification(
-      BuildContext context, Reminder reminder) async {
-    final notificationState = Provider.of<DevNotificationState>(context, listen: false);
-    if (reminder.active) {
-      final id = notificationService.generateUniqueId(reminder.id);
-      try {
-        await notificationService.scheduleNotification(
-          id,
-          'Daily Scavenger',
-          '🔔 Check your ${reminder.title} items',
-          reminder.dateTime,
-          TimeOfDay.fromDateTime(reminder.dateTime),
-          'dailyReminder',
-          'daily',
-          null,
-        );
-        notificationState.addScheduledNotificationId(id);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Notification for ${reminder.title} scheduled!'),
-        ));
-      } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Error scheduling notification: $e'),
-        ));
-      }
-    } else {
-      notificationService.cancelNotification(reminder.id);
-      notificationState.removeScheduledNotificationId(reminder.id);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Notification for ${reminder.title} cancelled!'),
-      ));
+    BuildContext context,
+    Reminder updatedReminder,
+  ) async {
+    final notificationService = Provider.of<DevNNotificationService>(context, listen: false);
+    final devNotificationState = Provider.of<DevNotificationState>(context, listen: false);
+
+    // 1. Cancel the existing notification if it exists:
+    final existingId = devNotificationService.generateUniqueId(updatedReminder.id);
+    if(devNotificationState.scheduledNotificationIds.contains(existingId)){
+       await notificationService.cancelNotification(existingId);
+       devNotificationState.removeScheduledNotificationId(existingId);
+    }
+      
+
+    // 2. Schedule the updated notification:
+    if (updatedReminder.active) {
+        await _scheduleNotification(context, updatedReminder);
     }
   }
+
+
+
+
+  Future<void> _scheduleNotification(BuildContext context, Reminder reminder) async {
+    final id = devNotificationService.generateUniqueId(reminder.id);
+    final notificationService = Provider.of<DevNNotificationService>(context, listen: false);
+    try {
+      await notificationService.scheduleNotification(
+        id,
+        'Daily Scavenger',
+        '🔔 Check your ${reminder.title} items',
+        reminder.dateTime,
+        TimeOfDay.fromDateTime(reminder.dateTime),
+        'dailyReminder',
+        'daily',
+        null,
+      );
+      //Important: Add the ID to the list to allow cancellation
+      Provider.of<DevNotificationState>(context, listen: false).addScheduledNotificationId(id);
+      print('Scheduled notification for ${reminder.title}, ID: $id');
+    } catch (e) {
+      // Handle errors, display a message, etc.
+      print('Error scheduling notification: $e');
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -128,10 +145,7 @@ class _ReminderListState extends State<DevOldReminderList> {
 
         return Scaffold(
           appBar: AppBar(
-            title: const Text(
-              'Settings',
-              style: AppFonts.h10,
-            ),
+            title: const Text('Settings', style: AppFonts.h10,),
             centerTitle: true,
             leading: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -148,83 +162,142 @@ class _ReminderListState extends State<DevOldReminderList> {
           ),
           body: reminders.isEmpty
               ? const Center(child: Text('No reminders found'))
-              : ListView.builder(
-                  itemCount: reminders.length,
-                  itemBuilder: (context, index) {
-                    final reminder = reminders[index];
-                    return SizedBox( 
-                      width: MediaQuery.of(context).size.width,
-                      child: Padding(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: 20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.60,
-                              child: Text(
-                                reminder.title,
-                                style: AppFonts.h8,
-                              ),
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                height:
-                                    MediaQuery.of(context).size.height * 0.09,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 15.0, vertical: 10),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: MediaQuery.of(context)
-                                                .size
-                                                .width *
-                                            0.60,
-                                        child: TextFormField(
-                                          decoration: const InputDecoration(
-                                            focusedBorder:
-                                                InputBorder.none,
-                                            enabledBorder: InputBorder.none,
-                                            contentPadding: EdgeInsetsDirectional
-                                                .only(start: 10.0),
-                                          ),
-                                          onTap: () => _showTimePicker(
-                                              context, index, box),
-                                          controller:
-                                              dateTimeControllers[index],
-                                          maxLines: 1,
-                                        ),
-                                      ),
-                                      Switch(
-                                        value: reminder.active,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            reminder.active = value;
-                                          });
-                                          _toggleReminderNotification(
-                                              context, reminder);
-                                        },
-                                      ),
-                                    ],
+              : Column(
+                children: [
+                  const SizedBox(height: 20,),
+                  Expanded(
+                    child: ListView.builder(
+                        itemCount: reminders.length,
+                        itemBuilder: (context, index) {
+                          final reminder = reminders[index];
+                          return SizedBox(
+                            width: MediaQuery.of(context).size.width,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    reminder.title,
+                                    style: AppFonts.h8,
                                   ),
-                                ),
+                                  
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    width: 359,
+                                    height:
+                                        52,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 15.0, ),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width:
+                                                MediaQuery.of(context).size.width *
+                                                    0.60,
+                                            child: TextFormField(
+                                              decoration: const InputDecoration(
+                                                focusedBorder: InputBorder.none,
+                                                enabledBorder: InputBorder.none,
+                                                contentPadding:
+                                                    EdgeInsetsDirectional.only(
+                                                        start: 10.0),
+                                              ),
+                                              onTap: () => _showTimePicker(
+                                                  context, index, box),
+                                              controller:
+                                                  dateTimeControllers[index],
+                                              maxLines: 1,
+                                            ),
+                                          ),
+                                          // Switch(
+                                          //   value: reminder.active,
+                                          //   onChanged: (value) {
+                                          //     setState(() {
+                                          //       reminder.active = value;
+                                          //     });
+                                          //     _scheduleReminderNotification(
+                                          //         context, reminder, reminder.id);
+                                          //   },
+                                          // ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10,),
+                                ],
                               ),
                             ),
-                          ],
-                        ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
+                  ),
+                ],
+              ),
         );
       },
     );
   }
-}
 
+
+
+   Future<void> _updateReminderNotification(
+      BuildContext context, Reminder reminder) async {
+    final devNotificationState =
+        Provider.of<DevNotificationState>(context, listen: false);
+    //Cancel existing notification if it exists
+    final existingNotificationId =
+        devNotificationService.generateUniqueId(reminder.id);
+
+    if (scheduledNotifications.contains(existingNotificationId)) {
+      try {
+        await devNotificationService.cancelNotification(existingNotificationId);
+        scheduledNotifications.remove(existingNotificationId);
+        devNotificationState
+            .removeScheduledNotificationId(existingNotificationId);
+      } catch (e) {
+        print("Error canceling notification: $e");
+      }
+    }
+
+    // Schedule the updated notification
+    // _scheduleReminderNotification(context, reminder, reminder.id);
+  }
+
+
+  Future<void> _updateRemindersActiveState(
+      BuildContext context, bool value) async {
+    final notificationService = Provider.of<DevNNotificationService>(context, listen: false);
+    final box = Hive.box<Reminder>(reminderBoxName);
+    final reminders = box.values.toList();
+    for (final reminder in reminders) {
+      try {
+        reminder.active = value; // Correct logic: directly set active state
+        await reminder.save();
+        final notificationService = Provider.of<DevNNotificationService>(context, listen: false);
+        if (reminder.active) {
+          notificationService.scheduleNotification(
+            reminder.id,
+            reminder.title,
+            reminder.body ?? '',
+            reminder.dateTime,
+            TimeOfDay.fromDateTime(reminder.dateTime),
+            reminder.id.toString(),
+            'daily',
+            null,
+          );
+        } else {
+          notificationService.cancelNotification(reminder.id);
+        }
+      } catch (e) {
+        print('Error updating reminder ${reminder.id}: $e');
+        // ... (Error handling remains the same) ...
+      }
+    }
+  }
+
+}
