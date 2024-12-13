@@ -41,15 +41,15 @@
 			<string>UIInterfaceOrientationLandscapeLeft</string>
 			<string>UIInterfaceOrientationLandscapeRight</string>
 		</array>
-		<key>Privacy - Notifications Usage Description</key>
-		<string>This app uses notifications to remind you of important tasks.</string>
+		<key>NSUserNotificationCenterUsageDescription</key>
+		<string>This app uses notifications to remind you of your items.</string>
 
 		<key>UIBackgroundModes</key>
 		<array>
 			<string>remote-notification</string>
 		</array>
 		<key>NSCameraUsageDescription</key>
-		<string>This app needs access to your camera to take photos to add cover for items.</string>
+		<string>The application does not use this feature</string>
 		<key>NSPhotoLibraryUsageDescription</key>
 		<string>This app needs access to your photo library to select photos to add cover for items.</string>
 		<key>CADisableMinimumFrameDurationOnPhone</key>
