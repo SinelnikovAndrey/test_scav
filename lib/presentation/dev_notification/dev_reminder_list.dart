@@ -6,30 +6,30 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/main.dart';
-import 'package:test_scav/presentation/notification/note_state.dart';
-import 'package:test_scav/presentation/notification/notification.dart';
+import 'package:test_scav/presentation/dev_notification/dev_note_state.dart';
+import 'package:test_scav/presentation/dev_notification/dev_notification.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/widgets/left_button.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:uuid/uuid.dart';
 
 
-class OldReminderList extends StatefulWidget {
-  const OldReminderList({super.key});
+class DevOldReminderList extends StatefulWidget {
+  const DevOldReminderList({super.key});
 
   @override
-  State<OldReminderList> createState() => _ReminderListState();
+  State<DevOldReminderList> createState() => _ReminderListState();
 }
 
-class _ReminderListState extends State<OldReminderList> {
+class _ReminderListState extends State<DevOldReminderList> {
   final List<TextEditingController> dateTimeControllers = [];
-  final notificationService = NNotificationService(); 
+  final notificationService = DevNNotificationService(); 
 
   @override
   void initState() {
     super.initState();
     notificationService.init();
-    NNotificationService.onClickNotification.listen((String? payload) {
+    DevNNotificationService.onClickNotification.listen((String? payload) {
       if (payload != null) {
         Navigator.pushNamed(context, '/notificationPage');
       }
@@ -67,7 +67,7 @@ class _ReminderListState extends State<OldReminderList> {
 
   Future<void> _toggleReminderNotification(
       BuildContext context, Reminder reminder) async {
-    final notificationState = Provider.of<NotificationState>(context, listen: false);
+    final notificationState = Provider.of<DevNotificationState>(context, listen: false);
     if (reminder.active) {
       final id = notificationService.generateUniqueId(reminder.id);
       try {
@@ -102,8 +102,8 @@ class _ReminderListState extends State<OldReminderList> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => NotificationState(),
-      child: Consumer<NotificationState>(
+      create: (context) => DevNotificationState(),
+      child: Consumer<DevNotificationState>(
         builder: (context, notificationState, child) {
           return _buildReminderList(context, notificationState);
         },
@@ -112,7 +112,7 @@ class _ReminderListState extends State<OldReminderList> {
   }
 
   Widget _buildReminderList(
-      BuildContext context, NotificationState notificationState) {
+      BuildContext context, DevNotificationState notificationState) {
     return ValueListenableBuilder<Box<Reminder>>(
       valueListenable: Hive.box<Reminder>(reminderBoxName).listenable(),
       builder: (context, box, child) {

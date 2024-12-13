@@ -17,9 +17,10 @@ import 'package:test_scav/my_app.dart';
 import 'package:test_scav/data/services/hive_adapters.dart';
 // import 'package:test_scav/presentation/notification/notification.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
+import 'package:test_scav/presentation/dev_notification/dev_note_state.dart';
+import 'package:test_scav/presentation/dev_notification/dev_notification.dart';
 import 'package:test_scav/presentation/notification/note_state.dart';
 import 'package:test_scav/presentation/notification/notification.dart';
-import 'package:test_scav/presentation/settings/notification_service.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -54,8 +55,8 @@ Future<void> main() async {
     runApp(
   MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (_) => NotificationState()),
-      Provider<NNotificationService>(create: (_) => NNotificationService()),
+      ChangeNotifierProvider(create: (_) => DevNotificationState()),
+      Provider<DevNNotificationService>(create: (_) => DevNNotificationService()),
     ],
     child: MyApp(appDocumentsDirPath: appDocumentsDirPath, rootData: rootData),
   ),

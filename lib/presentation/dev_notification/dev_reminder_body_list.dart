@@ -8,14 +8,14 @@ import 'package:test_scav/widgets/left_button.dart';
 
 
 
-class ReminderBodyList extends StatefulWidget {
-  const ReminderBodyList({super.key});
+class DevOldReminderBodyList extends StatefulWidget {
+  const DevOldReminderBodyList({super.key});
 
   @override
-  State<ReminderBodyList> createState() => _ReminderBodyListState();
+  State<DevOldReminderBodyList> createState() => _ReminderBodyListState();
 }
 
-class _ReminderBodyListState extends State<ReminderBodyList> {
+class _ReminderBodyListState extends State<DevOldReminderBodyList> {
 
 
   @override
@@ -115,3 +115,6 @@ class _ReminderBodyListState extends State<ReminderBodyList> {
     );
   }
 }
+
+
+

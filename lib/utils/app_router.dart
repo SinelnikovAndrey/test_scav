@@ -1,13 +1,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
+import 'package:test_scav/presentation/dev_notification/dev_reminder_body_list.dart';
+import 'package:test_scav/presentation/dev_notification/dev_reminder_list.dart';
 import 'package:test_scav/presentation/home/add_group.dart';
 import 'package:test_scav/presentation/home/add_item.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
 import 'package:test_scav/presentation/notification/reminder_body_list.dart';
 import 'package:test_scav/presentation/notification/reminder_list.dart';
-import 'package:test_scav/presentation/settings/reminder_body_list.dart';
-import 'package:test_scav/presentation/settings/reminder_list.dart';
+
 
 import 'package:test_scav/widgets/navigation_page.dart';
 class AppRouter {
@@ -38,9 +39,9 @@ class AppRouter {
       case addItemRoute:
         return MaterialPageRoute<void>(builder: (_) => const AddItemPage());
       case reminderItemRoute:
-        return MaterialPageRoute<void>(builder: (_) => const OldReminderList());
+        return MaterialPageRoute<void>(builder: (_) => const DevOldReminderList());
       case reminderBodyRoute:
-        return MaterialPageRoute<void>(builder: (_) => const OldReminderBodyList());
+        return MaterialPageRoute<void>(builder: (_) => const DevOldReminderBodyList());
       case addGroupRoute:
         return MaterialPageRoute<void>(builder: (_) => const AddGroupPage());
       
