@@ -161,23 +161,22 @@ class _EditItemPageState extends State<EditItemPage> {
         borderRadius: BorderRadius.circular(20),
         color: AppColors.gray,
       ),
-      height: MediaQuery.of(context).size.height * 0.4,
-      width: MediaQuery.of(context).size.width * 0.9,
+      height: 382,
+      width: 382,
       child: Image.file(
         imageFile,
-        height: 200,
-        width: double.infinity,
         fit: BoxFit.cover,
       ),
     );
   }
 
   Widget _buildAddPhotoOverlay(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
     return Positioned.fill(
       child: Container(
+        height: 382,
+                            width: 382,
         color: Colors.black.withOpacity(0.5), // Semi-transparent black
-        child: Center(
+        child: const Center(
           child: Text(
             '+ Add New',
             style: TextStyle(color: Colors.white),
@@ -188,10 +187,9 @@ class _EditItemPageState extends State<EditItemPage> {
   }
 
   Widget _buildPlaceholder(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
     return Container(
-        height: mediaQuery.size.height * 0.4,
-        width: mediaQuery.size.width * 0.9,
+        height: 382,
+        width: 382,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
           color: AppColors.darkBorderGray,
@@ -200,10 +198,9 @@ class _EditItemPageState extends State<EditItemPage> {
   }
 
   Widget _buildLoadingWidget(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context);
-    return Container(
-      height: mediaQuery.size.height * 0.4,
-      width: mediaQuery.size.width * 0.9,
+    return const SizedBox(
+      height: 382,
+      width: 382,
       child: Center(child: CircularProgressIndicator()),
     );
   }

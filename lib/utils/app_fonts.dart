@@ -43,6 +43,12 @@ static const Color darkText = Color(0xFF1C1D20);
       fontSize: 18,
       fontWeight: FontWeight.w500,
       height: 1.5);
+      static const h18400 = TextStyle(
+      color: darkText,
+      fontFamily: 'SF Pro Display',
+      fontSize: 18,
+      fontWeight: FontWeight.w400,
+      height: 1.5);
 
   static const h6 = TextStyle(
       color: darkText,

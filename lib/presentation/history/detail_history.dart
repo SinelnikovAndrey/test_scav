@@ -77,10 +77,10 @@ class HistoryDetailPage extends StatelessWidget {
                     children: [
                       if (item.relativeImagePath.isNotEmpty)
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                           child: Image.file(
                             height: 382,
-                            width: double.infinity,
+                            width: 382,
                             fit: BoxFit.cover,
                             File(p.join(
                               appDocumentsDirPath,
@@ -93,20 +93,21 @@ class HistoryDetailPage extends StatelessWidget {
                           decoration: BoxDecoration(
                               border: Border.all(),
                               borderRadius: BorderRadius.circular(20)),
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: 88,
+                          width: 382,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10),
+                                horizontal: 20.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Text(
                                   'Date',
-                                  style: AppFonts.h6,
+                                  style: AppFonts.h8,
                                 ),
-                                // SizedBox(height: 5,),
-                                Text(item.formattedFetchDate),
+                                const SizedBox(height: 5,),
+                                Text(item.formattedFetchDate,style: AppFonts.h6,),
                               ],
                             ),
                           )),
@@ -115,20 +116,21 @@ class HistoryDetailPage extends StatelessWidget {
                           decoration: BoxDecoration(
                               border: Border.all(),
                               borderRadius: BorderRadius.circular(20)),
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: 88,
+                          width: 382,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10),
+                                horizontal: 20.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Text(
                                   'Time',
-                                  style: AppFonts.h6,
+                                  style: AppFonts.h8,
                                 ),
-                                // SizedBox(height: 5,),
-                                Text(item.formattedFetchTime),
+                                const SizedBox(height: 5,),
+                                Text(item.formattedFetchTime,style: AppFonts.h6,),
                               ],
                             ),
                           )),
@@ -137,20 +139,21 @@ class HistoryDetailPage extends StatelessWidget {
                           decoration: BoxDecoration(
                               border: Border.all(),
                               borderRadius: BorderRadius.circular(20)),
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: 88,
+                          width: 382,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10),
+                                horizontal: 20.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Text(
                                   'Location',
-                                  style: AppFonts.h6,
+                                  style: AppFonts.h8,
                                 ),
-                                // SizedBox(height: 5,),
-                                Text(item.placeName),
+                                const SizedBox(height: 5,),
+                                Text(item.placeName,style: AppFonts.h6,),
                               ],
                             ),
                           )),
@@ -159,20 +162,21 @@ class HistoryDetailPage extends StatelessWidget {
                           decoration: BoxDecoration(
                               border: Border.all(),
                               borderRadius: BorderRadius.circular(20)),
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          width: MediaQuery.of(context).size.width * 0.9,
+                          height: 88,
+                          width: 382,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0, vertical: 10),
+                                horizontal: 20.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 const Text(
                                   'Description',
-                                  style: AppFonts.h6,
+                                  style: AppFonts.h8,
                                 ),
-                                // SizedBox(height: 5,),
-                                Text(item.placeDescription),
+                                const SizedBox(height: 5,),
+                                Text(item.placeDescription,style: AppFonts.h6,),
                               ],
                             ),
                           )),
@@ -181,9 +185,13 @@ class HistoryDetailPage extends StatelessWidget {
                       ),
                       if (item.placePhotoUrl.isNotEmpty)
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(20),
                           child: Image.file(
+                            height: 382,
+                          width: 382,
+                          fit: BoxFit.cover,
                             File(p.join(
+                              
                                 appDocumentsDirPath, item.placePhotoUrl!)),
                           ),
                         ),

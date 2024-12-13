@@ -40,9 +40,10 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
   final _imagePicker = ImagePicker();
 
   File? _imageFile;
-
-  DateTime _selectedDateTime = DateTime.now();
+  DateTime _selectedDate = DateTime.now(); // Initialize with current date
+  TimeOfDay _selectedTime = TimeOfDay.now();
   final TextEditingController _dateTimeController = TextEditingController();
+  final TextEditingController _timeController = TextEditingController();
 
   // HistoryData item;
   late HistoryData itemData;
@@ -56,17 +57,42 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
     _placeDescriptionController.text = widget.placeData.placeDescription;
     _placePhotoUrlController.text = widget.placeData.placePhotoUrl;
 
-    _updateDateTimeController();
-    _setInitialDateTime();
+    // _updateDateTimeController();
+    // _setInitialDateTime();
   }
 
-  void _setInitialDateTime() {
-    if (widget.placeData.saveDateTime != null) {
-      _selectedDateTime = widget.placeData.saveDateTime;
-      _dateTimeController.text =
-          DateFormat('yyyy-MM-dd HH:mm').format(widget.placeData.saveDateTime!);
+   Future<void> _selectDate(BuildContext context) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+        _dateTimeController.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
     }
   }
+
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_selectedDate),
+    );
+    if (picked != null && picked != _selectedTime) {
+      setState(() {
+        _selectedTime = picked;
+        _timeController.text = picked.format(context);
+      });
+    }
+  }
+
+
+
+
 
   Future<void> _openHistoryBox() async {
     try {
@@ -80,40 +106,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
     }
   }
 
-  void _updateDateTimeController() {
-    _dateTimeController.text =
-        DateFormat('dd/MM/yy HH:mm').format(_selectedDateTime);
-  }
 
-  Future<void> _selectDateAndTime(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: _selectedDateTime,
-      firstDate: DateTime(2000),
-      lastDate: DateTime(2101),
-    );
-    if (picked != null) {
-      final TimeOfDay? pickedTime = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay(
-            hour: _selectedDateTime.hour, minute: _selectedDateTime.minute),
-      );
-
-      if (pickedTime != null) {
-        final selectedDateTime = DateTime(
-          picked.year,
-          picked.month,
-          picked.day,
-          pickedTime.hour,
-          pickedTime.minute,
-        );
-        setState(() {
-          _selectedDateTime = selectedDateTime;
-          _updateDateTimeController();
-        });
-      }
-    }
-  }
 
   Future<void> _pickImage() async {
     try {
@@ -161,61 +154,80 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
 
     super.dispose();
   }
+  
 
   Future<void> _updatePlace() async {
-    if (_formKey.currentState!.validate()) {
-      if (_placeNameController.text.trim().isEmpty ||
-          _placeDescriptionController.text.trim().isEmpty) {
+  if (_formKey.currentState!.validate()) {
+    if (_placeNameController.text.trim().isEmpty ||
+        _placeDescriptionController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please fill in all fields')));
+      return;
+    }
+
+    try {
+      String? newPlaceRelativePath;
+
+      if (_imageFile != null) {
+        newPlaceRelativePath = await FileUtils.saveImage(_imageFile!);
+        if (newPlaceRelativePath == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Error saving image')));
+          return;
+        }
+      }
+
+      //Crucially, create DateTime objects from TimeOfDay
+      final DateTime? updatedDateTime = _selectedDate;
+      final DateTime? updatedSaveTime = DateTime(
+        updatedDateTime!.year,
+        updatedDateTime.month,
+        updatedDateTime.day,
+        _selectedTime.hour,
+        _selectedTime.minute,
+      );
+       //Check for nulls, prevents crashes!
+      if (updatedDateTime == null || updatedSaveTime == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Please fill in all fields')));
+            const SnackBar(content: Text('Please select a date and time')));
         return;
       }
 
-      try {
-        String? newPlaceRelativePath;
 
-        if (_imageFile != null) {
-          newPlaceRelativePath = await FileUtils.saveImage(_imageFile!);
-          if (newPlaceRelativePath == null) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Error saving image')));
-            return;
-          }
-        }
-        final updatedPlaceData = widget.placeData.copyWith(
-          id: widget.placeData.id,
-          placeName: _placeNameController.text.trim(),
-          relativeImagePath: widget.placeData.relativeImagePath,
-          placeDescription: _placeDescriptionController.text.trim(),
-          itemName: widget.placeData.itemName,
-          itemColor: widget.placeData.itemColor,
-          itemForm: widget.placeData.itemForm,
-          itemGroup: widget.placeData.itemGroup,
-          itemDescription: widget.placeData.itemDescription,
-          placePhotoUrl: newPlaceRelativePath ?? widget.placeData.placePhotoUrl,
-          saveDateTime: _selectedDateTime ?? widget.placeData.saveDateTime,
-          fetchDateTime: _selectedDateTime ?? widget.placeData.fetchDateTime,
-        );
+      final updatedPlaceData = widget.placeData.copyWith(
+        id: widget.placeData.id,
+        placeName: _placeNameController.text.trim(),
+        relativeImagePath: widget.placeData.relativeImagePath,
+        placeDescription: _placeDescriptionController.text.trim(),
+        itemName: widget.placeData.itemName,
+        itemColor: widget.placeData.itemColor,
+        itemForm: widget.placeData.itemForm,
+        itemGroup: widget.placeData.itemGroup,
+        itemDescription: widget.placeData.itemDescription,
+        placePhotoUrl: newPlaceRelativePath ?? widget.placeData.placePhotoUrl,
+        saveDateTime: updatedDateTime,
+        saveTime: updatedSaveTime, // Correctly create DateTime
+      );
 
-        await historyBox.put(widget.placeData.id, updatedPlaceData);
 
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Item updated successfully!')));
-        Navigator.pop(context, updatedPlaceData);
-      } on HiveError catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Hive error: ${e.message}')));
-      } on Exception catch (e) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Error adding item: $e')));
-      }
+      await historyBox.put(widget.placeData.id, updatedPlaceData);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Item updated successfully!')));
+      Navigator.pop(context, updatedPlaceData);
+    } on HiveError catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Hive error: ${e.message}')));
+    } on Exception catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error adding item: $e')));
     }
-  }
+  }}
 
   //Helper functions
   Widget _buildImageWidget(File imageFile, BuildContext context) {
     return ClipRRect(
-      borderRadius: BorderRadius.circular(10),
+      borderRadius: BorderRadius.circular(20),
       child: Image.file(
         imageFile,
          height: 382,
@@ -228,6 +240,8 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
   Widget _buildAddPhotoOverlay(BuildContext context) {
     return Positioned.fill(
       child: Container(
+        height: 382,
+        width: 382,
         color: Colors.black.withOpacity(0.5),
         child: const Center(
           child: Text(
@@ -309,10 +323,10 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
               children: [
                 if (widget.placeData.relativeImagePath.isNotEmpty)
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(20),
                     child: Image.file(
                       height: 382,
-                      width: double.infinity,
+                      width: 382,
                       fit: BoxFit.cover,
                       File(p.join(appDocumentsDirPath,
                           widget.placeData.relativeImagePath!)),
@@ -321,35 +335,58 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                 const SizedBox(height: 10.0),
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   const Text(
-                    'Date and Time',
-                    style: AppFonts.h6,
-                  ),
-                  Container(
-                      decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(20)),
-                      height: 52,
-                      width: 382,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                        ),
-                        child: TextField(
-                          onTap: () => _selectDateAndTime(context),
-                          controller: _dateTimeController,
-                          decoration: const InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'date and time',
-                              hintStyle: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              )),
-                        ),
-                      )),
+            'Date',
+            style: AppFonts.h7,
+          ),
+          Container(
+            decoration: BoxDecoration(
+                border: Border.all(),
+                borderRadius: BorderRadius.circular(20)),
+            height: 52,
+            width: 382,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: TextField(
+                readOnly: true, //Important: make it read-only
+                onTap: () => _selectDate(context),
+                controller: _dateTimeController,
+                decoration:  InputDecoration(
+                  border: InputBorder.none,
+                  hintText: widget.placeData.formattedFetchDate, //clearer hint
+                  hintStyle: AppFonts.h18400,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10.0),
+          const Text(
+            'Time',
+            style: AppFonts.h7,
+          ),
+          Container(
+            decoration: BoxDecoration(
+                border: Border.all(),
+                borderRadius: BorderRadius.circular(20)),
+            height: 52,
+            width: 382,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: TextField(
+                readOnly: true,
+                onTap: () => _selectTime(context),
+                controller: _timeController,
+                decoration:  InputDecoration(
+                  border: InputBorder.none,
+                  hintText: widget.placeData.formattedFetchTime, //clearer hint
+                  hintStyle: AppFonts.h18400,
+                ),
+              ),
+            ),
+          ),
                   const SizedBox(height: 10.0),
                   const Text(
                     'Location',
-                    style: AppFonts.h6,
+                    style: AppFonts.h7,
                   ),
                   Container(
                       decoration: BoxDecoration(
@@ -363,13 +400,11 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                         ),
                         child: TextFormField(
                           controller: _placeNameController,
+                          style: AppFonts.h18400,
                           decoration: const InputDecoration(
                               border: InputBorder.none,
                               hintText: 'edit place',
-                              hintStyle: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              )),
+                              hintStyle: AppFonts.h18400,),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a description';
@@ -381,7 +416,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                   const SizedBox(height: 10.0),
                   const Text(
                     'Description',
-                    style: AppFonts.h6,
+                    style: AppFonts.h7,
                   ),
                   Container(
                       decoration: BoxDecoration(
@@ -395,13 +430,11 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                         ),
                         child: TextFormField(
                           controller: _placeDescriptionController,
+                          style: AppFonts.h18400,
                           decoration: const InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Add description',
-                              hintStyle: TextStyle(
-                                fontSize: 18,
-                                color: Colors.grey,
-                              )),
+                              hintStyle: AppFonts.h18400,),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter a description';

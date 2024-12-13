@@ -59,7 +59,7 @@ class HistoryDataAdapter extends TypeAdapter<HistoryData> {
       itemName: fields[3] as String,
       placeDescription: fields[4] as String,
       relativeImagePath: fields[5] as String,
-      fetchDateTime: fields[6] as DateTime,
+      saveTime: fields[6] as DateTime,
       itemColor: fields[7] as String?,
       itemForm: fields[8] as String?,
       itemGroup: fields[9] as String?,
@@ -84,7 +84,7 @@ class HistoryDataAdapter extends TypeAdapter<HistoryData> {
     writer.writeByte(5);
     writer.write(obj.relativeImagePath);
     writer.writeByte(6);
-    writer.write(obj.fetchDateTime);
+    writer.write(obj.saveTime);
     writer.writeByte(7);
     writer.write(obj.itemColor);
     writer.writeByte(8);

@@ -23,10 +23,10 @@ class ItemCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.21,
-        width: MediaQuery.of(context).size.width * 0.9,
+        height: 178,
+        width: 382,
         child: InkWell(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
           onTap: () {
             print('Product object: $itemId');
             Navigator.push(
@@ -38,7 +38,7 @@ class ItemCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppColors.lightBorderGray),
             ),
             child: Row(
@@ -53,14 +53,14 @@ class ItemCard extends StatelessWidget {
                       children: [
                         Center(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(20),
                             child: SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.17,
-                              width: MediaQuery.of(context).size.width * 0.4,
+                              height: 146,
+                              width: 146,
                               child: Image.file(
                                 fit: BoxFit.cover,
                                 File(p.join(appDocumentsDirPath,
-                                    itemId.relativeImagePath!)), 
+                                    itemId.relativeImagePath!)),
                               ),
                             ),
                           ),
@@ -82,8 +82,8 @@ class ItemCard extends StatelessWidget {
                       maxLines: 1,
                       style: AppFonts.h8,
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
+                    const SizedBox(
+                      height: 10,
                     ),
                     Row(
                       children: [
@@ -102,8 +102,8 @@ class ItemCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
+                    const SizedBox(
+                      height: 10,
                     ),
                     Row(
                       children: [

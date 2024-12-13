@@ -81,7 +81,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
           itemForm: itemData.form,
           itemGroup: itemData.group,
           itemDescription: itemData.description,
-          fetchDateTime: DateTime.now(),
+          saveTime: DateTime.now(),
           placeDescription: '',
           placePhotoUrl: '',
         );

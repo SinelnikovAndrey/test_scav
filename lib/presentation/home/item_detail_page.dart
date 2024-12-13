@@ -103,7 +103,9 @@ class ItemDetailPage extends StatelessWidget {
                       
                       borderRadius: BorderRadius.circular(20),
                       child: Image.file(
-                        // height: MediaQuery.of(context).size.height * 0.4,
+                        height: 382,
+                        width: 382,
+                        fit: BoxFit.cover,
                         File(p.join(appDocumentsDirPath,
                             item.relativeImagePath!)), // Use the cached path
                       ),

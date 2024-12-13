@@ -37,17 +37,15 @@ class _HistoryPageState extends State<HistoryPage> {
                 child: Text('The history of your items will be here',
                     style: AppFonts.h7));
           } else {
-            return Expanded(
-              child: ListView.builder(
-                itemCount: places.length,
-                itemBuilder: (context, index) {
-                  final placeData = places[index];
-                  return HistoryCard(
-                    key: ValueKey(placeData.id), 
-                    item: placeData,
-                  );
-                },
-              ),
+            return ListView.builder(
+              itemCount: places.length,
+              itemBuilder: (context, index) {
+                final placeData = places[index];
+                return HistoryCard(
+                  key: ValueKey(placeData.id), 
+                  item: placeData,
+                );
+              },
             );
           }
         },

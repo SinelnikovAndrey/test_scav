@@ -8,7 +8,7 @@ class HistoryData {
   final String id;
   final String placeName;
   final DateTime saveDateTime;
-  final DateTime fetchDateTime;
+  final DateTime saveTime;
   final String itemName;
   final String placeDescription;
   final String relativeImagePath;
@@ -25,7 +25,7 @@ class HistoryData {
     required this.itemName,
     required this.placeDescription,
     required this.relativeImagePath,
-    required this.fetchDateTime,
+    required this.saveTime,
     this.itemColor,
     this.itemForm,
     this.itemGroup,
@@ -45,11 +45,11 @@ class HistoryData {
         itemDescription = '',
         placePhotoUrl = 'null',
         saveDateTime = DateTime.now(), 
-        fetchDateTime = DateTime.now();
+        saveTime = DateTime.now();
   
 
   String get formattedFetchDate => DateFormat('dd.MM.yy').format(saveDateTime);
-  String get formattedFetchTime => DateFormat('HH:mm').format(saveDateTime);
+  String get formattedFetchTime => DateFormat('HH:mm').format(saveTime);
 
   
 
@@ -57,7 +57,7 @@ class HistoryData {
     String? id,
     String? placeName,
     DateTime? saveDateTime,
-    DateTime? fetchDateTime,
+    DateTime? saveTime,
     String? itemName,
     String? placeDescription,
     String? relativeImagePath,
@@ -74,7 +74,7 @@ class HistoryData {
       itemName: itemName ?? this.itemName,
       placeDescription: placeDescription ?? this.placeDescription,
       relativeImagePath: relativeImagePath ?? this.relativeImagePath,
-      fetchDateTime: fetchDateTime ?? this.fetchDateTime,
+      saveTime: saveTime ?? this.saveTime,
       itemColor: itemColor ?? this.itemColor,
       itemForm: itemForm ?? this.itemForm,
       itemGroup: itemGroup ?? this.itemGroup,
@@ -88,7 +88,7 @@ class HistoryData {
       'id': id,
       'placeName': placeName,
       'saveDateTime': saveDateTime.toIso8601String(),
-      'fetchDateTime': fetchDateTime.toIso8601String(),
+      'fetchDateTime': saveTime.toIso8601String(),
       'itemName': itemName,
       'placeDescription': placeDescription,
       'photoUrl': relativeImagePath,
@@ -108,7 +108,7 @@ class HistoryData {
       itemName: map['itemName'] as String,
       placeDescription: map['placeDescription'] as String,
       relativeImagePath: map['photoUrl'] as String,
-      fetchDateTime: DateTime.parse(map['fetchDateTime'] as String),
+      saveTime: DateTime.parse(map['fetchDateTime'] as String),
       itemColor: map['itemColor'] as String?,
       itemForm: map['itemForm'] as String?,
       itemGroup: map['itemGroup'] as String?,
@@ -124,7 +124,7 @@ class HistoryData {
 
   @override
   String toString() {
-    return 'HistoryData{id: $id, placeName: $placeName, saveDateTime: $saveDateTime, fetchDateTime: $fetchDateTime, itemName: $itemName, placeDescription: $placeDescription, photoUrl: $relativeImagePath, itemColor: $itemColor, itemForm: $itemForm, itemGroup: $itemGroup, itemDescription: $itemDescription, placePhotoUrl: $placePhotoUrl}';
+    return 'HistoryData{id: $id, placeName: $placeName, saveDateTime: $saveDateTime, fetchDateTime: $saveTime, itemName: $itemName, placeDescription: $placeDescription, photoUrl: $relativeImagePath, itemColor: $itemColor, itemForm: $itemForm, itemGroup: $itemGroup, itemDescription: $itemDescription, placePhotoUrl: $placePhotoUrl}';
   }
 
   @override
@@ -132,7 +132,7 @@ class HistoryData {
         id,
         placeName,
         saveDateTime,
-        fetchDateTime,
+        saveTime,
         itemName,
         placeDescription,
         relativeImagePath,

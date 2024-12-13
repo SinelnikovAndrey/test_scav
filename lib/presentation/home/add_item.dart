@@ -192,8 +192,8 @@ class _AddItemPageState extends State<AddItemPage> {
                               borderRadius: BorderRadius.circular(20),
                               color: AppColors.darkBorderGray,
                             ),
-                            height: MediaQuery.of(context).size.height * 0.4,
-                            width: MediaQuery.of(context).size.width * 0.9,
+                            height: 382,
+                            width: 382,
                             child: Image.file(
                               _imageFile!,
                               // height: 200,
@@ -206,8 +206,8 @@ class _AddItemPageState extends State<AddItemPage> {
                               borderRadius: BorderRadius.circular(20),
                               color: AppColors.darkBorderGray,
                             ),
-                            height: MediaQuery.of(context).size.height * 0.4,
-                            width: MediaQuery.of(context).size.width * 0.9,
+                            height: 382,
+                            width: 382,
                             child: const Center(
                                 child: Text(
                               '+ Add Photo',
@@ -256,49 +256,35 @@ class _AddItemPageState extends State<AddItemPage> {
                     'Color',
                     style: AppFonts.h6,
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Flexible(
-                          flex: 3,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(),
-                                borderRadius: BorderRadius.circular(20)),
-                            height: 52,
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                              ),
-                              child: DropdownButton<String>(
-                                value: selectedColorName,
-                                onChanged: (String? newColorName) {
-                                  setState(() {
-                                    selectedColorName = newColorName ?? 'Grey';
-                                    _updateFormValidity();
-                                  });
-                                },
-                                items: colorMap.keys.map((colorName) {
-                                  return DropdownMenuItem<String>(
-                                    value: colorName,
-                                    child: Text(colorName),
-                                  );
-                                }).toList(),
-                                underline: Container(),
-                                menuWidth:
-                                    MediaQuery.of(context).size.width * 0.5,
-                              ),
-                            ),
-                          ),
-                        ),
+                  Container(
+                    decoration: BoxDecoration(
+                        border: Border.all(),
+                        borderRadius: BorderRadius.circular(20)),
+                    height: 52,
+                    width: 359,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20.0,
                       ),
-                      const SizedBox(width: 10),
-                      ColorBox(
-                        height: 52,
-                        width: 52,
-                          color: colorMap[selectedColorName] ?? Colors.grey),
-                    ],
+                      child: DropdownButton<String>(
+                        value: selectedColorName,
+                        onChanged: (String? newColorName) {
+                          setState(() {
+                            selectedColorName = newColorName ?? 'Grey';
+                            _updateFormValidity();
+                          });
+                        },
+                        items: colorMap.keys.map((colorName) {
+                          return DropdownMenuItem<String>(
+                            value: colorName,
+                            child: Text(colorName),
+                          );
+                        }).toList(),
+                        underline: Container(),
+                        menuWidth:
+                            MediaQuery.of(context).size.width * 0.5,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 10.0),
                   const Text(

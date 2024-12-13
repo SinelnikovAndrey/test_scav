@@ -23,10 +23,10 @@ class HistoryCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.21,
-        width: MediaQuery.of(context).size.width * 0.9,
+        height: 178,
+        width: 382,
         child: InkWell(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(20),
           onTap: () {
             print('Product object: $item');
             Navigator.push(
@@ -38,7 +38,7 @@ class HistoryCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(20),
               border: Border.all(color: AppColors.lightBorderGray),
             ),
             child: Row(
@@ -52,10 +52,10 @@ class HistoryCard extends StatelessWidget {
                       children: [
                         Center(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: BorderRadius.circular(20),
                             child: SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.17,
-                              width: MediaQuery.of(context).size.width * 0.4,
+                              height: 146,
+                              width: 146,
                               child: Image.file(
                                 fit: BoxFit.cover,
                                 File(p.join(appDocumentsDirPath,
@@ -65,74 +65,72 @@ class HistoryCard extends StatelessWidget {
                           ),
                         )
                       ]),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item.itemName,
-                        style: AppFonts.h8,
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-
-                      Row(
-                        children: [
-                          SvgPicture.asset(
-                            SvgAssets.calendar,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.black,
-                              BlendMode.srcIn,
-                            ),
+                      const SizedBox(width: 25),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.itemName,
+                      style: AppFonts.h8,
+                    ),
+                    
+                const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          SvgAssets.calendar,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
                           ),
-                          const SizedBox(
-                            width: 5,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          item.formattedFetchDate,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          SvgAssets.timeCircle,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
                           ),
-                          Text(
-                            item.formattedFetchDate,
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(item.formattedFetchTime),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        SvgPicture.asset(
+                          SvgAssets.location,
+                          colorFilter: const ColorFilter.mode(
+                            Colors.black,
+                            BlendMode.srcIn,
                           ),
-                        ],
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                      Row(
-                        children: [
-                          SvgPicture.asset(
-                            SvgAssets.timeCircle,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.black,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(item.formattedFetchTime),
-                        ],
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                      Row(
-                        children: [
-                          SvgPicture.asset(
-                            SvgAssets.location,
-                            colorFilter: const ColorFilter.mode(
-                              Colors.black,
-                              BlendMode.srcIn,
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 5,
-                          ),
-                          Text(item.placeName),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Text(item.placeName),
+                      ],
+                    ),
+                  ],
                 ),
               ],
             ),
