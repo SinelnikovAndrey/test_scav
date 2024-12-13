@@ -5,8 +5,9 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:provider/provider.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/main.dart';
-import 'package:test_scav/presentation/dev_notification/dev_note_state.dart';
-import 'package:test_scav/presentation/dev_notification/dev_notification.dart';
+import 'package:test_scav/presentation/notification/note_state.dart';
+import 'package:test_scav/presentation/notification/notification.dart';
+
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/default_button.dart';
@@ -33,7 +34,7 @@ class _SettingsState extends State<Settings> {
       try {
         reminder.active = value; 
         await reminder.save();
-        final notificationService = Provider.of<DevNNotificationService>(context, listen: false);
+        final notificationService = Provider.of<NotificationService>(context, listen: false);
         if (reminder.active) {
           notificationService.scheduleNotification(
             reminder.id,
@@ -200,7 +201,7 @@ class _SettingsState extends State<Settings> {
                       const SizedBox(
                         width: 100,
                       ),
-                      Consumer<DevNotificationState>(
+                      Consumer<NotificationState>(
                         builder: (context, notificationState, child) {
                           return Switch(
                           
