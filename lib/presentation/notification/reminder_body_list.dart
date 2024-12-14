@@ -88,20 +88,20 @@ class _ReminderBodyListState extends State<ReminderBodyList> {
                                   width: 382,
                                   child:  Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 10.0, vertical: 10),
+                                        horizontal: 30.0, vertical: 10),
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        SizedBox(
-                                          // width: MediaQuery.of(context).size.width * 0.7,
-                                          child: Text(reminder.body, style: AppFonts.h7,)),
-                               
+                                        // const SizedBox(width: 20,),
+                                        Text(reminder.body, style: AppFonts.h7,),
+                                        // const SizedBox(width: 30,),
+                                        const Spacer(),
                                         Text(reminder.formattedReminderTime, style: AppFonts.h7,),
                                    
                                       ],
                                     ),
                                   )),
-                                                const SizedBox(height: 10,)
+                                               
                             ],
                           );
                         },

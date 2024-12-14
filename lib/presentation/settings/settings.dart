@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -7,6 +8,7 @@ import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/main.dart';
 import 'package:test_scav/presentation/notification/note_state.dart';
 import 'package:test_scav/presentation/notification/notification.dart';
+import 'package:test_scav/utils/app_colors.dart';
 
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
@@ -190,7 +192,7 @@ class _SettingsState extends State<Settings> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.shield),
+                      const Icon(Icons.notifications),
                       const SizedBox(
                         width: 20,
                       ),
@@ -199,14 +201,17 @@ class _SettingsState extends State<Settings> {
                         style: AppFonts.h6,
                       ),
                       const SizedBox(
-                        width: 100,
+                        width: 105,
                       ),
                       Consumer<NotificationState>(
                         builder: (context, notificationState, child) {
-                          return Switch(
+                          return CupertinoSwitch(
                           
                             value: notificationState.globalActive,
+                            activeColor: AppColors.primary2,
+                            thumbColor: AppColors.primary,
                             onChanged: (value) {
+                              
                               notificationState.globalActive = value;
                               _updateRemindersActiveState(
                                   context, value);

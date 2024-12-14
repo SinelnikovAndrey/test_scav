@@ -48,7 +48,7 @@ class NotificationService {
     playSound: true,
     priority: Priority.high,
     importance: Importance.high,
-    sound: RawResourceAndroidNotificationSound('notification_sound'),
+    // sound: RawResourceAndroidNotificationSound('notification_sound'),
   );
 
   static const DarwinNotificationDetails _darwinNotificationDetails =

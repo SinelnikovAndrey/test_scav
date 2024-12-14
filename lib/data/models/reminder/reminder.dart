@@ -23,7 +23,7 @@ class Reminder extends HiveObject {
   Reminder(
       {required this.title,
       required this.dateTime,
-      this.active = true,
+      required this.active ,
       required this.id,
       required this.body});
 

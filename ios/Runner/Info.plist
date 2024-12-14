@@ -44,10 +44,6 @@
 		<key>NSUserNotificationCenterUsageDescription</key>
 		<string>This app uses notifications to remind you of your items.</string>
 
-		<key>UIBackgroundModes</key>
-		<array>
-			<string>remote-notification</string>
-		</array>
 		<key>NSCameraUsageDescription</key>
 		<string>The application does not use this feature</string>
 		<key>NSPhotoLibraryUsageDescription</key>
