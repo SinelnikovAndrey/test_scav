@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/presentation/home/add_group.dart';
 import 'package:test_scav/presentation/home/add_item.dart';
-import 'package:test_scav/presentation/notification/reminder_body_list.dart';
-import 'package:test_scav/presentation/notification/reminder_list.dart';
+import 'package:test_scav/presentation/settings/notification/reminder_body_list.dart';
+import 'package:test_scav/presentation/settings/notification/reminder_list.dart';
 import 'package:test_scav/widgets/navigation_page.dart';
 
 
@@ -23,13 +23,24 @@ class AppRouter {
 
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+      // case navigationPageRoute:
+      //   final arguments = settings.arguments as Map<String, dynamic>?;
+      //   final appDocumentsDirPath = arguments?['appDocumentsDirPath'] ?? '';
+      //   return MaterialPageRoute<void>(
+      //     builder: (_) => NavigationPage(
+      //       appDocumentsDirPath: appDocumentsDirPath,
+      //       rootData: Root(), initialIndex: 0,
+      //     ),
+      //   );
       case navigationPageRoute:
         final arguments = settings.arguments as Map<String, dynamic>?;
-        final appDocumentsDirPath = arguments?['appDocumentsDirPath'] ?? '';
+        final appDocumentsDirPath = arguments?['appDocumentsDirPath'] as String? ?? '';
+          final initialIndex = arguments?['selectedIndex'] as int? ?? 0;
         return MaterialPageRoute<void>(
           builder: (_) => NavigationPage(
             appDocumentsDirPath: appDocumentsDirPath,
             rootData: Root(),
+            initialIndex: initialIndex,
           ),
         );
       case addItemRoute:

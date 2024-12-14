@@ -6,8 +6,8 @@ import 'package:in_app_review/in_app_review.dart';
 import 'package:provider/provider.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/main.dart';
-import 'package:test_scav/presentation/notification/note_state.dart';
-import 'package:test_scav/presentation/notification/notification.dart';
+import 'package:test_scav/presentation/settings/notification/note_state.dart';
+import 'package:test_scav/presentation/settings/notification/notification.dart';
 import 'package:test_scav/utils/app_colors.dart';
 
 import 'package:test_scav/utils/app_fonts.dart';
@@ -27,7 +27,7 @@ class _SettingsState extends State<Settings> {
 
   final InAppReview inAppReview = InAppReview.instance;
 
-   Future<void> _updateRemindersActiveState(
+  Future<void> _updateRemindersActiveState(
       BuildContext context, bool value) async {
     final box = Hive.box<Reminder>(reminderBoxName);
     final reminders = box.values.toList();
@@ -35,12 +35,13 @@ class _SettingsState extends State<Settings> {
       try {
         reminder.active = value;
         await reminder.save();
-        final notificationService = Provider.of<NotificationService>(context, listen: false);
+        final notificationService =
+            Provider.of<NotificationService>(context, listen: false);
         if (reminder.active) {
           notificationService.scheduleNotification(
             reminder.id,
             reminder.title,
-            reminder.body ,
+            reminder.body,
             reminder.dateTime,
             TimeOfDay.fromDateTime(reminder.dateTime),
             reminder.id.toString(),
@@ -52,12 +53,9 @@ class _SettingsState extends State<Settings> {
         }
       } catch (e) {
         print('Error updating reminder ${reminder.id}: $e');
-
       }
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -209,9 +207,18 @@ class _SettingsState extends State<Settings> {
                             value: notificationState.globalActive,
                             activeColor: AppColors.primary2,
                             thumbColor: AppColors.primary,
-                            onChanged: (value) {
+                            onChanged: (value) async {
                               notificationState.globalActive = value;
                               _updateRemindersActiveState(context, value);
+
+                              if (value &&
+                                  !notificationState.permissionRequested) {
+                                final devNotificationService =
+                                    Provider.of<NotificationService>(context,
+                                        listen: false);
+                                await devNotificationService.init();
+                                notificationState.permissionRequested = true;
+                              }
                             },
                           );
                         },

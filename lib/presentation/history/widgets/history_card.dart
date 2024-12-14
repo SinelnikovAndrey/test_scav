@@ -65,72 +65,79 @@ class HistoryCard extends StatelessWidget {
                           ),
                         )
                       ]),
-                      const SizedBox(width: 25),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      item.itemName,
-                      style: AppFonts.h8,
-                    ),
-                    
-                const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          SvgAssets.calendar,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.black,
-                            BlendMode.srcIn,
+                const SizedBox(width: 25),
+                SizedBox(
+                  width: 150,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(item.itemName,
+                          maxLines: 1,
+                          style: AppFonts.h8,
+                          textAlign: TextAlign.left,
+                          overflow: TextOverflow.ellipsis),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      SizedBox(
+                        width: 100,
+                        child: Row(
+                          children: [
+                            SvgPicture.asset(
+                              SvgAssets.calendar,
+                            ),
+                            const SizedBox(
+                              width: 5,
+                            ),
+                            Text(item.formattedFetchDate,
+                                maxLines: 1,
+                                style: AppFonts.h6,
+                                textAlign: TextAlign.left,
+                                overflow: TextOverflow.ellipsis),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            SvgAssets.timeCircle,
                           ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          item.formattedFetchDate,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          SvgAssets.timeCircle,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.black,
-                            BlendMode.srcIn,
+                          const SizedBox(
+                            width: 5,
                           ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(item.formattedFetchTime),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          SvgAssets.location,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.black,
-                            BlendMode.srcIn,
+                          Text(item.formattedFetchTime,
+                              maxLines: 1,
+                              style: AppFonts.h6,
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            SvgAssets.location,
                           ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(item.placeName),
-                      ],
-                    ),
-                  ],
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          SizedBox(
+                            width: 120,
+                            child: Text(item.placeName,
+                                maxLines: 1,
+                                style: AppFonts.h6,
+                                textAlign: TextAlign.left,
+                                overflow: TextOverflow.ellipsis),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -12,9 +12,10 @@ import 'package:test_scav/utils/assets.dart';
 
 
 class NavigationPage extends StatefulWidget {
+  final int initialIndex;
   final Root rootData;
   final String appDocumentsDirPath;
-  const NavigationPage({super.key, required this.rootData, required this.appDocumentsDirPath});
+  const NavigationPage({super.key, required this.rootData, required this.appDocumentsDirPath, required this.initialIndex});
 
   @override
   State<NavigationPage> createState() => _HomePageState();
@@ -24,77 +25,87 @@ class _HomePageState extends State<NavigationPage> {
     int selectedIndex = 0;
   final Color backgroundColor = Colors.black87; 
 
+    @override
+  void initState() {
+    super.initState();
+      selectedIndex = widget.initialIndex; 
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomNavigationBar: 
-      
-      NavigationBarTheme(
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        bottomNavigationBar: 
         
-        data: NavigationBarThemeData(
-          height: MediaQuery.of(context).size.height * 0.1,
-          indicatorColor: Colors.transparent,
-          labelTextStyle: MaterialStateProperty.all(
-            const TextStyle(color: Colors.white, fontSize: 0),
-          ),
-        ),
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Color(0x7FE6EAF3),
-                blurRadius: 37,
-                offset: Offset(0, -12),
-                spreadRadius: 0,
-              )
-            ],
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(15),
-              topRight: Radius.circular(15),
+        NavigationBarTheme(
+          
+          data: NavigationBarThemeData(
+            height: MediaQuery.of(context).size.height * 0.1,
+            indicatorColor: Colors.transparent,
+            labelTextStyle: MaterialStateProperty.all(
+              const TextStyle(color: Colors.white, fontSize: 0),
             ),
           ),
-          child: NavigationBar(
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0x7FE6EAF3),
+                  blurRadius: 37,
+                  offset: Offset(0, -12),
+                  spreadRadius: 0,
+                )
+              ],
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(15),
+                topRight: Radius.circular(15),
+              ),
+            ),
+            child: NavigationBar(
+              
+              backgroundColor: backgroundColor, 
+              indicatorColor: Colors.transparent,
+              surfaceTintColor: Colors.transparent,
+              selectedIndex: selectedIndex,
+              onDestinationSelected: (index) {
+                setState(() {
+                  selectedIndex = index;
+                });
+              },
+              destinations: [
+                NavigationDestination(
+                  
+                  icon: SvgPicture.asset(selectedIndex == 0 ? SvgAssets.homeFilled : SvgAssets.homeLight), label: '',
+                ),
+                NavigationDestination(
+                  icon: SvgPicture.asset(selectedIndex == 1 ? SvgAssets.timeCircleFilled : SvgAssets.timeCircleLight), label: '',
+                ),
+                NavigationDestination(
+                  icon: SvgPicture.asset(selectedIndex == 2 ? SvgAssets.documentFilled : SvgAssets.documentLight), label: '', 
+                ),
+                NavigationDestination(
+                icon: SvgPicture.asset(selectedIndex == 3 ? SvgAssets.settingsFilled : SvgAssets.settingsLight), label: '',
+        
+                ),
+         
             
-            backgroundColor: backgroundColor, 
-            indicatorColor: Colors.transparent,
-            surfaceTintColor: Colors.transparent,
-            selectedIndex: selectedIndex,
-            onDestinationSelected: (index) {
-              setState(() {
-                selectedIndex = index;
-              });
-            },
-            destinations: [
-              NavigationDestination(
-                
-                icon: SvgPicture.asset(selectedIndex == 0 ? SvgAssets.homeFilled : SvgAssets.homeLight), label: '',
-              ),
-              NavigationDestination(
-                icon: SvgPicture.asset(selectedIndex == 1 ? SvgAssets.timeCircleFilled : SvgAssets.timeCircleLight), label: '',
-              ),
-              NavigationDestination(
-                icon: SvgPicture.asset(selectedIndex == 2 ? SvgAssets.documentFilled : SvgAssets.documentLight), label: '', 
-              ),
-              NavigationDestination(
-              icon: SvgPicture.asset(selectedIndex == 3 ? SvgAssets.settingsFilled : SvgAssets.settingsLight), label: '',
-  
-              ),
-       
-          
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-      body: IndexedStack(
-        index: selectedIndex,
-        children: [
-          MyItemsPage(appDocumentsDirPath: widget.appDocumentsDirPath),
-          const HistoryPage(),
-          const TipDisplay(),
-          const Settings(),
-        ],
+        body: IndexedStack(
+          index: selectedIndex,
+          children: [
+            MyItemsPage(appDocumentsDirPath: widget.appDocumentsDirPath),
+            const HistoryPage(),
+            const TipDisplay(),
+            const Settings(),
+          ],
+        ),
       ),
     );
   }

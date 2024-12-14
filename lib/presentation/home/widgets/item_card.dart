@@ -74,55 +74,67 @@ class ItemCard extends StatelessWidget {
                   ),
                 const SizedBox(width: 25),
                 // title
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      itemId.name,
-                      maxLines: 1,
-                      style: AppFonts.h8,
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          SvgAssets.colorLens,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.black,
-                            BlendMode.srcIn,
+                SizedBox(
+                  width: 150,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        itemId.name,
+                        maxLines: 1,
+                        style: AppFonts.h8,
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.ellipsis
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            SvgAssets.colorLens,
+                            
                           ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          itemId.color,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        SvgPicture.asset(
-                          SvgAssets.cube,
-                          colorFilter: const ColorFilter.mode(
-                            Colors.black,
-                            BlendMode.srcIn,
+                          const SizedBox(
+                            width: 5,
                           ),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        Text(
-                          itemId.form,
-                        ),
-                      ],
-                    ),
-                  ],
+                         SizedBox(
+                            width: 110,
+                            child: Text(
+                              itemId.color,
+                              maxLines: 1,
+                              style: AppFonts.h6,
+                                textAlign: TextAlign.left,
+                                overflow: TextOverflow.ellipsis
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          SvgPicture.asset(
+                            SvgAssets.cube,
+                           
+                          ),
+                          const SizedBox(
+                            width: 5,
+                          ),
+                          SizedBox(
+                            width: 110,
+                            child: Text(itemId.form,
+                                maxLines: 1,
+                                style: AppFonts.h6,
+                                textAlign: TextAlign.left,
+                                overflow: TextOverflow.ellipsis
+                                ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

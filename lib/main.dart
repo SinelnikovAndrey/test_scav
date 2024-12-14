@@ -14,8 +14,8 @@ import 'package:test_scav/data/models/tips/tips_data.dart';
 import 'package:test_scav/my_app.dart';
 import 'package:test_scav/data/services/hive_adapters.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
-import 'package:test_scav/presentation/notification/note_state.dart';
-import 'package:test_scav/presentation/notification/notification.dart';
+import 'package:test_scav/presentation/settings/notification/note_state.dart';
+import 'package:test_scav/presentation/settings/notification/notification.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -52,7 +52,7 @@ Future<void> main() async {
   MultiProvider(
     providers: [
        ChangeNotifierProvider(create: (context) => NotificationState(
-             initialGlobalActive:  Hive.box(settingsBoxName).get('globalActive') ?? true,
+             initialGlobalActive:  Hive.box(settingsBoxName).get('globalActive') ?? false,
           )
          ),
       Provider<NotificationService>(create: (_) => NotificationService()),

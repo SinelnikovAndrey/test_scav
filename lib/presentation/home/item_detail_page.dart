@@ -100,7 +100,6 @@ class ItemDetailPage extends StatelessWidget {
                   if (item.relativeImagePath != null &&
                       item.relativeImagePath!.isNotEmpty)
                     ClipRRect(
-                      
                       borderRadius: BorderRadius.circular(20),
                       child: Image.file(
                         height: 382,
@@ -116,7 +115,7 @@ class ItemDetailPage extends StatelessWidget {
                         border: Border.all(),
                         borderRadius: BorderRadius.circular(20)),
                     height: 82,
-                            width: 382,
+                    width: 382,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 10),
@@ -127,10 +126,11 @@ class ItemDetailPage extends StatelessWidget {
                             'Form',
                             style: AppFonts.h8,
                           ),
-                          Text(
-                            item.form,
-                          style: AppFonts.h6,
-                          ),
+                          Text(item.form,
+                              style: AppFonts.h6,
+                              maxLines: 1,
+                              textAlign: TextAlign.left,
+                              overflow: TextOverflow.ellipsis),
                         ],
                       ),
                     ),
@@ -154,14 +154,17 @@ class ItemDetailPage extends StatelessWidget {
                                   'Color',
                                   style: AppFonts.h8,
                                 ),
-                                Text(item.color),
+                                Text(item.color,
+                                    maxLines: 1,
+                                    textAlign: TextAlign.left,
+                                    overflow: TextOverflow.ellipsis),
                               ],
                             ),
                             const Spacer(),
-                             ColorBox(
-                    height: 50,
-                    width: 50,
-                    color: colorMap[item.color]!)
+                            ColorBox(
+                                height: 50,
+                                width: 50,
+                                color: colorMap[item.color]!)
                           ],
                         ),
                       )),
@@ -170,7 +173,7 @@ class ItemDetailPage extends StatelessWidget {
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                       height: 82,
+                      height: 82,
                       width: 382,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -181,11 +184,15 @@ class ItemDetailPage extends StatelessWidget {
                             const Text(
                               'Group',
                               style: AppFonts.h8,
+                              
                             ),
                             // SizedBox(height: 5,),
                             Text(
                               item.group,
-                               style: AppFonts.h6,
+                              style: AppFonts.h6,
+                              maxLines: 1,
+                                    textAlign: TextAlign.left,
+                                    overflow: TextOverflow.ellipsis
                             ),
                           ],
                         ),
@@ -195,7 +202,7 @@ class ItemDetailPage extends StatelessWidget {
                       decoration: BoxDecoration(
                           border: Border.all(),
                           borderRadius: BorderRadius.circular(20)),
-                       height: 82,
+                      height: 82,
                       width: 382,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
@@ -210,7 +217,10 @@ class ItemDetailPage extends StatelessWidget {
                             // SizedBox(height: 5,),
                             Text(
                               item.description,
-                               style: AppFonts.h6,
+                              style: AppFonts.h6,
+                              maxLines: 1,
+                                    textAlign: TextAlign.left,
+                                    overflow: TextOverflow.ellipsis
                             ),
                           ],
                         ),
@@ -227,4 +237,3 @@ class ItemDetailPage extends StatelessWidget {
     );
   }
 }
-

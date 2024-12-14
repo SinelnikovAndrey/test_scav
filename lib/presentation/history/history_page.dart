@@ -21,7 +21,7 @@ class _HistoryPageState extends State<HistoryPage> {
  @override
   Widget build(BuildContext context) {
     return Scaffold(
-
+      
       appBar: AppBar(
         title: const Text('History', style: AppFonts.h10),
         centerTitle: false,
