@@ -261,7 +261,7 @@ class _AddItemPageState extends State<AddItemPage> {
                         border: Border.all(),
                         borderRadius: BorderRadius.circular(20)),
                     height: 52,
-                    width: 359,
+                    width: 382,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 20.0,
