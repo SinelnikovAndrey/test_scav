@@ -14,7 +14,7 @@ class ColorBox extends StatelessWidget {
       width: width,
       decoration: BoxDecoration(
         color: color ?? Colors.grey,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(8),
       ),
     );
   }

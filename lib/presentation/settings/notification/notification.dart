@@ -92,12 +92,45 @@ class NotificationService {
     }
 
     await _flutterLocalNotificationsPlugin.initialize(initializationSettings,
-      onDidReceiveNotificationResponse: _onNotificationTapped,
-      onDidReceiveBackgroundNotificationResponse: emptyBackgroundHandler
+      onDidReceiveNotificationResponse: _ReceiveNotification,
+      onDidReceiveBackgroundNotificationResponse: _ReceiveBackgroundNotification
       // onDidReceiveBackgroundNotificationResponse: null,
     );
 
      await _requestPermissions();
+
+  }
+
+   static void _ReceiveNotification(NotificationResponse? PayLoad){
+
+    String? _actionId = PayLoad!.actionId;
+    String _actionResult = " actionId => ";
+
+    if(_actionId!=null)
+      _actionResult += _actionId;
+    else
+      _actionResult += "Null";
+
+    print(_actionResult);
+
+    onClickNotification.add(PayLoad.payload!+_actionResult);
+
+  }
+
+
+  static void _ReceiveBackgroundNotification(NotificationResponse? PayLoad){
+
+    String? _actionId = PayLoad!.actionId;
+    String _actionResult = " actionId => ";
+
+    if(_actionId!=null)
+      _actionResult += _actionId;
+    else
+      _actionResult += "Null";
+
+    print(_actionResult);
+
+    onClickNotification.add(PayLoad.payload!+_actionResult);
 
   }
 

@@ -350,43 +350,46 @@ class _EditItemPageState extends State<EditItemPage> {
                     'Color',
                     style: AppFonts.h6,
                   ),
-                  Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                            border: Border.all(),
-                            borderRadius: BorderRadius.circular(20)),
-                        height: 52,
-                        width: MediaQuery.of(context).size.width * 0.74,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10),
-                          child: DropdownButton<String>(
-                            value: selectedColorName,
-                            onChanged: (String? newColorName) {
-                              setState(() {
-                                selectedColorName =
-                                    newColorName ?? widget.itemData.color;
-                                     _updateFormValidity();
-                              });
-                            },
-                            items: colorMap.keys.map((colorName) {
-                              return DropdownMenuItem<String>(
-                                value: colorName,
-                                child: Text(colorName),
-                              );
-                            }).toList(),
-                            underline: Container(),
-                            menuWidth: MediaQuery.of(context).size.width * 0.72,
+                  SizedBox(
+                    width: 382,
+                    child: Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(20)),
+                          height: 52,
+                          width: 300,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0, vertical: 10),
+                            child: DropdownButton<String>(
+                              value: selectedColorName,
+                              onChanged: (String? newColorName) {
+                                setState(() {
+                                  selectedColorName =
+                                      newColorName ?? widget.itemData.color;
+                                       _updateFormValidity();
+                                });
+                              },
+                              items: colorMap.keys.map((colorName) {
+                                return DropdownMenuItem<String>(
+                                  value: colorName,
+                                  child: Text(colorName),
+                                );
+                              }).toList(),
+                              underline: Container(),
+                              menuWidth: 300,
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      ColorBox(
-                          height: 52,
-                          width: 52,
-                          color: colorMap[selectedColorName] ?? Colors.grey),
-                    ],
+                        const SizedBox(width: 8),
+                        ColorBox(
+                            height: 52,
+                            width: 52,
+                            color: colorMap[selectedColorName] ?? Colors.grey),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 10.0),
                   const Text(
