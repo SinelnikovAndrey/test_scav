@@ -48,7 +48,8 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
   // HistoryData item;
   late HistoryData itemData;
   bool isLoading = true;
-
+  
+  bool _isFormValid = false;
   @override
   void initState() {
     super.initState();
@@ -59,7 +60,16 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
 
     // _updateDateTimeController();
     // _setInitialDateTime();
+    _updateFormValidity();
   }
+
+  void _updateFormValidity() {
+    setState(() {
+      _isFormValid = _placeNameController.text.isNotEmpty &&
+           _placeDescriptionController.text.isNotEmpty ;
+    });
+  }
+
 
    Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -72,7 +82,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        _dateTimeController.text = DateFormat('yyyy-MM-dd').format(picked);
+        _dateTimeController.text = DateFormat('dd.MM.yy').format(picked);
       });
     }
   }
@@ -400,6 +410,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                         ),
                         child: TextFormField(
                           controller: _placeNameController,
+                          onChanged: (_) => _updateFormValidity(),
                           style: AppFonts.h18400,
                           decoration: const InputDecoration(
                               border: InputBorder.none,
@@ -430,6 +441,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                         ),
                         child: TextFormField(
                           controller: _placeDescriptionController,
+                          onChanged: (_) => _updateFormValidity(),
                           style: AppFonts.h18400,
                           decoration: const InputDecoration(
                               border: InputBorder.none,
@@ -486,6 +498,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                 DefaultButton(
                   text: 'Save',
                   onTap: _updatePlace,
+                  isEnabled: _isFormValid,
                 )
               ],
             ),

@@ -135,32 +135,28 @@ class HistoryDetailPage extends StatelessWidget {
                             ),
                           )),
                       const SizedBox(height: 16.0),
-                      Column(
-                        children: [
-                          Container(
-                              decoration: BoxDecoration(
-                                  border: Border.all(),
-                                  borderRadius: BorderRadius.circular(20)),
-                              // height: 88,
-                              width: 382,
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Text(
-                                      'Location',
-                                      style: AppFonts.h8,
-                                    ),
-                                    const SizedBox(height: 5,),
-                                    Text(item.placeName,style: AppFonts.h6,),
-                                  ],
+                      Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(),
+                              borderRadius: BorderRadius.circular(20)),
+                          height: 88,
+                          width: 382,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  'Location',
+                                  style: AppFonts.h8,
                                 ),
-                              )),
-                        ],
-                      ),
+                                const SizedBox(height: 5,),
+                                Text(item.placeName,style: AppFonts.h6,),
+                              ],
+                            ),
+                          )),
                       const SizedBox(height: 16.0),
                       if (item.placeDescription.isNotEmpty)
                       Container(
@@ -171,7 +167,7 @@ class HistoryDetailPage extends StatelessWidget {
                           width: 382,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0),
+                                horizontal: 20.0,vertical: 13),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -182,7 +178,7 @@ class HistoryDetailPage extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 5,),
                                 Text(item.placeDescription,style: AppFonts.h6,) ,
-                                // const SizedBox(height: 27,),
+
                               ],
                             ),
                           )),

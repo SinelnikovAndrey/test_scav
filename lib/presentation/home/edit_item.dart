@@ -42,6 +42,9 @@ class _EditItemPageState extends State<EditItemPage> {
 
   String? _imageUrl;
 
+    bool _isFormValid = false; 
+
+
   List<Reminder> _reminders = []; // List to hold reminders
   String? _selectedReminderTitle;
 
@@ -57,7 +60,20 @@ class _EditItemPageState extends State<EditItemPage> {
     _descriptionController.text = widget.itemData.description;
     _relativeImagePath = widget.itemData.relativeImagePath;
     _loadReminders();
+    _updateFormValidity();
   }
+
+
+   void _updateFormValidity() {
+    setState(() {
+      _isFormValid = _nameController.text.isNotEmpty &&
+           _formController.text.isNotEmpty &&
+           _descriptionController.text.isNotEmpty &&
+           _selectedReminderTitle != null &&
+           selectedColorName.isNotEmpty;
+    });
+  }
+
 
   Future<void> _loadReminders() async {
     final reminderBox = await Hive.openBox<Reminder>(reminderBoxName);
@@ -105,7 +121,9 @@ class _EditItemPageState extends State<EditItemPage> {
   }
 
   Future<void> _editFile() async {
-    if (_formKey.currentState!.validate()) {
+    if (
+      _formKey.currentState!.validate()
+      ) {
       // Input validation
       if (_nameController.text.trim().isEmpty ||
           _formController.text.trim().isEmpty ||
@@ -309,6 +327,7 @@ class _EditItemPageState extends State<EditItemPage> {
                             ),
                             child: TextFormField(
                               controller: _nameController,
+                              onChanged: (_) => _updateFormValidity(),
                               decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   hintText: 'Add name',
@@ -348,6 +367,7 @@ class _EditItemPageState extends State<EditItemPage> {
                               setState(() {
                                 selectedColorName =
                                     newColorName ?? widget.itemData.color;
+                                     _updateFormValidity();
                               });
                             },
                             items: colorMap.keys.map((colorName) {
@@ -385,6 +405,7 @@ class _EditItemPageState extends State<EditItemPage> {
                         ),
                         child: TextFormField(
                           controller: _formController,
+                          onChanged: (_) => _updateFormValidity(),
                           decoration: const InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Add form',
@@ -428,6 +449,7 @@ class _EditItemPageState extends State<EditItemPage> {
                               onChanged: (String? newValue) {
                                 setState(() {
                                   _selectedReminderTitle = newValue;
+                                  _updateFormValidity();
                                 });
                               },
                               items: _reminders.map((reminder) {
@@ -462,6 +484,7 @@ class _EditItemPageState extends State<EditItemPage> {
                         ),
                         child: TextFormField(
                           controller: _descriptionController,
+                          onChanged: (_) => _updateFormValidity(),
                           decoration: const InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Add description',
@@ -482,6 +505,7 @@ class _EditItemPageState extends State<EditItemPage> {
                 DefaultButton(
                   text: 'Save',
                   onTap: _editFile,
+                  isEnabled: _isFormValid,
                 )
               ],
             ),
