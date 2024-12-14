@@ -2,7 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
+// import 'package:hive_flutter/hive_flutter.dart';
+// import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
+// import 'package:test_scav/data/models/reminder/reminder.dart';
+// import 'package:test_scav/main.dart';
+// import 'package:test_scav/presentation/notification/note_state.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
@@ -144,7 +149,18 @@ Future<void> _onNotificationTapped(NotificationResponse details) async {
   }
 
 
-  Future<void> scheduleNotification(
+
+  Future<void> cancelNotification(int id) async {
+    await _flutterLocalNotificationsPlugin.cancel(id);
+  }
+
+  Future<void> cancelAllNotifications() async {
+    await _flutterLocalNotificationsPlugin.cancelAll();
+  }
+
+
+
+   Future<void> scheduleNotification(
       int id,
       String title,
       String body,
@@ -178,13 +194,71 @@ Future<void> _onNotificationTapped(NotificationResponse details) async {
       payload: payload,
     );
   }
+ 
+//    Future<void> updateRemindersActiveState(BuildContext context, bool value) async {
+//     final notificationService = Provider.of<NotificationService>(context, listen: false);
+//     final box = Hive.box<Reminder>(reminderBoxName);
+//     final reminders = box.values.toList();
 
 
-  Future<void> cancelNotification(int id) async {
-    await _flutterLocalNotificationsPlugin.cancel(id);
-  }
+//      // 1. Update all the reminders active state
+//       for (final reminder in reminders) {
+//         final updatedReminder = reminder.copyWith(active: value);
+//        try {
+//           await box.put(reminder.id, updatedReminder);
+//        } catch(e) {
+//          print("Error updating reminder ${reminder.id}: $e");
+//        }
+//       }
+     
+//     for (final reminder in reminders) {
+//       if(reminder.dateTime != null){
+//        await notificationService.toggleReminderNotification(context, reminder); // call the service
+//       }
+//     }
+// }
 
-  Future<void> cancelAllNotifications() async {
-    await _flutterLocalNotificationsPlugin.cancelAll();
-  }
+  // Future<void> toggleReminderNotification(
+  //   BuildContext context,
+  //   Reminder updatedReminder,
+  // ) async {
+  //   final notificationService = Provider.of<NotificationService>(context, listen: false);
+  //   final notificationState = Provider.of<NotificationState>(context, listen: false);
+
+
+  //   final existingId = notificationService.generateUniqueId(updatedReminder.id);
+  //   if(notificationState.scheduledNotificationIds.contains(existingId)){
+  //      await notificationService.cancelNotification(existingId);
+  //      notificationState.removeScheduledNotificationId(existingId);
+  //   }
+      
+
+  //   if (updatedReminder.active) {
+  //       await oldscheduleNotification(context, updatedReminder);
+  //   }
+  // }
+
+
+  // Future<void> oldscheduleNotification(BuildContext context, Reminder reminder) async {
+  //   int generateUniqueId(int reminderId) => reminderId;
+  //   final id = generateUniqueId(reminder.id);
+  //   final notificationService = Provider.of<NotificationService>(context, listen: false);
+  //   try {
+  //     await notificationService.scheduleNotification(
+  //       id,
+  //       'Daily Scavenger',
+  //       '🔔 Check your ${reminder.title} items',
+  //       reminder.dateTime,
+  //       TimeOfDay.fromDateTime(reminder.dateTime),
+  //       'dailyReminder',
+  //       'daily',
+  //       null,
+  //     );
+  //     Provider.of<NotificationState>(context, listen: false).addScheduledNotificationId(id);
+  //     print('Scheduled notification for ${reminder.title}, ID: $id');
+  //   } catch (e) {
+  //     print('Error scheduling notification: $e');
+  //   }
+  // }
+
 }

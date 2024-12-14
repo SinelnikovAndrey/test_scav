@@ -27,14 +27,13 @@ class _SettingsState extends State<Settings> {
 
   final InAppReview inAppReview = InAppReview.instance;
 
-
    Future<void> _updateRemindersActiveState(
       BuildContext context, bool value) async {
     final box = Hive.box<Reminder>(reminderBoxName);
     final reminders = box.values.toList();
     for (final reminder in reminders) {
       try {
-        reminder.active = value; 
+        reminder.active = value;
         await reminder.save();
         final notificationService = Provider.of<NotificationService>(context, listen: false);
         if (reminder.active) {
@@ -53,10 +52,12 @@ class _SettingsState extends State<Settings> {
         }
       } catch (e) {
         print('Error updating reminder ${reminder.id}: $e');
-      
+
       }
     }
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -150,11 +151,11 @@ class _SettingsState extends State<Settings> {
                       border: Border.all(),
                       borderRadius: BorderRadius.circular(20)),
                   height: 60,
-                      width: 382,
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                        ),
+                  width: 382,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.0,
+                    ),
                     child: Row(
                       // crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -172,12 +173,11 @@ class _SettingsState extends State<Settings> {
                   )),
             ),
             const SizedBox(
-                          height: 20,
-                        ),
+              height: 20,
+            ),
             InkWell(
               onTap: () {
-                Navigator.of(context)
-                    .pushNamed(AppRouter.reminderBodyRoute);
+                Navigator.of(context).pushNamed(AppRouter.reminderBodyRoute);
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -206,15 +206,12 @@ class _SettingsState extends State<Settings> {
                       Consumer<NotificationState>(
                         builder: (context, notificationState, child) {
                           return CupertinoSwitch(
-                          
                             value: notificationState.globalActive,
                             activeColor: AppColors.primary2,
                             thumbColor: AppColors.primary,
                             onChanged: (value) {
-                              
                               notificationState.globalActive = value;
-                              _updateRemindersActiveState(
-                                  context, value);
+                              _updateRemindersActiveState(context, value);
                             },
                           );
                         },

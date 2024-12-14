@@ -24,6 +24,7 @@ import 'package:timezone/data/latest.dart' as tz;
 const String itemBoxName = 'itemsBox';
 const String historyBoxName = 'historyBox';
 const String reminderBoxName = 'remindersBox';
+const String settingsBoxName = 'settings'; 
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -50,7 +51,10 @@ Future<void> main() async {
     runApp(
   MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (_) => NotificationState()),
+       ChangeNotifierProvider(create: (context) => NotificationState(
+             initialGlobalActive:  Hive.box(settingsBoxName).get('globalActive') ?? true,
+          )
+         ),
       Provider<NotificationService>(create: (_) => NotificationService()),
     ],
     child: MyApp(appDocumentsDirPath: appDocumentsDirPath, rootData: rootData),
@@ -77,6 +81,11 @@ Future<void> _initHive(String appDocumentsDirPath) async {
     
     try {
        await Hive.openBox<Reminder>(reminderBoxName);
+    } catch (e) {
+      debugPrint('Error opening reminders box: $e');
+    }
+     try {
+       await Hive.openBox<dynamic>(settingsBoxName);
     } catch (e) {
       debugPrint('Error opening reminders box: $e');
     }

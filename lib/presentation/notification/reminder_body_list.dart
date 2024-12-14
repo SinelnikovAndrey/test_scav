@@ -6,8 +6,6 @@ import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/left_button.dart';
 
-
-
 class ReminderBodyList extends StatefulWidget {
   const ReminderBodyList({super.key});
 
@@ -16,8 +14,6 @@ class ReminderBodyList extends StatefulWidget {
 }
 
 class _ReminderBodyListState extends State<ReminderBodyList> {
-
-
   @override
   void initState() {
     super.initState();
@@ -25,7 +21,6 @@ class _ReminderBodyListState extends State<ReminderBodyList> {
 
   @override
   void dispose() {
- 
     super.dispose();
   }
 
@@ -35,10 +30,13 @@ class _ReminderBodyListState extends State<ReminderBodyList> {
       valueListenable: Hive.box<Reminder>(reminderBoxName).listenable(),
       builder: (context, box, child) {
         final reminders = box.values.toList();
-       
+
         return Scaffold(
           appBar: AppBar(
-            title: const Text('Notification', style: AppFonts.h10,),
+            title: const Text(
+              'Notification',
+              style: AppFonts.h10,
+            ),
             centerTitle: true,
             leading: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -57,8 +55,9 @@ class _ReminderBodyListState extends State<ReminderBodyList> {
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: LeftButton(
                   onTap: () {
-                          Navigator.of(context).pushNamed(AppRouter.reminderItemRoute);
-                        },
+                    Navigator.of(context)
+                        .pushNamed(AppRouter.reminderItemRoute);
+                  },
                   icon: Icons.edit,
                   iconColor: Colors.black,
                   backgroundColor: Colors.transparent,
@@ -66,15 +65,16 @@ class _ReminderBodyListState extends State<ReminderBodyList> {
                 ),
               ),
             ],
-            ),
+          ),
           body: reminders.isEmpty
               ? const Center(child: Text('No reminders found'))
               : Column(
-                children: [
-                  const SizedBox(height: 20,),
-
-                  Expanded(
-                    child: ListView.builder(
+                  children: [
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    Expanded(
+                      child: ListView.builder(
                         itemCount: reminders.length,
                         itemBuilder: (context, index) {
                           final reminder = reminders[index];
@@ -86,35 +86,40 @@ class _ReminderBodyListState extends State<ReminderBodyList> {
                                       borderRadius: BorderRadius.circular(20)),
                                   height: 72,
                                   width: 382,
-                                  child:  Padding(
+                                  child: Padding(
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 30.0, vertical: 10),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
                                       children: [
                                         // const SizedBox(width: 20,),
-                                        Text(reminder.body, style: AppFonts.h7,),
+                                        SizedBox(
+                                          width: 250,
+                                          child: Text(reminder.body,
+                                              style: AppFonts.h7,
+                                              maxLines: 2,
+                                              textAlign: TextAlign.left,
+                                              overflow: TextOverflow.ellipsis),
+                                        ),
                                         // const SizedBox(width: 30,),
                                         const Spacer(),
-                                        Text(reminder.formattedReminderTime, style: AppFonts.h7,),
-                                   
+                                        Text(
+                                          reminder.formattedReminderTime,
+                                          style: AppFonts.h7,
+                                        ),
                                       ],
                                     ),
                                   )),
-                                               
                             ],
                           );
                         },
                       ),
-                  ),
-                ],
-              ),
-      
+                    ),
+                  ],
+                ),
         );
       },
     );
   }
 }
-
-
-
