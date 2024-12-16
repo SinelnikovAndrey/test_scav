@@ -241,12 +241,7 @@ class _AddItemPageState extends State<AddItemPage> {
                                   border: InputBorder.none,
                                   hintText: 'Add name',
                                   hintStyle: AppFonts.h6),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter a name';
-                                }
-                                return null;
-                              },
+                             
                             ),
                           ),
                         ],
@@ -308,12 +303,7 @@ class _AddItemPageState extends State<AddItemPage> {
                               border: InputBorder.none,
                               hintText: 'Add form',
                               hintStyle: AppFonts.h6),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a form';
-                            }
-                            return null;
-                          },
+                          
                         ),
                       )),
                   const SizedBox(height: 10.0),
@@ -378,12 +368,7 @@ class _AddItemPageState extends State<AddItemPage> {
                                 fontSize: 18,
                                 color: Colors.grey,
                               )),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a description';
-                            }
-                            return null;
-                          },
+                         
                         ),
                       )),
                   const SizedBox(height: 20.0),

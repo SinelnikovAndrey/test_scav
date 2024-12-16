@@ -238,12 +238,15 @@ class _EditItemPageState extends State<EditItemPage> {
     } catch (e) {
       return null; // Or handle this error appropriately if needed.
     }
+    
   }
 
   @override
   Widget build(BuildContext context) {
-    final appDocumentsDirPath =
-        Provider.of<AppData>(context).appDocumentsDirPath;
+    return ValueListenableBuilder<Box<ItemData>>(
+      valueListenable:  Hive.box<ItemData>(itemBoxName).listenable(),
+      builder: (context, itemBox, child) {
+        final items = itemBox.values.toList();
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -305,6 +308,7 @@ class _EditItemPageState extends State<EditItemPage> {
                           _buildAddPhotoOverlay(context),
                       ],
                     ),
+                  
                   ),
                 ),
                 const SizedBox(height: 20.0),
@@ -321,12 +325,15 @@ class _EditItemPageState extends State<EditItemPage> {
                       width: 382,
                       child: Column(
                         children: [
+                          
                           Padding(
                             padding: const EdgeInsets.symmetric(
                               horizontal: 20.0,
                             ),
+                            
                             child: TextFormField(
                               controller: _nameController,
+                              
                               onChanged: (_) => _updateFormValidity(),
                               decoration: const InputDecoration(
                                   border: InputBorder.none,
@@ -335,12 +342,7 @@ class _EditItemPageState extends State<EditItemPage> {
                                     fontSize: 18,
                                     color: Colors.grey,
                                   )),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter a name';
-                                }
-                                return null;
-                              },
+                          
                             ),
                           ),
                         ],
@@ -416,12 +418,7 @@ class _EditItemPageState extends State<EditItemPage> {
                                 fontSize: 18,
                                 color: Colors.grey,
                               )),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a form';
-                            }
-                            return null;
-                          },
+                       
                         ),
                       )),
                   const SizedBox(height: 10.0),
@@ -461,12 +458,7 @@ class _EditItemPageState extends State<EditItemPage> {
                                   child: Text(reminder.title),
                                 );
                               }).toList(),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please select a reminder';
-                                }
-                                return null;
-                              },
+
                             ),
                     ),
                   ),
@@ -495,12 +487,7 @@ class _EditItemPageState extends State<EditItemPage> {
                                 fontSize: 18,
                                 color: Colors.grey,
                               )),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a description';
-                            }
-                            return null;
-                          },
+                        
                         ),
                       )),
                   const SizedBox(height: 20.0),
@@ -516,5 +503,5 @@ class _EditItemPageState extends State<EditItemPage> {
         ),
       ),
     );
-  }
+  });}
 }
