@@ -10,6 +10,7 @@ import 'package:test_scav/presentation/home/edit_item.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
 import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/utils/file_utils.dart';
 import 'package:test_scav/widgets/color_box.dart';
 import 'package:test_scav/widgets/default_button.dart';
@@ -79,15 +80,23 @@ class ItemDetailPage extends StatelessWidget {
               ),
             ],
           ),
+
+          
           bottomSheet: Padding(
             padding: const EdgeInsets.only(bottom: 10.0, left: 20, right: 20),
             child: DefaultButton(
               text: "Got it!",
               onTap: () {
-                Future.delayed(Duration.zero, () {
-                  Navigator.of(context)
-                      .push(AddPlacePage.materialPageRoute(itemId: item.id));
-                });
+            
+                 Navigator.pushReplacementNamed(
+          context,
+          AppRouter.addPlaceRoute,
+           arguments: {
+                
+                    'itemId': item.id,
+                  }
+        );
+                
               },
             ),
           ),

@@ -16,7 +16,7 @@ class Root {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
-    data['tips'] = tips != null ? tips!.map((v) => v?.toJson()).toList() : null;
+    data['tips'] = tips != null ? tips!.map((v) => v?.toJson()).toList() : '';
     return data;
   }
 }

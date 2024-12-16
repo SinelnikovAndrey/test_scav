@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ import 'package:test_scav/utils/app_colors.dart';
 
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
+import 'package:test_scav/utils/assets.dart';
 import 'package:test_scav/widgets/default_button.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -150,19 +152,19 @@ class _SettingsState extends State<Settings> {
                       borderRadius: BorderRadius.circular(20)),
                   height: 60,
                   width: 382,
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(
+                  child:  Padding(
+                    padding: const EdgeInsets.symmetric(
                       horizontal: 20.0,
                     ),
                     child: Row(
                       // crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Icon(Icons.shield),
-                        SizedBox(
+                        SvgPicture.asset(SvgAssets.shield),
+                        const SizedBox(
                           width: 20,
                         ),
-                        Text(
+                        const Text(
                           'Privacy policy',
                           style: AppFonts.h6,
                         ),
@@ -190,7 +192,7 @@ class _SettingsState extends State<Settings> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.notifications),
+                       SvgPicture.asset(SvgAssets.bell),
                       const SizedBox(
                         width: 20,
                       ),
@@ -198,9 +200,8 @@ class _SettingsState extends State<Settings> {
                         'Notification',
                         style: AppFonts.h6,
                       ),
-                      const SizedBox(
-                        width: 105,
-                      ),
+                      const Spacer(),
+                    
                       Consumer<NotificationState>(
                         builder: (context, notificationState, child) {
                           return CupertinoSwitch(

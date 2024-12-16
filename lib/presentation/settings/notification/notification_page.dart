@@ -1,21 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/main.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
-import 'package:test_scav/utils/assets.dart';
 import 'package:test_scav/widgets/left_button.dart';
 
-class ReminderBodyList extends StatefulWidget {
-  const ReminderBodyList({super.key});
+class NotificationPage extends StatefulWidget {
+  const NotificationPage({super.key});
 
   @override
-  State<ReminderBodyList> createState() => _ReminderBodyListState();
+  State<NotificationPage> createState() => _NotificationPageState();
 }
 
-class _ReminderBodyListState extends State<ReminderBodyList> {
+class _NotificationPageState extends State<NotificationPage> {
   @override
   void initState() {
     super.initState();
@@ -55,31 +53,15 @@ class _ReminderBodyListState extends State<ReminderBodyList> {
             actions: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Container(
-                  width: 35,
-                  height: 35,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: Colors.transparent,
-                    border: Border.all(
-                      color: Colors.grey!,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(AppRouter.reminderItemRoute);
-                      },
-                      borderRadius: BorderRadius.circular(100),
-                      child: SizedBox(
-                        child: SvgPicture.asset(
-                          SvgAssets.alarmClock,
-                        ),
-                      ),
-                    ),
-                  ),
+                child: LeftButton(
+                  onTap: () {
+                    Navigator.of(context)
+                        .pushNamed(AppRouter.reminderItemRoute);
+                  },
+                  icon: Icons.edit,
+                  iconColor: Colors.black,
+                  backgroundColor: Colors.transparent,
+                  borderColor: Colors.black12,
                 ),
               ),
             ],
@@ -124,7 +106,7 @@ class _ReminderBodyListState extends State<ReminderBodyList> {
                                         const Spacer(),
                                         Text(
                                           reminder.formattedReminderTime,
-                                          style: AppFonts.h5,
+                                          style: AppFonts.h7,
                                         ),
                                       ],
                                     ),

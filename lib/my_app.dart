@@ -37,7 +37,7 @@ class _MyAppState extends State<MyApp> {
               colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary),
               useMaterial3: true,
             ),
-            onGenerateRoute: AppRouter.onGenerateRoute,
+            onGenerateRoute: AppRouter.generateRoute,
             home: const SplashPage(), 
           ));
         }

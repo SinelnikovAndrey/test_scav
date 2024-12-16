@@ -12,7 +12,6 @@ import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/default_button.dart';
 import 'package:test_scav/widgets/left_button.dart';
-import 'package:test_scav/widgets/navigation_page.dart';
 
 class AddPlacePage extends StatefulWidget {
   final String itemId;
@@ -22,13 +21,7 @@ class AddPlacePage extends StatefulWidget {
     required this.itemId,
   });
 
-  static MaterialPageRoute materialPageRoute({
-    required String itemId,
-  }) =>
-      MaterialPageRoute(
-          builder: (context) => AddPlacePage(
-                itemId: itemId,
-              ));
+
 
   @override
   State<AddPlacePage> createState() => _AddPlacePageState();
@@ -93,19 +86,17 @@ class _AddPlacePageState extends State<AddPlacePage> {
             const SnackBar(content: Text('Place added history successfully!')));
 
         Navigator.pushReplacementNamed(
-       context,
-      AppRouter.navigationPageRoute,
-      arguments: {
-        
-           'selectedIndex': 1,
-      }
-    );
-      
+          context,
+          AppRouter.navigationPageRoute,
+           arguments: {
+                
+                    'selectedIndex': 1,
+                  }
+        );
+        Navigator.pop(context, placeData);
       } catch (e) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Error: $e')));
-      } finally {
-        setState(() {});
       }
     }
   }

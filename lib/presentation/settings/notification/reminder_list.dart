@@ -9,6 +9,7 @@ import 'package:test_scav/main.dart';
 import 'package:test_scav/presentation/settings/notification/note_state.dart';
 import 'package:test_scav/presentation/settings/notification/notification.dart';
 import 'package:test_scav/utils/app_fonts.dart';
+import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/left_button.dart';
 // import 'package:timezone/timezone.dart' as tz;
 // import 'package:uuid/uuid.dart';
@@ -30,11 +31,7 @@ class _ReminderListState extends State<ReminderList> {
   void initState() {
     super.initState();
     devNotificationService.init();
-    NotificationService.onClickNotification.listen((String? payload) {
-      if (payload != null) {
-        Navigator.pushNamed(context, '/notificationPage');
-      }
-    });
+    
   }
   Future<void> _showTimePicker(BuildContext context, int index, Box<Reminder> box) async {
     final reminder = box.getAt(index);

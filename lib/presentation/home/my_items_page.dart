@@ -63,7 +63,7 @@ class _MyItemsPageState extends State<MyItemsPage> {
   @override
   Widget build(BuildContext context) {
     return ValueListenableBuilder<Box<ItemData>>(
-      valueListenable: Hive.box<ItemData>(itemBoxName).listenable(),
+      valueListenable:  Hive.box<ItemData>(itemBoxName).listenable(),
       builder: (context, itemBox, child) {
         final items = itemBox.values.toList();
         final sortedItems = _sortItemsByGroup(items);

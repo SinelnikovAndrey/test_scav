@@ -14,8 +14,8 @@ class TipCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: SizedBox(
-        height: MediaQuery.of(context).size.height * 0.25,
-        width: MediaQuery.of(context).size.width * 0.9,
+        height: 178,
+        width: 382,
         child: InkWell(
           borderRadius: BorderRadius.circular(10),
           onTap: () {
@@ -35,60 +35,64 @@ class TipCard extends StatelessWidget {
                 color: AppColors.lightBorderGray,
               ),
             ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                if (tip.photo != null) ...[
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.asset(tip.photo!,
-                        height: MediaQuery.of(context).size.height * 0.25,
-                        width: MediaQuery.of(context).size.width * 0.38,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                      return const Text(
-                          'Image not found');
-                    }),
-                  )
-                ],
-                 SizedBox(width: MediaQuery.of(context).size.width * 0.03,),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-            
-                    Expanded(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.50,
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        child: Text(
-                          tip.header ?? 'No Header',
-                          style: AppFonts.h8,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 2,
-                          textAlign: TextAlign.left
-                        ),
-                      ),
-                    ),
-                    // const SizedBox(height: 8),
-                    Expanded(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: MediaQuery.of(context).size.height * 0.15,
-                        child: Text(
-                          style: AppFonts.h6,
-                          tip.firstPoint ?? '',
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 4,
-                          textAlign: TextAlign.left
-                        ),
-                      ),
-                    ),
-                  
-              
-                    const SizedBox(height: 15),
+            child: Padding(
+              padding: const EdgeInsets.all( 5.0),
+              child: Row(
+             
+                children: [
+                  if (tip.photo != null) ...[
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.asset(tip.photo!,
+                          height: 146,
+                          width: 146,
+                       fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                        return const Text(
+                            'Image not found');
+                      }),
+                    )
                   ],
-                ),
-              ],
+                   const SizedBox(width: 12),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+              
+                      Expanded(
+                        child: SizedBox(
+                          width: 175,
+                          height: 10,
+
+                          child: Text(
+                            tip.header ?? 'No Header',
+                            style: AppFonts.h8,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                            textAlign: TextAlign.left
+                          ),
+                        ),
+                      ),
+                      // const SizedBox(height: 8),
+                      Expanded(
+                        child: SizedBox(
+                          width: 175,
+
+                          child: Text(
+                            style: AppFonts.h6,
+                            tip.firstPoint ?? '',
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 3,
+                            textAlign: TextAlign.left
+                          ),
+                        ),
+                      ),
+                    
+                
+                      const SizedBox(height: 15),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -42,7 +42,7 @@ class NotificationService {
 
   NotificationService._internal();
 
-  static const channelId = '1'; 
+  static const channelId = '2'; 
 
   static const AndroidNotificationDetails _androidNotificationDetails =
       AndroidNotificationDetails(
@@ -53,6 +53,10 @@ class NotificationService {
     playSound: true,
     priority: Priority.high,
     importance: Importance.high,
+    actions: [
+            AndroidNotificationAction('id_Open', 'Open',showsUserInterface: true),
+            AndroidNotificationAction('id_Close', 'Close',showsUserInterface: true),
+          ]
     // sound: RawResourceAndroidNotificationSound('notification_sound'),
   );
 
@@ -61,6 +65,7 @@ class NotificationService {
     presentAlert: true,
     presentBadge: true,
     presentSound: true,
+    
   );
 
   final NotificationDetails _notificationDetails = NotificationDetails(

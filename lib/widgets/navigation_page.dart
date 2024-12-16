@@ -35,77 +35,74 @@ class _HomePageState extends State<NavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        bottomNavigationBar: 
+    return Scaffold(
+      bottomNavigationBar: 
+      
+      NavigationBarTheme(
         
-        NavigationBarTheme(
-          
-          data: NavigationBarThemeData(
-            height: MediaQuery.of(context).size.height * 0.1,
-            indicatorColor: Colors.transparent,
-            labelTextStyle: MaterialStateProperty.all(
-              const TextStyle(color: Colors.white, fontSize: 0),
+        data: NavigationBarThemeData(
+          height: MediaQuery.of(context).size.height * 0.1,
+          indicatorColor: Colors.transparent,
+          labelTextStyle: WidgetStateProperty.all(
+            const TextStyle(color: Colors.white, fontSize: 0),
+          ),
+        ),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Color(0x7FE6EAF3),
+                blurRadius: 37,
+                offset: Offset(0, -12),
+                spreadRadius: 0,
+              )
+            ],
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(15),
+              topRight: Radius.circular(15),
             ),
           ),
-          child: Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Color(0x7FE6EAF3),
-                  blurRadius: 37,
-                  offset: Offset(0, -12),
-                  spreadRadius: 0,
-                )
-              ],
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(15),
-                topRight: Radius.circular(15),
-              ),
-            ),
-            child: NavigationBar(
-              
-              backgroundColor: backgroundColor, 
-              indicatorColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              selectedIndex: selectedIndex,
-              onDestinationSelected: (index) {
-                setState(() {
-                  selectedIndex = index;
-                });
-              },
-              destinations: [
-                NavigationDestination(
-                  
-                  icon: SvgPicture.asset(selectedIndex == 0 ? SvgAssets.homeFilled : SvgAssets.homeLight), label: '',
-                ),
-                NavigationDestination(
-                  icon: SvgPicture.asset(selectedIndex == 1 ? SvgAssets.timeCircleFilled : SvgAssets.timeCircleLight), label: '',
-                ),
-                NavigationDestination(
-                  icon: SvgPicture.asset(selectedIndex == 2 ? SvgAssets.documentFilled : SvgAssets.documentLight), label: '', 
-                ),
-                NavigationDestination(
-                icon: SvgPicture.asset(selectedIndex == 3 ? SvgAssets.settingsFilled : SvgAssets.settingsLight), label: '',
-        
-                ),
-         
+          child: NavigationBar(
             
-              ],
-            ),
+            backgroundColor: backgroundColor, 
+            indicatorColor: Colors.transparent,
+            surfaceTintColor: Colors.transparent,
+            selectedIndex: selectedIndex,
+            onDestinationSelected: (index) {
+              setState(() {
+                selectedIndex = index;
+              });
+            },
+            destinations: [
+              NavigationDestination(
+                
+                icon: SvgPicture.asset(selectedIndex == 0 ? SvgAssets.homeFilled : SvgAssets.homeLight), label: '',
+              ),
+              NavigationDestination(
+                icon: SvgPicture.asset(selectedIndex == 1 ? SvgAssets.timeCircleFilled : SvgAssets.timeCircleLight), label: '',
+              ),
+              NavigationDestination(
+                icon: SvgPicture.asset(selectedIndex == 2 ? SvgAssets.documentFilled : SvgAssets.documentLight), label: '', 
+              ),
+              NavigationDestination(
+              icon: SvgPicture.asset(selectedIndex == 3 ? SvgAssets.settingsFilled : SvgAssets.settingsLight), label: '',
+      
+              ),
+       
+          
+            ],
           ),
         ),
-        body: IndexedStack(
-          index: selectedIndex,
-          children: [
-            MyItemsPage(appDocumentsDirPath: widget.appDocumentsDirPath),
-            const HistoryPage(),
-            const TipDisplay(),
-            const Settings(),
-          ],
-        ),
+      ),
+      body: IndexedStack(
+        index: selectedIndex,
+        children: [
+          MyItemsPage(appDocumentsDirPath: widget.appDocumentsDirPath),
+          const HistoryPage(),
+          const TipDisplay(),
+          const Settings(),
+        ],
       ),
     );
   }

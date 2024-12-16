@@ -8,8 +8,9 @@ class SvgAssets {
   static const String settingsLight = '${_basePath}settings_light.svg';
   static const String timeCircleFilled = '${_basePath}time_circle_filled.svg';
   static const String timeCircleLight = '${_basePath}time_circle_light.svg';
-  
+
   static const String bell = '${_basePath}bell.svg';
+  static const String shield = '${_basePath}shield.svg';
   static const String calendar = '${_basePath}calendar.svg';
   static const String caretLeft = '${_basePath}caret_left.svg';
   static const String location = '${_basePath}location.svg';

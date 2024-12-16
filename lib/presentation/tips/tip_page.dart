@@ -66,20 +66,21 @@ class TipPage extends StatelessWidget {
                           height: 10,
                         ),
                         Text(
-                          tip.firstPoint ?? '',
+                          '•${tip.firstPoint}' ?? '',
                           style: AppFonts.h6,
                         ),
                         Text(
-                          tip.secondPoint ?? '',
+                         '•${tip.secondPoint}'   ?? '',
                           style: AppFonts.h6,
                         ),
                      
                         Text(
-                          tip.thirdPoint ?? '',
+                          '•${tip.thirdPoint}'  ?? '',
                           style: AppFonts.h6,
                         ),
+                        if (tip.forthPoint != null)
                         Text(
-                          tip.forthPoint ?? '',
+                          '•${tip.forthPoint}' ?? '',
                           style: AppFonts.h6,
                         ),
                       ],

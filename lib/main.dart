@@ -68,16 +68,17 @@ Future<void> _initHive(String appDocumentsDirPath) async {
     await Hive.initFlutter(appDocumentsDirPath); 
     registerAdapters();
     try {
+       await Hive.openBox<ItemData>(itemBoxName);
+    } catch (e) {
+      debugPrint('Error opening items box: $e');
+    }
+    try {
        await Hive.openBox<HistoryData>(historyBoxName);
     } catch (e) {
       debugPrint('Error opening history box: $e');
     }
 
-    try {
-       await Hive.openBox<ItemData>(itemBoxName);
-    } catch (e) {
-      debugPrint('Error opening items box: $e');
-    }
+    
     
     try {
        await Hive.openBox<Reminder>(reminderBoxName);
