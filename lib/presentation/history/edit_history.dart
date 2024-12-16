@@ -416,12 +416,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                               border: InputBorder.none,
                               hintText: 'edit place',
                               hintStyle: AppFonts.h18400,),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a description';
-                            }
-                            return null;
-                          },
+                        
                         ),
                       )),
                   const SizedBox(height: 10.0),
@@ -447,12 +442,7 @@ class _EditHistoryPageState extends State<EditHistoryPage> {
                               border: InputBorder.none,
                               hintText: 'Add description',
                               hintStyle: AppFonts.h18400,),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter a description';
-                            }
-                            return null;
-                          },
+                       
                         ),
                       )),
                   const SizedBox(height: 20.0),

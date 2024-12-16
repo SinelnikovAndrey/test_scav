@@ -103,12 +103,7 @@ class _AddGroupPageState extends State<AddGroupPage> {
                                       fontSize: 18,
                                       color: Colors.grey,
                                     )),
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter a name';
-                                  }
-                                  return null;
-                                },
+                           
                               ),
                             ),
                           ],
