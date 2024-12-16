@@ -8,6 +8,7 @@ import 'dart:math';
 import 'package:test_scav/data/models/item_data.dart';
 import 'package:test_scav/presentation/history/history_page.dart';
 import 'package:test_scav/presentation/home/my_items_page.dart';
+import 'package:test_scav/utils/app_colors.dart';
 import 'package:test_scav/utils/app_fonts.dart';
 import 'package:test_scav/utils/app_router.dart';
 import 'package:test_scav/widgets/default_button.dart';
@@ -62,6 +63,13 @@ class _AddPlacePageState extends State<AddPlacePage> {
 
   Future<void> _addPlace() async {
     if (_formKey.currentState!.validate()) {
+      if (_placeNameController.text.trim().isEmpty
+      ) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please fill in Place field'),backgroundColor: AppColors.error,), );
+      return;
+    }
       setState(() {});
       try {
         final placeId = _generateId();
@@ -159,12 +167,7 @@ class _AddPlacePageState extends State<AddPlacePage> {
                             fontSize: 18,
                             color: Colors.grey,
                           )),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Please enter a place';
-                        }
-                        return null;
-                      },
+                 
                     ),
                   )),
 
