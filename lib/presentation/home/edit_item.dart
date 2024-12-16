@@ -45,7 +45,7 @@ class _EditItemPageState extends State<EditItemPage> {
     bool _isFormValid = false; 
 
 
-  List<Reminder> _reminders = []; // List to hold reminders
+  List<Reminder> _reminders = [];
   String? _selectedReminderTitle;
 
   @override
@@ -60,19 +60,19 @@ class _EditItemPageState extends State<EditItemPage> {
     _descriptionController.text = widget.itemData.description;
     _relativeImagePath = widget.itemData.relativeImagePath;
     _loadReminders();
-    _updateFormValidity();
+    // _updateFormValidity();
   }
 
 
-   void _updateFormValidity() {
-    setState(() {
-      _isFormValid = _nameController.text.isNotEmpty &&
-           _formController.text.isNotEmpty &&
-           _descriptionController.text.isNotEmpty &&
-           _selectedReminderTitle != null &&
-           selectedColorName.isNotEmpty;
-    });
-  }
+  //  void _updateFormValidity() {
+  //   setState(() {
+  //     _isFormValid = _nameController.text.isNotEmpty &&
+  //          _formController.text.isNotEmpty &&
+  //          _descriptionController.text.isNotEmpty &&
+  //          _selectedReminderTitle != null &&
+  //          selectedColorName.isNotEmpty;
+  //   });
+  // }
 
 
   Future<void> _loadReminders() async {
@@ -124,7 +124,6 @@ class _EditItemPageState extends State<EditItemPage> {
     if (
       _formKey.currentState!.validate()
       ) {
-      // Input validation
       if (_nameController.text.trim().isEmpty ||
           _formController.text.trim().isEmpty ||
           _descriptionController.text.trim().isEmpty ||
@@ -135,7 +134,7 @@ class _EditItemPageState extends State<EditItemPage> {
       }
 
       try {
-        String? newRelativePath; //Declare here
+        String? newRelativePath; 
 
         if (_imageFile != null) {
           newRelativePath = await FileUtils.saveImage(_imageFile!);
@@ -147,21 +146,20 @@ class _EditItemPageState extends State<EditItemPage> {
         }
 
         final editedItem = widget.itemData.copyWith(
-          // Use copyWith for immutability
           name: _nameController.text.trim(),
           color: selectedColorName,
           form: _formController.text.trim(),
           group: _selectedReminderTitle ?? '',
           description: _descriptionController.text.trim(),
           relativeImagePath: newRelativePath ??
-              widget.itemData.relativeImagePath, //Keep old path if not changed
+              widget.itemData.relativeImagePath, 
         );
 
         await _itemBox.put(widget.itemData.id, editedItem);
 
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Item updated successfully!')));
-        Navigator.pop(context, editedItem); // Return the new item
+        Navigator.pop(context, editedItem); 
       } on HiveError catch (e) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Hive error: ${e.message}')));
@@ -172,7 +170,6 @@ class _EditItemPageState extends State<EditItemPage> {
     }
   }
 
-  //Helper functions
   Widget _buildImageWidget(File imageFile, BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -193,7 +190,7 @@ class _EditItemPageState extends State<EditItemPage> {
       child: Container(
         height: 382,
                             width: 382,
-        color: Colors.black.withOpacity(0.5), // Semi-transparent black
+        color: Colors.black.withOpacity(0.5), 
         child: const Center(
           child: Text(
             '+ Add New',
@@ -236,7 +233,7 @@ class _EditItemPageState extends State<EditItemPage> {
       }
       return null;
     } catch (e) {
-      return null; // Or handle this error appropriately if needed.
+      return null; 
     }
     
   }
@@ -334,7 +331,7 @@ class _EditItemPageState extends State<EditItemPage> {
                             child: TextFormField(
                               controller: _nameController,
                               
-                              onChanged: (_) => _updateFormValidity(),
+                              // onChanged: (_) => _updateFormValidity(),
                               decoration: const InputDecoration(
                                   border: InputBorder.none,
                                   hintText: 'Add name',
@@ -371,7 +368,7 @@ class _EditItemPageState extends State<EditItemPage> {
                                 setState(() {
                                   selectedColorName =
                                       newColorName ?? widget.itemData.color;
-                                       _updateFormValidity();
+                                      //  _updateFormValidity();
                                 });
                               },
                               items: colorMap.keys.map((colorName) {
@@ -410,7 +407,7 @@ class _EditItemPageState extends State<EditItemPage> {
                         ),
                         child: TextFormField(
                           controller: _formController,
-                          onChanged: (_) => _updateFormValidity(),
+                          // onChanged: (_) => _updateFormValidity(),
                           decoration: const InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Add form',
@@ -441,15 +438,15 @@ class _EditItemPageState extends State<EditItemPage> {
                           ? const Center(child: Text('Loading reminders...'))
                           : DropdownButtonFormField<String>(
                               value: _selectedReminderTitle ??
-                                  widget.itemData.group, // Initial value
+                                  widget.itemData.group, 
                               decoration: const InputDecoration(
                                   border: InputBorder.none),
                               hint: const Text(
-                                  'Select Reminder'), // Removed dynamic hint
+                                  'Select Reminder'), 
                               onChanged: (String? newValue) {
                                 setState(() {
                                   _selectedReminderTitle = newValue;
-                                  _updateFormValidity();
+                                  // _updateFormValidity();
                                 });
                               },
                               items: _reminders.map((reminder) {
@@ -479,7 +476,7 @@ class _EditItemPageState extends State<EditItemPage> {
                         ),
                         child: TextFormField(
                           controller: _descriptionController,
-                          onChanged: (_) => _updateFormValidity(),
+                          // onChanged: (_) => _updateFormValidity(),
                           decoration: const InputDecoration(
                               border: InputBorder.none,
                               hintText: 'Add description',
@@ -495,7 +492,7 @@ class _EditItemPageState extends State<EditItemPage> {
                 DefaultButton(
                   text: 'Save',
                   onTap: _editFile,
-                  isEnabled: _isFormValid,
+                  // isEnabled: _isFormValid,
                 )
               ],
             ),
