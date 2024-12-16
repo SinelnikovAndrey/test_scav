@@ -85,15 +85,16 @@ class _AddPlacePageState extends State<AddPlacePage> {
         ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Place added history successfully!')));
 
-        Navigator.pushReplacementNamed(
+        Navigator.pushNamedAndRemoveUntil(
           context,
           AppRouter.navigationPageRoute,
+          (route) => false,
            arguments: {
                 
                     'selectedIndex': 1,
                   }
         );
-        Navigator.pop(context, placeData);
+        // Navigator.pop(context);
       } catch (e) {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Error: $e')));

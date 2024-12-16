@@ -16,6 +16,7 @@ import 'package:test_scav/data/services/hive_adapters.dart';
 import 'package:test_scav/data/models/reminder/reminder.dart';
 import 'package:test_scav/presentation/settings/notification/note_state.dart';
 import 'package:test_scav/presentation/settings/notification/notification.dart';
+import 'package:test_scav/utils/app_router.dart';
 
 import 'package:timezone/data/latest.dart' as tz;
 
@@ -33,8 +34,9 @@ Future<void> main() async {
 
   try {
     final appDocDir = await getApplicationDocumentsDirectory();
-    appDocumentsDirPath = appDocDir.path; 
     await _initHive(appDocumentsDirPath);
+    appDocumentsDirPath = appDocDir.path; 
+    
     tz.initializeTimeZones();
   
   } on Exception catch (e) {
@@ -100,4 +102,7 @@ void registerAdapters() {
     Hive.registerAdapter(HistoryDataAdapter());
     Hive.registerAdapter(ItemDataAdapter());
     Hive.registerAdapter(ReminderAdapter());
+}
+  void navigateToThisRoute(BuildContext context){
+         Navigator.popUntil(context, ModalRoute.withName(AppRouter.myItemsPageRoute));
 }

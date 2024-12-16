@@ -12,6 +12,7 @@ import 'package:test_scav/widgets/navigation_page.dart';
 
 class AppRouter {
   static const String myItemsPageRoute = '/myItemsPage';
+  static const String historyPageRoute = '/historyPage';
   static const String navigationPageRoute = '/navigationPage';
   static const String homeRoute = '/home';
   static const String onTappedUsRoute = '/splash';

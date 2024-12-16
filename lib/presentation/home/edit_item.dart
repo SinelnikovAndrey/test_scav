@@ -359,7 +359,7 @@ class _EditItemPageState extends State<EditItemPage> {
                               border: Border.all(),
                               borderRadius: BorderRadius.circular(20)),
                           height: 52,
-                          width: 300,
+                          width: 280,
                           child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20.0, vertical: 10),
@@ -379,7 +379,7 @@ class _EditItemPageState extends State<EditItemPage> {
                                 );
                               }).toList(),
                               underline: Container(),
-                              menuWidth: 300,
+                              menuWidth: 280,
                             ),
                           ),
                         ),

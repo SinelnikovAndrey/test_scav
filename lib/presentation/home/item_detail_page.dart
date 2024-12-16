@@ -88,7 +88,7 @@ class ItemDetailPage extends StatelessWidget {
               text: "Got it!",
               onTap: () {
             
-                 Navigator.pushReplacementNamed(
+                 Navigator.pushNamed(
           context,
           AppRouter.addPlaceRoute,
            arguments: {

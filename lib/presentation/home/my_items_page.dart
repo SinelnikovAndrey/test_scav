@@ -55,7 +55,6 @@ class _MyItemsPageState extends State<MyItemsPage> {
   @override
   void dispose() {
     super.dispose();
-    itemBox.close();
     reminderBox.listenable().removeListener(_updateReminderTitles);
     _reminderTitles.dispose();
   }
